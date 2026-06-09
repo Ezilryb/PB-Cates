@@ -1,6 +1,0 @@
-{
-  "name": "PB-Cartes",
-  "description": "Plateforme de fidélité multi-commerce passwordless sécurisée.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
