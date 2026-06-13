@@ -169,6 +169,16 @@
     .nav-item span { font-size: 22px; }
     .nav-item.active { color: var(--gold); }
 
+    /* PROFIL */
+    .profile-section { padding: 1.25rem; display: flex; flex-direction: column; gap: 1.5rem; }
+    .profile-card { background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: var(--radius-lg); padding: 1.75rem 1.25rem; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; text-align: center; }
+    .profile-avatar-lg { width: 64px; height: 64px; border-radius: 50%; background: rgba(201,168,76,0.12); border: 1px solid var(--border); color: var(--gold); font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; justify-content: center; letter-spacing: 0.5px; }
+    .profile-email { font-size: 0.95rem; color: var(--text-primary); font-weight: 500; word-break: break-all; }
+    .profile-uid { font-size: 0.72rem; color: var(--text-muted); word-break: break-all; }
+    .btn-logout { width: 100%; padding: 0.85rem 1.5rem; background: transparent; border: 1px solid rgba(224,85,85,0.3); border-radius: var(--radius-md); color: #e07070; font-family: var(--font-body); font-size: 0.92rem; font-weight: 500; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+    .btn-logout:hover { background: rgba(224,85,85,0.08); border-color: rgba(224,85,85,0.5); }
+    .btn-logout:active { transform: scale(0.98); }
+
     /* DETAIL */
     #screen-detail { padding: 0; }
     .back-btn { display: flex; align-items: center; gap: 8px; padding: 1.25rem 1.25rem 0.75rem; background: none; border: none; color: var(--text-secondary); font-family: var(--font-body); font-size: 0.88rem; cursor: pointer; transition: color 0.2s; }
@@ -376,7 +386,7 @@
     <section id="screen-wallet" class="screen" role="main" aria-label="Portefeuille de fidélité">
       <header class="wallet-header">
         <span class="wallet-brand">PB-Cates</span>
-        <button class="avatar-btn" id="user-avatar" onclick="showToast('Profil — bientôt disponible')" aria-label="Mon profil">ME</button>
+        <button class="avatar-btn" id="user-avatar" onclick="showScreen('profile')" aria-label="Mon profil">ME</button>
       </header>
       <div class="wallet-summary">
         <div class="wallet-greeting">Bonjour</div>
@@ -422,10 +432,29 @@
       </div>
     </section>
 
+    <!-- ÉCRAN 4 : PROFIL -->
+    <section id="screen-profile" class="screen" role="main" aria-label="Mon profil">
+      <header class="wallet-header">
+        <span class="wallet-brand">PB-Cates</span>
+      </header>
+      <div class="wallet-summary">
+        <div class="wallet-greeting">Mon Compte</div>
+        <div class="wallet-title">Profil</div>
+      </div>
+      <div class="profile-section">
+        <div class="profile-card">
+          <div class="profile-avatar-lg" id="profile-avatar" aria-hidden="true">ME</div>
+          <div class="profile-email" id="profile-email">—</div>
+          <div class="profile-uid" id="profile-uid"></div>
+        </div>
+        <button class="btn-logout" onclick="logout()">Se déconnecter</button>
+      </div>
+    </section>
+
     <nav class="bottom-nav" id="bottom-nav" style="display:none" role="navigation" aria-label="Navigation principale">
-      <button class="nav-item active" onclick="showScreen('wallet')" aria-label="Portefeuille"><span aria-hidden="true">◈</span>Wallet</button>
+      <button class="nav-item active" id="nav-wallet" onclick="showScreen('wallet')" aria-label="Portefeuille"><span aria-hidden="true">◈</span>Wallet</button>
       <button class="nav-item" onclick="showToast('Offres — bientôt disponible')" aria-label="Offres"><span aria-hidden="true">◇</span>Offres</button>
-      <button class="nav-item" onclick="showToast('Profil — bientôt disponible')" aria-label="Profil"><span aria-hidden="true">○</span>Profil</button>
+      <button class="nav-item" id="nav-profile" onclick="showScreen('profile')" aria-label="Profil"><span aria-hidden="true">○</span>Profil</button>
     </nav>
   </div>
 </div>
@@ -484,7 +513,14 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const t = document.getElementById(`screen-${id}`);
   if (t) t.classList.add('active');
-  document.getElementById('bottom-nav').style.display = (id === 'wallet' || id === 'detail') ? 'flex' : 'none';
+  document.getElementById('bottom-nav').style.display = (id === 'wallet' || id === 'detail' || id === 'profile') ? 'flex' : 'none';
+
+  /* Mettre en surbrillance l'onglet correspondant dans la barre de navigation */
+  const navWallet  = document.getElementById('nav-wallet');
+  const navProfile = document.getElementById('nav-profile');
+  if (navWallet)  navWallet.classList.toggle('active',  id === 'wallet' || id === 'detail');
+  if (navProfile) navProfile.classList.toggle('active', id === 'profile');
+
   appState.currentScreen = id;
   window.scrollTo(0, 0);
 }
@@ -687,11 +723,30 @@ function loginSuccess(user) {
   appState.currentUser = user; appState.cards = [];
   const initials = (user.displayName || user.email || 'U').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
   document.getElementById('user-avatar').textContent = initials;
+  document.getElementById('profile-avatar').textContent = initials;
+  document.getElementById('profile-email').textContent = user.email || '—';
+  document.getElementById('profile-uid').textContent = user.uid ? `ID : ${user.uid}` : '';
   document.getElementById('stat-cards').textContent = 0;
   document.getElementById('stat-rewards').textContent = 0;
   renderCardList();
   showScreen('wallet');
   loadWallet(user);
+}
+
+/* ── Déconnexion ──
+   signOut() déclenche onAuthStateChanged (voir bas de fichier), qui
+   réinitialise appState, coupe le listener Firestore et réaffiche
+   l'écran de connexion. */
+async function logout() {
+  try {
+    const { signOut } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    const auth = await getFbAuth();
+    await signOut(auth);
+    showToast('Vous êtes déconnecté');
+  } catch (err) {
+    console.error('[Auth] Erreur de déconnexion :', err);
+    showToast('Erreur lors de la déconnexion', 'error');
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════
