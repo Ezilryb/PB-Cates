@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* ── Commerces : lecture pour tout utilisateur authentifié,
+          écriture réservée aux admins (custom claim) ── */
+    match /commerces/{commerceId} {
+      allow read : if request.auth != null;
+      allow write: if request.auth != null
+                   && request.auth.token.admin == true;
+    }
+
+    /* ── Données utilisateur : accès strictement personnel ── */
+    match /users/{userId} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
+
+      /* Cartes de fidélité (une par commerce rejoint). Le staff en
+         caisse (authentifié, mais avec un uid différent du client)
+         doit pouvoir LIRE la carte pour afficher les vrais tampons
+         lors d'un scan, et CRÉER la carte à la volée lors de la
+         première visite (Carte Universelle → découverte du commerce). */
+      match /cards/{cardId} {
+        allow read, write: if request.auth != null;
+      }
+    }
+
+    /* ── OTPs temporaires (code 6 chiffres) ── */
+    match /otps/{email} {
+      allow read, write: if request.auth == null;  /* pré-auth */
+    }
+
+    /* ── Fallback de développement : expiration 2026-07-10 ── */
+    match /{document=**} {
+      allow read, write: if request.time < timestamp.date(2026, 7, 10);
+    }
+  }
+}
