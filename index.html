@@ -289,6 +289,22 @@
       animation: fadeUp 0.25s ease;
     }
 
+    /* ── ACCÈS PROFESSIONNEL (CAISSE) ── */
+    .pro-access-link {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; margin-top: 1.75rem; padding: 0.7rem 1rem;
+      background: transparent; border: 1px dashed var(--border-soft);
+      border-radius: var(--radius-md);
+      font-family: var(--font-body); font-size: 0.78rem; letter-spacing: 0.3px;
+      color: var(--text-muted); text-decoration: none;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+    .pro-access-link:hover {
+      color: var(--gold); border-color: var(--gold-dim);
+      background: rgba(201,168,76,0.04);
+    }
+    .pro-access-link .icon { font-size: 14px; }
+
     @media (min-width: 500px) {
       #app { background: #08080a; padding-top: 2rem; padding-bottom: 2rem; }
       .shell { border-radius: var(--radius-xl); border: 1px solid var(--border-soft); overflow: hidden; max-height: 820px; box-shadow: 0 40px 100px rgba(0,0,0,0.6); }
@@ -378,6 +394,11 @@
           </div>
           <button class="btn-primary" id="btn-register" onclick="handleEmailRegister()">Créer mon compte</button>
         </div>
+
+        <!-- ── ACCÈS PROFESSIONNEL : ESPACE CAISSE ── -->
+        <a href="store.html" class="pro-access-link" aria-label="Accéder à l'espace caisse pour les commerçants">
+          <span class="icon" aria-hidden="true">🏪</span> Vous êtes un commerce ? Accéder à l'Espace Caisse
+        </a>
 
       </div>
     </section>
