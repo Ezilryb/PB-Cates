@@ -28,6 +28,8 @@
       --success-bg:     rgba(78,203,113,0.1);
       --danger:         #e05555;
       --danger-bg:      rgba(224,85,85,0.1);
+      --teal:           #3ecdbd;
+      --teal-bg:        rgba(62,205,189,0.1);
       --text-primary:   #f0ece0;
       --text-secondary: #9a9080;
       --text-muted:     #555048;
@@ -212,6 +214,146 @@
     .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(13,13,15,0.3); border-top-color: #0d0d0f; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 5px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ══════════════════════════════════════════════════════
+       CONSOLE CAISSE — actions par email, règles métier,
+       réseau simulé, export CSV, activité récente
+    ══════════════════════════════════════════════════════ */
+    .console-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin: 1rem 1rem 0;
+    }
+    #tab-console > .console-section:last-child { margin-bottom: 1rem; }
+    .console-section-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1.1rem;
+    }
+    .console-section-title.center { text-align: center; }
+    .console-field-label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.3px;
+      margin-bottom: 0.6rem;
+    }
+
+    /* Stepper "Volume Tampons à Valider" */
+    .stepper-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.35rem; }
+    .stepper-label { font-size: 0.9rem; color: var(--text-primary); margin-bottom: 2px; }
+    .stepper-hint  { font-size: 0.75rem; color: var(--text-muted); }
+    .stepper-control { display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0; }
+    .stepper-value { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--gold); min-width: 30px; text-align: center; }
+
+    /* Boutons d'action : Ajouter / Cadeau */
+    .console-actions-row { display: flex; gap: 0.75rem; margin-bottom: 0.85rem; }
+    .btn-console-add, .btn-console-gift {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 0.95rem; border: none; border-radius: var(--radius-md);
+      font-family: var(--font-body); font-size: 0.95rem; font-weight: 500;
+      cursor: pointer; transition: filter 0.2s, transform 0.1s, opacity 0.2s;
+    }
+    .btn-console-add  { background: var(--gold); color: #0d0d0f; }
+    .btn-console-gift { background: var(--teal); color: #07221f; }
+    .btn-console-add:hover, .btn-console-gift:hover { filter: brightness(1.08); }
+    .btn-console-add:active, .btn-console-gift:active { transform: scale(0.98); }
+    .btn-console-add:disabled, .btn-console-gift:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
+
+    /* Bouton ligne (Simuler scan QR / Export CSV) */
+    .btn-console-outline {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 0.85rem; background: transparent; border: 1px solid var(--border);
+      border-radius: var(--radius-md); color: var(--gold);
+      font-family: var(--font-body); font-size: 0.88rem; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-console-outline:hover  { background: rgba(201,168,76,0.06); border-color: var(--gold-dim); }
+    .btn-console-outline:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-icon { font-size: 16px; line-height: 1; }
+
+    /* Bascule "Autoriser le Multi-Tampon" */
+    .console-toggle-row {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+      padding-bottom: 1.35rem; margin-bottom: 1.35rem; border-bottom: 1px solid var(--border-soft);
+    }
+    .console-row-label { font-size: 0.9rem; color: var(--text-primary); margin-bottom: 4px; }
+    .console-row-sub   { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; max-width: 300px; }
+
+    .toggle { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-slider {
+      position: absolute; inset: 0; background: var(--bg-input);
+      border: 1px solid var(--border-soft); border-radius: 100px; cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; width: 20px; height: 20px; left: 2px; top: 2px;
+      background: var(--text-muted); border-radius: 50%; transition: transform 0.2s, background 0.2s;
+    }
+    .toggle input:checked + .toggle-slider { background: rgba(201,168,76,0.22); border-color: var(--gold-dim); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); background: var(--gold); }
+    .toggle input:disabled + .toggle-slider { opacity: 0.4; cursor: not-allowed; }
+
+    /* Slider "Limite Anti-Fraude Journalière" */
+    .range-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+    .range-value { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--gold); white-space: nowrap; }
+    .console-range {
+      --fill: 30%;
+      width: 100%; -webkit-appearance: none; appearance: none; height: 5px; margin-top: 0.85rem;
+      border-radius: 3px; outline: none; cursor: pointer;
+      background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--fill), var(--bg-input) var(--fill), var(--bg-input) 100%);
+    }
+    .console-range::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+      background: var(--gold); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 0 1px var(--border);
+    }
+    .console-range::-moz-range-thumb {
+      width: 20px; height: 20px; border-radius: 50%; background: var(--gold);
+      cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 0 1px var(--border);
+    }
+    .console-range:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Réseau de l'instance */
+    .network-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .network-info { display: flex; align-items: center; gap: 0.9rem; }
+    .network-icon {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+      background: var(--success-bg); color: var(--success); transition: background 0.2s, color 0.2s;
+    }
+    .network-row.offline .network-icon { background: var(--danger-bg); color: var(--danger); }
+    .btn-network-sim {
+      padding: 0.65rem 1.1rem; background: var(--danger); border: none; border-radius: var(--radius-md);
+      color: #fff; font-family: var(--font-body); font-size: 0.85rem; font-weight: 500;
+      cursor: pointer; transition: opacity 0.2s, background 0.2s; white-space: nowrap;
+    }
+    .btn-network-sim:hover { opacity: 0.88; }
+    .btn-network-sim.is-offline { background: var(--success); color: #06231d; }
+
+    /* Export */
+    .console-export-icon { text-align: center; font-size: 26px; color: var(--text-muted); margin-bottom: 0.6rem; }
+
+    /* Activité récente */
+    .activity-row { display: flex; align-items: center; gap: 0.85rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-soft); }
+    .activity-row:last-child { border-bottom: none; }
+    .activity-row-icon {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .activity-row-icon.positive { background: var(--success-bg); color: var(--success); }
+    .activity-row-icon.negative { background: rgba(201,168,76,0.12); color: var(--gold); }
+    .activity-row-main { flex: 1; min-width: 0; }
+    .activity-row-email { font-size: 0.86rem; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .activity-row-label { font-size: 0.74rem; color: var(--text-muted); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .activity-row-badge { font-size: 0.82rem; font-weight: 600; flex-shrink: 0; }
+    .activity-row-badge.positive { color: var(--success); }
+    .activity-row-badge.negative { color: var(--gold); }
+    .empty-activity { font-size: 0.82rem; color: var(--text-muted); text-align: center; padding: 1.5rem 0; }
+
     @media (min-width: 500px) {
       #app { background: #08080a; padding-top: 2rem; padding-bottom: 2rem; }
       .shell { border-radius: var(--radius-xl); border: 1px solid var(--border-soft); overflow: hidden; max-height: 820px; box-shadow: 0 40px 100px rgba(0,0,0,0.6); }
@@ -267,6 +409,7 @@
       <div class="scanner-tabs">
         <button class="scanner-tab active" id="tab-scan-btn" onclick="switchTab('scanner')">📷 Scanner</button>
         <button class="scanner-tab" id="tab-hist-btn" onclick="switchTab('history')">📋 Historique</button>
+        <button class="scanner-tab" id="tab-console-btn" onclick="switchTab('console')">🧾 Console</button>
       </div>
 
       <!-- TAB: SCANNER -->
@@ -312,11 +455,112 @@
         </div>
       </div>
 
+      <!-- TAB: CONSOLE -->
+      <div id="tab-console" style="display:none;flex-direction:column;flex:1;overflow-y:auto;">
+
+        <!-- Actions d'encaissement -->
+        <div class="console-section">
+          <div class="console-section-title">Actions d'Encaissement</div>
+
+          <label class="console-field-label" for="console-email">Adresse E-mail du Client</label>
+          <div class="input-group" style="margin-bottom:1.35rem">
+            <span class="input-icon">✉</span>
+            <input type="email" id="console-email" placeholder="client@exemple.com" autocomplete="off" inputmode="email" aria-label="Adresse email du client" />
+          </div>
+
+          <div class="stepper-row">
+            <div>
+              <div class="stepper-label">Volume Tampons à Valider</div>
+              <div class="stepper-hint" id="console-multi-hint">Règle : multi-tampon désactivé</div>
+            </div>
+            <div class="stepper-control">
+              <button class="stamp-selector-btn" id="console-btn-minus" onclick="consoleAdjustStamps(-1)" aria-label="Diminuer le nombre de tampons">−</button>
+              <div class="stepper-value" id="console-stamp-value">1</div>
+              <button class="stamp-selector-btn" id="console-btn-plus" onclick="consoleAdjustStamps(1)" aria-label="Augmenter le nombre de tampons">+</button>
+            </div>
+          </div>
+
+          <div class="console-actions-row">
+            <button class="btn-console-add" id="btn-console-add" onclick="consoleAddStamps()">
+              <span class="btn-icon" aria-hidden="true">▣</span> Ajouter
+            </button>
+            <button class="btn-console-gift" id="btn-console-gift" onclick="consoleRedeemReward()">
+              <span class="btn-icon" aria-hidden="true">🎁</span> Cadeau
+            </button>
+          </div>
+
+          <button class="btn-console-outline" onclick="switchTab('scanner')">
+            <span class="btn-icon" aria-hidden="true">📷</span> Simuler Scan QR Client (Plan B)
+          </button>
+        </div>
+
+        <!-- Règles métier de l'instance -->
+        <div class="console-section">
+          <div class="console-section-title">Règles Métier de l'Instance</div>
+
+          <div class="console-toggle-row">
+            <div>
+              <div class="console-row-label">Autoriser le Multi-Tampon</div>
+              <div class="console-row-sub">Permet de valider plusieurs tampons par encaissement (ex: commande grand groupe).</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="console-multistamp" onchange="toggleMultiStamp(this.checked)" aria-label="Autoriser le multi-tampon" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div>
+            <div class="range-row">
+              <div class="console-row-label" style="margin-bottom:0">Limite Anti-Fraude Journalière</div>
+              <div class="range-value" id="console-daily-limit-value">3 max</div>
+            </div>
+            <div class="console-row-sub" style="margin-bottom:0.4rem">Accumulation maximale autorisée par e-mail client par jour.</div>
+            <input type="range" class="console-range" id="console-daily-limit" min="1" max="10" value="3" step="1"
+                   oninput="onDailyLimitInput(this.value)" onchange="onDailyLimitChange(this.value)"
+                   aria-label="Limite anti-fraude journalière" />
+          </div>
+        </div>
+
+        <!-- Réseau de l'instance -->
+        <div class="console-section">
+          <div class="network-row" id="network-row">
+            <div class="network-info">
+              <span class="network-icon" id="network-status-icon" aria-hidden="true">☁</span>
+              <div>
+                <div class="console-row-label">Réseau de l'Instance</div>
+                <div class="console-row-sub" id="network-status-label">Connecté en direct</div>
+              </div>
+            </div>
+            <button class="btn-network-sim" id="btn-network-sim" onclick="toggleNetworkSim()">Simuler Coupure</button>
+          </div>
+        </div>
+
+        <!-- Export de données -->
+        <div class="console-section">
+          <div class="console-export-icon" aria-hidden="true">⬇</div>
+          <div class="console-section-title center">Export de Données Fidélité</div>
+          <div class="console-row-sub" style="text-align:center;max-width:none;margin-bottom:1.1rem">Analysez l'activité des tampons et exportez le fichier de données clients.</div>
+          <button class="btn-console-outline" id="btn-export-csv" onclick="generateActivityExport()">
+            <span class="btn-icon" aria-hidden="true">📊</span> Générer l'Export CSV
+          </button>
+        </div>
+
+        <!-- Activité récente de l'établissement -->
+        <div class="console-section">
+          <div class="console-section-title">Activité Récente de l'Établissement</div>
+          <div id="activity-list">
+            <div class="empty-activity">Aucune activité pour le moment.</div>
+          </div>
+        </div>
+
+      </div>
+
     </section>
 
     <nav class="bottom-nav" id="bottom-nav" style="display:none">
       <button class="nav-item active" id="nav-scan" onclick="switchTab('scanner')"><span>📷</span>Scanner</button>
       <button class="nav-item" id="nav-hist" onclick="switchTab('history')"><span>📋</span>Historique</button>
+      <button class="nav-item" id="nav-console" onclick="switchTab('console')"><span>🧾</span>Console</button>
       <button class="nav-item" onclick="logout()"><span>⎋</span>Déconnexion</button>
     </nav>
 
@@ -386,7 +630,8 @@ const state = {
   scanPaused: false,
   videoStream: null,
   rafId: null,
-  activeTab: 'scanner'
+  activeTab: 'scanner',
+  consoleStampCount: 1
 };
 
 /* ── Firestore : recherche du restaurant lié au compte caisse ── */
@@ -537,12 +782,19 @@ async function loginSuccess(user) {
     showToast('Aucun commerce lié à ce compte — contactez l\'administrateur', 'error');
   }
 
+  /* Flux temps-réel "Activité Récente" — alimente l'onglet Console */
+  startActivityFeed();
+
   startScanner();
 }
 
 function logout() {
   stopScanner();
+  stopActivityFeed();
+  restoreNetworkIfSimulatedOffline();
   state.user = null;
+  state.currentRestaurant = null;
+  state.consoleStampCount = 1;
   showScreen('auth');
   document.getElementById('bottom-nav').style.display = 'none';
   showToast('Déconnexion effectuée');
@@ -561,12 +813,16 @@ function switchTab(tab) {
   state.activeTab = tab;
   document.getElementById('tab-scanner').style.display = tab === 'scanner' ? 'flex' : 'none';
   document.getElementById('tab-history').style.display = tab === 'history' ? 'flex' : 'none';
+  document.getElementById('tab-console').style.display = tab === 'console' ? 'flex' : 'none';
   document.getElementById('tab-scan-btn').classList.toggle('active', tab === 'scanner');
   document.getElementById('tab-hist-btn').classList.toggle('active', tab === 'history');
+  document.getElementById('tab-console-btn').classList.toggle('active', tab === 'console');
   document.getElementById('nav-scan').classList.toggle('active', tab === 'scanner');
   document.getElementById('nav-hist').classList.toggle('active', tab === 'history');
+  document.getElementById('nav-console').classList.toggle('active', tab === 'console');
   if (tab === 'scanner' && !state.scanPaused) startScanner();
   if (tab === 'history') renderHistory();
+  if (tab === 'console') initConsoleTab();
 }
 
 /* ── Camera scanner ── */
@@ -799,6 +1055,21 @@ async function confirmStamp() {
 
   try {
     await fs.setDoc(state.cardRef, payload, { merge: true });
+
+    /* Journal d'activité (alimente l'onglet Console + export CSV).
+       L'email du client est lu depuis users/{uid} (annuaire écrit par
+       l'app cliente à la connexion — voir index.html → loadWallet). */
+    let clientEmail = '';
+    try {
+      const userSnap = await fs.getDoc(fs.doc(_storeDb, 'users', state.scannedToken.uid));
+      if (userSnap.exists()) clientEmail = userSnap.data().email || '';
+    } catch (e) { /* annuaire indisponible — on journalise sans email */ }
+    logActivity({
+      email: clientEmail || `uid:${state.scannedToken.uid.substring(0, 8)}…`,
+      uid:   state.scannedToken.uid,
+      label: count === 1 ? 'Point ajouté (+1) · QR' : `Points ajoutés (+${count}) · QR`,
+      delta: count
+    });
   } catch (err) {
     /* Avec la persistance IndexedDB activée, ceci ne se déclenche pas
        pour une simple coupure réseau (le SDK met en file localement) —
@@ -869,6 +1140,517 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (state.user && state.activeTab === 'scanner') { state.scanPaused = false; scheduleScan(); }
   });
 });
+
+/* ══════════════════════════════════════════════════════════════════
+   CONSOLE CAISSE
+   ─────────────────────────────────────────────────────────────────
+   Permet d'encaisser un client par email (sans QR), de piloter les
+   règles métier du commerce (multi-tampon, limite anti-fraude), de
+   simuler une coupure réseau (résilience hors-ligne), de générer un
+   export CSV et d'afficher l'activité récente de l'établissement.
+
+   ANNUAIRE EMAIL → UID :
+   Chaque client, à sa connexion sur index.html, écrit son email dans
+   users/{uid} (champ `email`, voir loadWallet côté client). La
+   Console Caisse retrouve ainsi le uid d'un client à partir de son
+   email via une requête `where('email','==', ...)` sur la collection
+   `users` (lecture autorisée pour tout utilisateur authentifié —
+   voir firestore.rules).
+
+   LIMITE CONNUE : si le client ne s'est encore jamais connecté à
+   l'app (aucune entrée users/{uid}), la recherche échoue — il doit se
+   connecter une première fois pour que son email soit indexé. Le
+   "Plan B" (scan QR) reste disponible dans ce cas.
+══════════════════════════════════════════════════════════════════ */
+
+let _unsubscribeActivity = null;
+let _netSimOffline       = false;
+
+/* ── Annuaire : retrouver le uid d'un client à partir de son email ── */
+async function findUserByEmail(email) {
+  const db = await getStoreDb();
+  const fs = _fsModule;
+  const snap = await fs.getDocs(fs.query(
+    fs.collection(db, 'users'),
+    fs.where('email', '==', email),
+    fs.limit(1)
+  ));
+  if (snap.empty) return null;
+  return { uid: snap.docs[0].id, ...snap.docs[0].data() };
+}
+
+/* ── Journal d'activité de l'établissement ──
+   commerces/{commerceId}/activity/{auto} = { email, uid, label, delta, date, staffId }
+   delta > 0 → tampon(s) ajoutés · delta < 0 → récompense utilisée */
+async function logActivity({ email, uid, label, delta }) {
+  const resto = state.currentRestaurant;
+  if (!resto?.id) return;
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    await fs.addDoc(fs.collection(db, 'commerces', resto.id, 'activity'), {
+      email:   email || '',
+      uid:     uid || null,
+      label:   label || '',
+      delta:   delta ?? 0,
+      date:    fs.serverTimestamp(),
+      staffId: state.user?.uid || ''
+    });
+  } catch (err) {
+    console.warn('[Console] Journal d\'activité impossible :', err.message);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   STEPPER — Volume de tampons à valider
+══════════════════════════════════════════════════════════════════ */
+function consoleMaxStamps() {
+  const resto = state.currentRestaurant;
+  if (!resto) return 1;
+  return resto.multiStamp ? Math.min(3, resto.dailyLimit || 3) : 1;
+}
+
+function consoleSetStampCount(n) {
+  const max = consoleMaxStamps();
+  state.consoleStampCount = Math.max(1, Math.min(max, n));
+  const valueEl = document.getElementById('console-stamp-value');
+  const minusEl = document.getElementById('console-btn-minus');
+  const plusEl  = document.getElementById('console-btn-plus');
+  if (valueEl) valueEl.textContent = state.consoleStampCount;
+  if (minusEl) minusEl.disabled = state.consoleStampCount <= 1;
+  if (plusEl)  plusEl.disabled  = state.consoleStampCount >= max;
+}
+
+function consoleAdjustStamps(delta) {
+  consoleSetStampCount(state.consoleStampCount + delta);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ACTION : "Ajouter" — valider N tampon(s) pour un client par email
+══════════════════════════════════════════════════════════════════ */
+async function consoleAddStamps() {
+  const resto = state.currentRestaurant;
+  if (!resto?.id) { showToast('Aucun commerce lié à ce compte', 'error'); return; }
+
+  const emailInput = document.getElementById('console-email');
+  const email = (emailInput.value || '').trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Adresse email invalide', 'error');
+    emailInput.focus();
+    return;
+  }
+
+  const btn = document.getElementById('btn-console-add');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Ajout…';
+
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    const count = state.consoleStampCount;
+
+    const match = await findUserByEmail(email);
+    if (!match) {
+      showToast('Aucun compte client pour cet email — le client doit se connecter une fois dans l\'app', 'error');
+      return;
+    }
+
+    const cardRef = fs.doc(db, 'users', match.uid, 'cards', resto.id);
+    let existing = null;
+    try {
+      const snap = await fs.getDoc(cardRef);
+      if (snap.exists()) existing = snap.data();
+    } catch (e) { /* lecture impossible — on tente la création */ }
+
+    const historyEntry = {
+      date:    fs.Timestamp.now(),
+      action:  count === 1 ? 'Visite validée (email)' : `${count} tampons validés (email)`,
+      stamps:  count,
+      staffId: state.user?.uid || ''
+    };
+
+    /* setDoc + merge : crée la carte si elle n'existe pas (carte
+       générale → 1ère visite chez ce commerce via email), ou met à
+       jour la carte existante — même schéma que confirmStamp(). */
+    const payload = {
+      commerceId: resto.id,
+      maxStamps:  resto.maxStamps,
+      reward:     resto.reward,
+      stamps:     fs.increment(count),
+      lastVisit:  fs.serverTimestamp(),
+      history:    fs.arrayUnion(historyEntry)
+    };
+    if (!existing) payload.createdAt = fs.serverTimestamp();
+
+    await fs.setDoc(cardRef, payload, { merge: true });
+    logActivity({
+      email, uid: match.uid,
+      label: count === 1 ? 'Point ajouté (+1)' : `Points ajoutés (+${count})`,
+      delta: count
+    });
+
+    showToast(`✓ ${count} tampon${count > 1 ? 's' : ''} ajouté${count > 1 ? 's' : ''} pour ${email}`, 'success');
+    emailInput.value = '';
+    consoleSetStampCount(1);
+
+  } catch (err) {
+    console.error('[Console] Erreur ajout tampon :', err);
+    showToast('Erreur lors de l\'ajout — réessayez', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ACTION : "Cadeau" — valider la récompense pour un client par email
+══════════════════════════════════════════════════════════════════ */
+async function consoleRedeemReward() {
+  const resto = state.currentRestaurant;
+  if (!resto?.id) { showToast('Aucun commerce lié à ce compte', 'error'); return; }
+
+  const emailInput = document.getElementById('console-email');
+  const email = (emailInput.value || '').trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Adresse email invalide', 'error');
+    emailInput.focus();
+    return;
+  }
+
+  const btn = document.getElementById('btn-console-gift');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>…';
+
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+
+    const match = await findUserByEmail(email);
+    if (!match) {
+      showToast('Aucun compte client pour cet email — le client doit se connecter une fois dans l\'app', 'error');
+      return;
+    }
+
+    const cardRef = fs.doc(db, 'users', match.uid, 'cards', resto.id);
+    const snap = await fs.getDoc(cardRef);
+    const data = snap.exists() ? snap.data() : null;
+    const stamps    = data?.stamps    || 0;
+    const maxStamps = data?.maxStamps || resto.maxStamps;
+    const reward    = data?.reward    || resto.reward;
+
+    if (!data || stamps < maxStamps) {
+      showToast(`Récompense indisponible (${stamps}/${maxStamps} tampons)`, 'error');
+      return;
+    }
+
+    const historyEntry = {
+      date:    fs.Timestamp.now(),
+      action:  `Récompense utilisée : ${reward}`,
+      stamps:  -maxStamps,
+      staffId: state.user?.uid || ''
+    };
+    await fs.setDoc(cardRef, {
+      stamps:    0,
+      lastVisit: fs.serverTimestamp(),
+      history:   fs.arrayUnion(historyEntry)
+    }, { merge: true });
+
+    logActivity({ email, uid: match.uid, label: `Récompense : ${reward}`, delta: -maxStamps });
+
+    showToast(`✓ Récompense validée pour ${email}`, 'success');
+    emailInput.value = '';
+    consoleSetStampCount(1);
+
+  } catch (err) {
+    console.error('[Console] Erreur récompense :', err);
+    showToast('Erreur — réessayez', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   RÈGLES MÉTIER — multi-tampon & limite anti-fraude
+   Écrivent directement sur commerces/{id} (autorisé pour le compte
+   caisse lié — voir firestore.rules : champs limités à multiStamp et
+   dailyLimit, via request.auth.uid == storeUid).
+══════════════════════════════════════════════════════════════════ */
+async function toggleMultiStamp(checked) {
+  const resto = state.currentRestaurant;
+  const toggleEl = document.getElementById('console-multistamp');
+  if (!resto?.id) {
+    showToast('Aucun commerce lié à ce compte', 'error');
+    if (toggleEl) toggleEl.checked = !checked;
+    return;
+  }
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    await fs.updateDoc(fs.doc(db, 'commerces', resto.id), { multiStamp: checked });
+    resto.multiStamp = checked;
+    updateMultiStampHint();
+    consoleSetStampCount(1);
+    showToast(checked ? 'Multi-tampon activé' : 'Multi-tampon désactivé', 'success');
+  } catch (err) {
+    console.error('[Console] Erreur multi-tampon :', err);
+    if (toggleEl) toggleEl.checked = !checked;
+    showToast('Erreur de mise à jour', 'error');
+  }
+}
+
+function updateMultiStampHint() {
+  const resto  = state.currentRestaurant;
+  const hintEl = document.getElementById('console-multi-hint');
+  if (!hintEl) return;
+  hintEl.textContent = resto?.multiStamp
+    ? `Règle : multi-tampon autorisé (max ${consoleMaxStamps()}/encaissement)`
+    : 'Règle : multi-tampon désactivé';
+}
+
+function onDailyLimitInput(value) {
+  const pct = ((value - 1) / 9) * 100;
+  const slider = document.getElementById('console-daily-limit');
+  if (slider) slider.style.setProperty('--fill', `${pct}%`);
+  const label = document.getElementById('console-daily-limit-value');
+  if (label) label.textContent = `${value} max`;
+}
+
+async function onDailyLimitChange(value) {
+  const resto = state.currentRestaurant;
+  const n = Math.max(1, Math.min(10, parseInt(value, 10) || 1));
+  if (!resto?.id) { showToast('Aucun commerce lié à ce compte', 'error'); return; }
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    await fs.updateDoc(fs.doc(db, 'commerces', resto.id), { dailyLimit: n });
+    resto.dailyLimit = n;
+    updateMultiStampHint();
+    consoleSetStampCount(state.consoleStampCount);
+    showToast('Limite anti-fraude mise à jour', 'success');
+  } catch (err) {
+    console.error('[Console] Erreur limite anti-fraude :', err);
+    showToast('Erreur de mise à jour', 'error');
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   RÉSEAU DE L'INSTANCE — simulateur de coupure
+   Utilise disableNetwork()/enableNetwork() du SDK Firestore : les
+   écritures tentées pendant la "coupure" sont mises en file par la
+   persistance IndexedDB (déjà activée dans getStoreDb()) et
+   synchronisées automatiquement dès enableNetwork().
+══════════════════════════════════════════════════════════════════ */
+async function toggleNetworkSim() {
+  const db  = await getStoreDb();
+  const fs  = _fsModule;
+  const btn   = document.getElementById('btn-network-sim');
+  const row   = document.getElementById('network-row');
+  const icon  = document.getElementById('network-status-icon');
+  const label = document.getElementById('network-status-label');
+
+  try {
+    if (!_netSimOffline) {
+      await fs.disableNetwork(db);
+      _netSimOffline = true;
+      row?.classList.add('offline');
+      icon.textContent  = '⚠';
+      label.textContent = 'Hors-ligne — écritures mises en file locale';
+      btn.textContent = 'Rétablir la Connexion';
+      btn.classList.add('is-offline');
+      showToast('Coupure réseau simulée — les actions sont mises en file', '');
+    } else {
+      await fs.enableNetwork(db);
+      _netSimOffline = false;
+      row?.classList.remove('offline');
+      icon.textContent  = '☁';
+      label.textContent = 'Connecté en direct';
+      btn.textContent = 'Simuler Coupure';
+      btn.classList.remove('is-offline');
+      showToast('Connexion rétablie — synchronisation en cours', 'success');
+    }
+  } catch (err) {
+    console.error('[Console] Erreur simulation réseau :', err);
+    showToast('Erreur', 'error');
+  }
+}
+
+/** Rétablit le réseau si la coupure était simulée (appelé à la déconnexion) */
+async function restoreNetworkIfSimulatedOffline() {
+  if (!_netSimOffline || !_storeDb || !_fsModule) return;
+  try { await _fsModule.enableNetwork(_storeDb); } catch (e) { /* ignoré */ }
+  _netSimOffline = false;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   EXPORT CSV — Données de fidélité (date, heure, email, action, Δ)
+══════════════════════════════════════════════════════════════════ */
+function csvEscape(v) {
+  const s = String(v ?? '');
+  return /[",;\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+async function generateActivityExport() {
+  const resto = state.currentRestaurant;
+  if (!resto?.id) { showToast('Aucun commerce lié à ce compte', 'error'); return; }
+
+  const btn = document.getElementById('btn-export-csv');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Génération…';
+
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    const snap = await fs.getDocs(fs.query(
+      fs.collection(db, 'commerces', resto.id, 'activity'),
+      fs.orderBy('date', 'desc'),
+      fs.limit(1000)
+    ));
+
+    const rows = [['Date', 'Heure', 'Email', 'Action', 'Variation tampons']];
+    snap.forEach(d => {
+      const data = d.data();
+      const date = data.date?.toDate ? data.date.toDate() : new Date();
+      rows.push([
+        date.toLocaleDateString('fr-FR'),
+        date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        data.email || '',
+        data.label || '',
+        data.delta != null ? String(data.delta) : ''
+      ]);
+    });
+
+    const csv  = rows.map(r => r.map(csvEscape).join(',')).join('\r\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pb-cates-${resto.id}-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    showToast(`Export généré (${snap.size} entrée${snap.size > 1 ? 's' : ''})`, 'success');
+  } catch (err) {
+    console.error('[Console] Erreur export CSV :', err);
+    showToast('Erreur lors de la génération de l\'export', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ACTIVITÉ RÉCENTE — flux temps-réel commerces/{id}/activity
+══════════════════════════════════════════════════════════════════ */
+function startActivityFeed() {
+  stopActivityFeed();
+  const resto = state.currentRestaurant;
+  if (!resto?.id) return;
+
+  getStoreDb().then(db => {
+    const fs = _fsModule;
+    const q = fs.query(
+      fs.collection(db, 'commerces', resto.id, 'activity'),
+      fs.orderBy('date', 'desc'),
+      fs.limit(20)
+    );
+    _unsubscribeActivity = fs.onSnapshot(q,
+      snap => renderActivityFeed(snap.docs.map(d => d.data())),
+      err  => console.warn('[Console] Activité indisponible :', err.message)
+    );
+  });
+}
+
+function stopActivityFeed() {
+  if (_unsubscribeActivity) { _unsubscribeActivity(); _unsubscribeActivity = null; }
+}
+
+function renderActivityFeed(items) {
+  const container = document.getElementById('activity-list');
+  if (!container) return;
+
+  if (!items.length) {
+    container.innerHTML = `<div class="empty-activity">Aucune activité pour le moment.</div>`;
+    return;
+  }
+
+  container.innerHTML = items.map(it => {
+    const date = it.date?.toDate ? it.date.toDate() : new Date();
+    const positive = (it.delta || 0) >= 0;
+    const badge = positive ? `+${it.delta ?? 0}` : `${it.delta ?? ''}`;
+    return `
+      <div class="activity-row">
+        <div class="activity-row-icon ${positive ? 'positive' : 'negative'}">${positive ? '✓' : '★'}</div>
+        <div class="activity-row-main">
+          <div class="activity-row-email">${escapeBrand(it.email || '—')}</div>
+          <div class="activity-row-label">${escapeBrand(it.label || '')} · ${formatActivityDate(date)}</div>
+        </div>
+        <div class="activity-row-badge ${positive ? 'positive' : 'negative'}">${badge}</div>
+      </div>`;
+  }).join('');
+}
+
+function formatActivityDate(d) {
+  return `${d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' })} ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   INITIALISATION DE L'ONGLET CONSOLE
+   Synchronise les contrôles (stepper, toggle, slider, réseau) avec
+   l'état courant à chaque ouverture de l'onglet.
+══════════════════════════════════════════════════════════════════ */
+function initConsoleTab() {
+  const resto  = state.currentRestaurant;
+  const linked = !!resto?.id;
+
+  /* Stepper + indication de la règle multi-tampon */
+  consoleSetStampCount(1);
+  updateMultiStampHint();
+
+  /* Règles métier */
+  const multiToggle = document.getElementById('console-multistamp');
+  const dailySlider = document.getElementById('console-daily-limit');
+  if (multiToggle) multiToggle.checked = !!resto?.multiStamp;
+  if (dailySlider) {
+    const dl = resto?.dailyLimit || 3;
+    dailySlider.value = dl;
+    onDailyLimitInput(dl);
+  }
+
+  /* Réseau : refléter l'état courant de la simulation */
+  const row    = document.getElementById('network-row');
+  const icon   = document.getElementById('network-status-icon');
+  const label  = document.getElementById('network-status-label');
+  const netBtn = document.getElementById('btn-network-sim');
+  if (row && icon && label && netBtn) {
+    if (_netSimOffline) {
+      row.classList.add('offline');
+      icon.textContent  = '⚠';
+      label.textContent = 'Hors-ligne — écritures mises en file locale';
+      netBtn.textContent = 'Rétablir la Connexion';
+      netBtn.classList.add('is-offline');
+    } else {
+      row.classList.remove('offline');
+      icon.textContent  = '☁';
+      label.textContent = 'Connecté en direct';
+      netBtn.textContent = 'Simuler Coupure';
+      netBtn.classList.remove('is-offline');
+    }
+  }
+
+  /* Aucun commerce lié à ce compte → désactiver les actions */
+  ['console-email', 'btn-console-add', 'btn-console-gift',
+   'console-multistamp', 'console-daily-limit', 'btn-export-csv'
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = !linked;
+  });
+}
 
 /* ── Toasts ── */
 function showToast(msg, type = '') {

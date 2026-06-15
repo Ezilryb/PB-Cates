@@ -14,7 +14,7 @@
 'use strict';
 
 /* ── Nom et version du cache (à incrémenter à chaque déploiement) ── */
-const CACHE_NAME    = 'pb-cates-v1';
+const CACHE_NAME    = 'pb-cates-v2';
 const SYNC_TAG      = 'sync-tampons-offline';
 
 /* ── Ressources du "App Shell" à mettre en cache immédiatement ── */

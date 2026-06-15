@@ -757,6 +757,16 @@ async function loadWallet(user) {
   const db = await getFbDb();
   const fs  = _fsModule;
 
+  /* Annuaire users/{uid}.email — permet à la Console Caisse de
+     retrouver une carte à partir de l'email du client. */
+  if (user.email) {
+    fs.setDoc(fs.doc(db, 'users', user.uid), {
+      email: user.email.toLowerCase(),
+      displayName: user.displayName || null,
+      updatedAt: fs.serverTimestamp()
+    }, { merge: true }).catch(err => console.warn('[Wallet] Maj annuaire impossible :', err.message));
+  }
+
   if (_unsubscribeCards) { _unsubscribeCards(); _unsubscribeCards = null; }
 
   const cardsRef   = fs.collection(db, 'users', user.uid, 'cards');

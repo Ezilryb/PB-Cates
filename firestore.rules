@@ -4,17 +4,40 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /* ── Commerces : lecture pour tout utilisateur authentifié,
-          écriture réservée aux admins (custom claim) ── */
+          écriture réservée aux admins (custom claim).
+          Le compte caisse lié (storeUid) peut en plus modifier SES
+          PROPRES règles métier (multiStamp, dailyLimit) depuis la
+          Console Caisse — et uniquement ces deux champs. ── */
     match /commerces/{commerceId} {
       allow read : if request.auth != null;
       allow write: if request.auth != null
                    && request.auth.token.admin == true;
+
+      /* Réglages "Console Caisse" modifiables par le staff lié */
+      allow update: if request.auth != null
+                    && request.auth.uid == resource.data.storeUid
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['multiStamp', 'dailyLimit']);
+
+      /* Journal d'activité (tampons / récompenses) — alimente le flux
+         "Activité Récente de l'Établissement" et l'export CSV de la
+         Console Caisse. Même modèle ouvert que users/{uid}/cards : tout
+         utilisateur authentifié (client ou staff) peut écrire/lire,
+         car le staff n'a pas de rôle Firestore dédié pour l'instant. */
+      match /activity/{entryId} {
+        allow read, write: if request.auth != null;
+      }
     }
 
-    /* ── Données utilisateur : accès strictement personnel ── */
+    /* ── Données utilisateur : profil personnel.
+          Le champ `email` (écrit par le client à la connexion, voir
+          index.html → loadWallet) doit rester lisible par le staff
+          pour retrouver une carte depuis la Console Caisse
+          (recherche "users where email == ..." → uid). ── */
     match /users/{userId} {
-      allow read, write: if request.auth != null
-                         && request.auth.uid == userId;
+      allow read:  if request.auth != null;
+      allow write: if request.auth != null
+                   && request.auth.uid == userId;
 
       /* Cartes de fidélité (une par commerce rejoint). Le staff en
          caisse (authentifié, mais avec un uid différent du client)
