@@ -38,15 +38,7 @@
       --max-w:          440px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      height: 100%;
-      background: var(--bg-deep);
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      font-size: 16px;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
+    html, body { height: 100%; background: var(--bg-deep); color: var(--text-primary); font-family: var(--font-body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -60,14 +52,7 @@
     /* ── AUTH ── */
     #screen-auth { justify-content: center; padding: 2rem 1.5rem; min-height: 100dvh; }
     .auth-logo { text-align: center; margin-bottom: 3rem; }
-    .logo-mark {
-      width: 72px; height: 72px; border-radius: var(--radius-lg);
-      border: 1px solid var(--gold-dim);
-      background: linear-gradient(135deg, #1e1a10 0%, #0d0d0f 100%);
-      display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;
-      font-family: var(--font-display); font-size: 22px; font-weight: 700;
-      color: var(--gold); letter-spacing: 0.5px; position: relative; overflow: hidden;
-    }
+    .logo-mark { width: 72px; height: 72px; border-radius: var(--radius-lg); border: 1px solid var(--gold-dim); background: linear-gradient(135deg, #1e1a10 0%, #0d0d0f 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--gold); letter-spacing: 0.5px; position: relative; overflow: hidden; }
     .logo-mark::after { content: ''; position: absolute; top: -30%; left: -30%; width: 60%; height: 60%; background: radial-gradient(ellipse, rgba(201,168,76,0.15), transparent 70%); border-radius: 50%; }
     .logo-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--text-primary); letter-spacing: 0.5px; }
     .logo-sub { font-size: 0.82rem; color: var(--text-secondary); letter-spacing: 2.5px; text-transform: uppercase; margin-top: 4px; }
@@ -132,7 +117,7 @@
     #wc-scene { position: absolute; inset: 0; z-index: 1; perspective: 1200px; touch-action: none; cursor: pointer; }
     #wc-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.65s cubic-bezier(0.23, 1, 0.32, 1); border-radius: 20px; box-shadow: 0 16px 44px rgba(0,0,0,0.65), 0 5px 12px rgba(0,0,0,0.38); }
     #wc-front { position: absolute; inset: 0; border-radius: 20px; padding: 15px 19px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-    #wc-back { position: absolute; inset: 0; border-radius: 20px; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg); display: flex; flex-direction: column; }
+    #wc-back  { position: absolute; inset: 0; border-radius: 20px; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg); display: flex; flex-direction: column; }
     #wc-dots { display: flex; justify-content: center; gap: 7px; margin-top: 13px; padding-bottom: 2px; }
     #wc-list { border-top: 1px solid rgba(255,255,255,0.07); border-radius: 18px 18px 0 0; padding: 7px 7px 0; background: rgba(255,255,255,0.03); margin-top: 10px; flex: 1; overflow-y: auto; }
 
@@ -141,12 +126,12 @@
     .loyalty-card { border-radius: var(--radius-xl); padding: 1.5rem; position: relative; overflow: hidden; cursor: pointer; transition: transform 0.22s cubic-bezier(.25,.46,.45,.94), box-shadow 0.22s; border: 1px solid rgba(255,255,255,0.07); min-height: 160px; display: flex; flex-direction: column; justify-content: space-between; }
     .loyalty-card:hover { transform: translateY(-3px); }
     .loyalty-card:active { transform: scale(0.98); }
-    .card-noir   { background: linear-gradient(135deg, #1a1a1f 0%, #0f0f12 100%); }
-    .card-navy   { background: linear-gradient(135deg, #0e1828 0%, #060d18 100%); }
-    .card-forest { background: linear-gradient(135deg, #0d1a10 0%, #060e07 100%); }
-    .card-plum   { background: linear-gradient(135deg, #18101e 0%, #0d090f 100%); }
-    .card-amber  { background: linear-gradient(135deg, #1e1408 0%, #100a04 100%); }
-    .card-general{ background: linear-gradient(135deg, #2a2210 0%, #14110a 55%, #0d0d0f 100%); border-color: var(--gold-dim); }
+    .card-noir    { background: linear-gradient(135deg, #1a1a1f 0%, #0f0f12 100%); }
+    .card-navy    { background: linear-gradient(135deg, #0e1828 0%, #060d18 100%); }
+    .card-forest  { background: linear-gradient(135deg, #0d1a10 0%, #060e07 100%); }
+    .card-plum    { background: linear-gradient(135deg, #18101e 0%, #0d090f 100%); }
+    .card-amber   { background: linear-gradient(135deg, #1e1408 0%, #100a04 100%); }
+    .card-general { background: linear-gradient(135deg, #2a2210 0%, #14110a 55%, #0d0d0f 100%); border-color: var(--gold-dim); }
     .card-header { display: flex; align-items: flex-start; justify-content: space-between; }
     .card-brand-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
     .card-category { font-size: 0.72rem; color: var(--text-secondary); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
@@ -268,8 +253,8 @@
         </div>
         <div class="divider">ou par email</div>
         <div class="auth-tabs" role="tablist">
-          <button class="auth-tab active" id="tab-login" role="tab" onclick="switchAuthTab('login')">Connexion</button>
-          <button class="auth-tab" id="tab-register" role="tab" onclick="switchAuthTab('register')">Inscription</button>
+          <button class="auth-tab active" id="tab-login"    role="tab" onclick="switchAuthTab('login')">Connexion</button>
+          <button class="auth-tab"        id="tab-register" role="tab" onclick="switchAuthTab('register')">Inscription</button>
         </div>
         <div id="auth-error" class="auth-error" role="alert"></div>
         <div id="panel-login">
@@ -286,28 +271,28 @@
           <button type="button" class="btn-forgot" onclick="showForgotPanel()">Mot de passe oublié ?</button>
         </div>
         <div id="panel-forgot" style="display:none">
-          <div class="forgot-back" onclick="hideForgotPanel()" role="button" tabindex="0" aria-label="Retour à la connexion"><span aria-hidden="true">←</span> Retour à la connexion</div>
+          <div class="forgot-back" onclick="hideForgotPanel()" role="button" tabindex="0">← Retour à la connexion</div>
           <p style="font-size:0.88rem;color:var(--text-secondary);margin-bottom:1.25rem;line-height:1.6">Saisissez votre email. Vous recevrez un lien pour créer un nouveau mot de passe.</p>
           <div id="forgot-success" class="forgot-success" style="display:none" role="alert">✓ Email envoyé ! Vérifiez votre boîte de réception (et les spams).</div>
           <div class="input-group">
             <span class="input-icon" aria-hidden="true">✉</span>
-            <input type="email" id="forgot-email" placeholder="votre@email.com" autocomplete="email" inputmode="email" aria-label="Adresse email pour réinitialisation" />
+            <input type="email" id="forgot-email" placeholder="votre@email.com" autocomplete="email" inputmode="email" />
           </div>
           <button class="btn-primary" id="btn-forgot-send" onclick="handleForgotPassword()">Envoyer le lien de réinitialisation</button>
         </div>
         <div id="panel-register" style="display:none">
           <div class="input-group">
             <span class="input-icon" aria-hidden="true">✉</span>
-            <input type="email" id="reg-email" placeholder="votre@email.com" autocomplete="email" inputmode="email" aria-label="Adresse email" />
+            <input type="email" id="reg-email" placeholder="votre@email.com" autocomplete="email" inputmode="email" />
           </div>
           <div class="input-group password-wrap">
             <span class="input-icon" aria-hidden="true">🔒</span>
-            <input type="password" id="reg-password" placeholder="Choisir un mot de passe (6 car. min.)" autocomplete="new-password" aria-label="Mot de passe" />
-            <button type="button" class="toggle-pwd" onclick="togglePwd('reg-password', this)" aria-label="Afficher le mot de passe">👁</button>
+            <input type="password" id="reg-password" placeholder="Choisir un mot de passe (6 car. min.)" autocomplete="new-password" />
+            <button type="button" class="toggle-pwd" onclick="togglePwd('reg-password', this)">👁</button>
           </div>
           <button class="btn-primary" id="btn-register" onclick="handleEmailRegister()">Créer mon compte</button>
         </div>
-        <a href="store.html" class="pro-access-link" aria-label="Accéder à l'espace caisse pour les commerçants">
+        <a href="store.html" class="pro-access-link" aria-label="Accéder à l'espace caisse">
           <span class="icon" aria-hidden="true">🏪</span> Vous êtes un commerce ? Accéder à l'Espace Caisse
         </a>
       </div>
@@ -347,7 +332,7 @@
 
     <!-- ÉCRAN 3 : DÉTAIL -->
     <section id="screen-detail" class="screen" role="main" aria-label="Détail de la carte">
-      <button class="back-btn" onclick="showScreen('wallet')" aria-label="Retour au portefeuille"><span aria-hidden="true">←</span> Portefeuille</button>
+      <button class="back-btn" onclick="showScreen('wallet')" aria-label="Retour au portefeuille">← Portefeuille</button>
       <div class="detail-card-wrapper">
         <div class="detail-loyalty-card card-noir" id="detail-card">
           <div>
@@ -391,16 +376,16 @@
         <div class="profile-card">
           <div class="profile-avatar-lg" id="profile-avatar" aria-hidden="true">ME</div>
           <div class="profile-email" id="profile-email">—</div>
-          <div class="profile-uid" id="profile-uid"></div>
+          <div class="profile-uid"   id="profile-uid"></div>
         </div>
         <button class="btn-logout" onclick="logout()">Se déconnecter</button>
       </div>
     </section>
 
     <nav class="bottom-nav" id="bottom-nav" style="display:none" role="navigation" aria-label="Navigation principale">
-      <button class="nav-item active" id="nav-wallet" onclick="showScreen('wallet')" aria-label="Portefeuille"><span aria-hidden="true">◈</span>Wallet</button>
-      <button class="nav-item" onclick="showToast('Offres — bientôt disponible')" aria-label="Offres"><span aria-hidden="true">◇</span>Offres</button>
-      <button class="nav-item" id="nav-profile" onclick="showScreen('profile')" aria-label="Profil"><span aria-hidden="true">○</span>Profil</button>
+      <button class="nav-item active" id="nav-wallet"  onclick="showScreen('wallet')"  aria-label="Portefeuille"><span>◈</span>Wallet</button>
+      <button class="nav-item"                          onclick="showToast('Offres — bientôt disponible')" aria-label="Offres"><span>◇</span>Offres</button>
+      <button class="nav-item"        id="nav-profile" onclick="showScreen('profile')" aria-label="Profil"><span>○</span>Profil</button>
     </nav>
   </div>
 </div>
@@ -408,11 +393,11 @@
 <!-- QR OVERLAY -->
 <div class="qr-overlay" id="qr-overlay" role="dialog" aria-modal="true" aria-label="QR Code dynamique" onclick="closeQROverlay(event)">
   <div class="qr-modal" onclick="event.stopPropagation()">
-    <div class="qr-modal-title" id="qr-modal-brand">Le Bistro du Coin</div>
+    <div class="qr-modal-title" id="qr-modal-brand">PB-Cates</div>
     <div class="qr-modal-sub">Code dynamique — valable 30 secondes</div>
     <div class="qr-ring-wrapper" aria-label="QR Code de validation">
       <svg class="countdown-svg" viewBox="0 0 190 190" aria-hidden="true">
-        <circle class="ring-track" cx="95" cy="95" r="88"/>
+        <circle class="ring-track"    cx="95" cy="95" r="88"/>
         <circle class="ring-progress" cx="95" cy="95" r="88" id="qr-ring-progress"/>
       </svg>
       <div class="qr-canvas-inner">
@@ -446,9 +431,9 @@ const QR_CIRCUMFERENCE = 553;
 
 /* ── App state ── */
 const appState = {
-  currentScreen: 'auth',
-  currentUser:   null,
-  cards:         [],
+  currentScreen:  'auth',
+  currentUser:    null,
+  cards:          [],
   selectedCardId: null,
   qrTimer:        null,
   qrTimerValue:   QR_DURATION
@@ -459,8 +444,8 @@ let _unsubscribeCards = null;
    CARROUSEL STYLE CARTE BANCAIRE
 ══════════════════════════════════════════════════════════════════ */
 const wc = {
-  cards: [],
-  idx:   0,
+  cards:   [],
+  idx:     0,
   flipped: {},
   pStart:  null,
 
@@ -473,6 +458,7 @@ const wc = {
     'card-amber':   ['#1e1408', '#100a04'],
   },
 
+  /* Motif QR décoratif (non scannable — uniquement pour l'aspect visuel) */
   QR_PAT: '11111110110111111111000010010100001010111011101011010111011101010101011101110101000000101000001011111110101111111100000000110000000010110110111010010100101001100100101011010101010101010101001000101010100100001011111110111001010110000000010010101011111110001011111011000001010001010110111111100001011111101',
 
   grad(colorClass) { return this.GRAD[colorClass] || this.GRAD['card-noir']; },
@@ -497,11 +483,14 @@ const wc = {
     const scene = document.getElementById('wc-scene');
     if (!scene || scene._wcBound) return;
     scene._wcBound = true;
-    scene.addEventListener('pointerdown', e => { this.pStart = { x: e.clientX, y: e.clientY, t: Date.now() }; try { scene.setPointerCapture(e.pointerId); } catch (_) {} });
+    scene.addEventListener('pointerdown', e => {
+      this.pStart = { x: e.clientX, y: e.clientY, t: Date.now() };
+      try { scene.setPointerCapture(e.pointerId); } catch (_) {}
+    });
     scene.addEventListener('pointermove', e => {
       if (!this.pStart) return;
       const r = scene.getBoundingClientRect();
-      const x = ((e.clientX - r.left) / r.width) * 100;
+      const x = ((e.clientX - r.left) / r.width)  * 100;
       const y = ((e.clientY - r.top)  / r.height) * 100;
       const sh = document.getElementById('wc-shimmer');
       if (sh) sh.style.background = `radial-gradient(ellipse 170px 100px at ${x}% ${y}%, rgba(255,255,255,0.06), transparent 65%)`;
@@ -528,10 +517,10 @@ const wc = {
 
   render() {
     if (!this.cards.length) return;
-    const c = this.cards[this.idx];
+    const c          = this.cards[this.idx];
     const colorClass = c.colorClass || (c.id === '__general__' ? 'card-general' : 'card-noir');
-    const [g1, g2] = this.grad(colorClass);
-    const grad = `linear-gradient(135deg, ${g1} 0%, ${g2} 100%)`;
+    const [g1, g2]   = this.grad(colorClass);
+    const grad       = `linear-gradient(135deg, ${g1} 0%, ${g2} 100%)`;
     const front = document.getElementById('wc-front');
     const back  = document.getElementById('wc-back');
     const inner = document.getElementById('wc-inner');
@@ -548,8 +537,14 @@ const wc = {
 
   buildFront(c) {
     const code = (c.shortCode || 'PB').toUpperCase().substring(0, 4).padEnd(4);
-    const dots3 = [0,1,2].map(() => `<span style="display:flex;gap:2.5px;">${[0,1,2,3].map(() => `<span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.5);"></span>`).join('')}</span>`).join('');
-    const stampBadge = c.maxStamps > 0 ? `<div style="border:1px solid rgba(255,255,255,0.2);border-radius:17px;padding:4px 10px;font-size:10px;font-weight:700;color:white;letter-spacing:0.4px;background:rgba(0,0,0,0.25);">${c.stamps} / ${c.maxStamps} TAMPONS</div>` : '';
+    const dots3 = [0,1,2].map(() =>
+      `<span style="display:flex;gap:2.5px;">${[0,1,2,3].map(() =>
+        `<span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.5);"></span>`
+      ).join('')}</span>`
+    ).join('');
+    const stampBadge = c.maxStamps > 0
+      ? `<div style="border:1px solid rgba(255,255,255,0.2);border-radius:17px;padding:4px 10px;font-size:10px;font-weight:700;color:white;letter-spacing:0.4px;background:rgba(0,0,0,0.25);">${c.stamps} / ${c.maxStamps} TAMPONS</div>`
+      : '';
     return `
       <div id="wc-shimmer" style="position:absolute;inset:0;border-radius:20px;pointer-events:none;transition:background 0.08s;"></div>
       <div style="position:absolute;right:-42px;top:-42px;width:175px;height:175px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none;"></div>
@@ -586,25 +581,48 @@ const wc = {
     const isGeneral = c.id === '__general__';
     const sign      = this.esc((c.signCode || 'user').substring(0, 12));
     const dotHtml = c.maxStamps > 0
-      ? Array.from({ length: c.maxStamps }, (_, i) => { const f = i < c.stamps; return `<div style="width:11px;height:11px;border-radius:50%;background:${f?'rgba(255,255,255,0.88)':'rgba(255,255,255,0.13)'};border:1.5px solid rgba(255,255,255,0.28);${f?'box-shadow:0 0 5px rgba(255,255,255,0.3);':''}"></div>`; }).join('')
+      ? Array.from({ length: c.maxStamps }, (_, i) => {
+          const f = i < c.stamps;
+          return `<div style="width:11px;height:11px;border-radius:50%;background:${f ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.13)'};border:1.5px solid rgba(255,255,255,0.28);${f ? 'box-shadow:0 0 5px rgba(255,255,255,0.3);' : ''}"></div>`;
+        }).join('')
       : '';
     const stampSection = c.maxStamps > 0
-      ? `<div><div style="font-size:6.5px;letter-spacing:2px;color:rgba(255,255,255,0.4);font-weight:700;margin-bottom:3px;">STATUT FIDÉLITÉ</div><div style="font-size:13px;font-weight:800;color:white;margin-bottom:2px;">${c.stamps} / ${c.maxStamps} Tampons</div><div style="font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:6px;">${this.esc(c.offers||'')}</div><div style="display:flex;flex-wrap:wrap;gap:3px;">${dotHtml}</div></div>`
-      : `<div style="font-size:9px;color:rgba(255,255,255,0.5);line-height:1.5;">Fonctionne dans tous les commerces partenaires.<br>Présentez votre QR en caisse pour rejoindre un nouveau commerce.</div>`;
+      ? `<div>
+           <div style="font-size:6.5px;letter-spacing:2px;color:rgba(255,255,255,0.4);font-weight:700;margin-bottom:3px;">STATUT FIDÉLITÉ</div>
+           <div style="font-size:13px;font-weight:800;color:white;margin-bottom:2px;">${c.stamps} / ${c.maxStamps} Tampons</div>
+           <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:6px;">${this.esc(c.offers||'')}</div>
+           <div style="display:flex;flex-wrap:wrap;gap:3px;">${dotHtml}</div>
+         </div>`
+      : `<div style="font-size:9px;color:rgba(255,255,255,0.5);line-height:1.5;">Fonctionne dans tous les commerces partenaires.<br>Présentez votre QR en caisse pour rejoindre un commerce.</div>`;
+
+    /* ════════════════════════════════════════════════════════════
+       BOUTON CTA CORRIGÉ
+       • Carte Universelle → ouvre le QR Universel directement
+       • Carte de commerce → ouvre le QR de cette carte directement
+         (plus besoin de passer par l'écran détail)
+    ════════════════════════════════════════════════════════════ */
+    const BTN_STYLE = 'background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.17);border-radius:9px;padding:7px 12px;color:white;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.4px;white-space:nowrap;font-family:var(--font-body);';
     const ctaBtn = isGeneral
-      ? `<button onclick="openGeneralQR()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.17);border-radius:9px;padding:7px 12px;color:white;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.4px;white-space:nowrap;font-family:var(--font-body);">▣ Afficher mon QR Code</button>`
-      : `<button onclick="openCardDetail('${c.id}')" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.17);border-radius:9px;padding:7px 12px;color:white;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.4px;white-space:nowrap;font-family:var(--font-body);">Historique & Plus →</button>`;
+      ? `<button onclick="openGeneralQR()"          style="${BTN_STYLE}">▣ QR Universel</button>`
+      : `<button onclick="openStoreCardQR('${c.id}')" style="${BTN_STYLE}">▣ QR Code</button>`;
+
     return `
       <div style="height:40px;background:#090909;margin-top:24px;flex-shrink:0;"></div>
       <div style="flex:1;padding:9px 15px 12px;display:flex;gap:11px;align-items:flex-start;overflow:hidden;">
         <div style="flex:1;display:flex;flex-direction:column;gap:7px;min-width:0;">
-          <div><div style="font-size:6.5px;letter-spacing:2px;color:rgba(255,255,255,0.4);font-weight:700;margin-bottom:4px;">CODE SÉCURISÉ</div><div style="display:flex;border-radius:4px;overflow:hidden;"><div style="flex:1;background:white;padding:5px 8px;font-family:cursive;font-size:13px;color:#1A1A8A;font-weight:bold;">${sign}</div><div style="background:rgba(0,0,0,0.38);padding:5px 7px;font-size:10px;color:rgba(255,255,255,0.62);display:flex;align-items:center;">✓</div></div></div>
+          <div>
+            <div style="font-size:6.5px;letter-spacing:2px;color:rgba(255,255,255,0.4);font-weight:700;margin-bottom:4px;">CODE SÉCURISÉ</div>
+            <div style="display:flex;border-radius:4px;overflow:hidden;">
+              <div style="flex:1;background:white;padding:5px 8px;font-family:cursive;font-size:13px;color:#1A1A8A;font-weight:bold;">${sign}</div>
+              <div style="background:rgba(0,0,0,0.38);padding:5px 7px;font-size:10px;color:rgba(255,255,255,0.62);display:flex;align-items:center;">✓</div>
+            </div>
+          </div>
           ${stampSection}
           <div style="margin-top:auto;">${ctaBtn}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;">
           <div style="background:white;padding:5px;border-radius:9px;">${this.buildQRSvg(76)}</div>
-          <div style="font-size:6.5px;letter-spacing:1.8px;color:rgba(255,255,255,0.38);font-weight:700;">${isGeneral ? 'QR UNIVERSEL' : 'QR CODE SCAN'}</div>
+          <div style="font-size:6.5px;letter-spacing:1.8px;color:rgba(255,255,255,0.38);font-weight:700;">${isGeneral ? 'QR UNIVERSEL' : 'QR CODE'}</div>
         </div>
       </div>`;
   },
@@ -613,32 +631,54 @@ const wc = {
     const shn = document.getElementById('wc-shn');
     const shp = document.getElementById('wc-shp');
     if (!shn || !shp) return;
-    if (this.idx < this.cards.length - 1) { const nc = this.cards[this.idx + 1]; const [g1, g2] = this.grad(nc.colorClass || 'card-noir'); shn.style.background = `linear-gradient(135deg, ${g1}, ${g2})`; shn.style.display = ''; } else { shn.style.display = 'none'; }
-    if (this.idx > 0) { const pc = this.cards[this.idx - 1]; const [g1, g2] = this.grad(pc.colorClass || 'card-noir'); shp.style.background = `linear-gradient(135deg, ${g1}, ${g2})`; shp.style.display = ''; } else { shp.style.display = 'none'; }
+    if (this.idx < this.cards.length - 1) {
+      const nc = this.cards[this.idx + 1]; const [g1, g2] = this.grad(nc.colorClass || 'card-noir');
+      shn.style.background = `linear-gradient(135deg, ${g1}, ${g2})`; shn.style.display = '';
+    } else { shn.style.display = 'none'; }
+    if (this.idx > 0) {
+      const pc = this.cards[this.idx - 1]; const [g1, g2] = this.grad(pc.colorClass || 'card-noir');
+      shp.style.background = `linear-gradient(135deg, ${g1}, ${g2})`; shp.style.display = '';
+    } else { shp.style.display = 'none'; }
   },
 
   renderDots() {
     const el = document.getElementById('wc-dots');
     if (!el) return;
-    el.innerHTML = this.cards.map((_, i) => `<div role="tab" aria-selected="${i === this.idx}" onclick="wc.goTo(${i})" style="height:7px;width:${i === this.idx ? 21 : 7}px;border-radius:4px;background:${i === this.idx ? 'var(--gold)' : 'rgba(255,255,255,0.18)'};transition:all 0.3s;cursor:pointer;"></div>`).join('');
+    el.innerHTML = this.cards.map((_, i) =>
+      `<div role="tab" aria-selected="${i === this.idx}" onclick="wc.goTo(${i})" style="height:7px;width:${i === this.idx ? 21 : 7}px;border-radius:4px;background:${i === this.idx ? 'var(--gold)' : 'rgba(255,255,255,0.18)'};transition:all 0.3s;cursor:pointer;"></div>`
+    ).join('');
   },
 
   renderList() {
     const el = document.getElementById('wc-list');
     if (!el) return;
-    if (!this.cards.length) { el.innerHTML = `<div style="text-align:center;padding:2rem 1rem;"><div style="font-size:0.82rem;color:var(--text-muted);">Présentez votre Carte Universelle en caisse<br>pour rejoindre votre premier commerce partenaire.</div></div>`; return; }
+    if (!this.cards.length) {
+      el.innerHTML = `<div style="text-align:center;padding:2rem 1rem;"><div style="font-size:0.82rem;color:var(--text-muted);">Présentez votre Carte Universelle en caisse<br>pour rejoindre votre premier commerce partenaire.</div></div>`;
+      return;
+    }
     el.innerHTML = this.cards.map((c, i) => {
       const colorClass = c.colorClass || (c.id === '__general__' ? 'card-general' : 'card-noir');
-      const [g1, g2] = this.grad(colorClass);
-      const subtitle = c.maxStamps > 0 ? `${c.stamps} / ${c.maxStamps} Tampons • ${c.stamps >= c.maxStamps ? '1 Cadeau disponible ★' : '0 Cadeau(x)'}` : 'Carte principale';
-      return `<div role="listitem" onclick="wc.goTo(${i})" style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:12px;background:${i === this.idx ? 'rgba(255,255,255,0.055)' : 'transparent'};cursor:pointer;transition:background 0.2s;"><div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,${g1},${g2});display:flex;align-items:center;justify-content:center;font-size:14px;font-family:var(--font-display);font-weight:700;color:rgba(255,255,255,0.85);flex-shrink:0;">${this.esc((c.logoText||c.shortCode||'PB').substring(0,2).toUpperCase())}</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:white;margin-bottom:2px;">${this.esc(c.name)}</div><div style="font-size:10.5px;color:rgba(255,255,255,0.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${this.esc(subtitle)}</div></div><div style="font-size:10.5px;color:var(--gold);font-weight:600;flex-shrink:0;">Voir →</div></div>`;
+      const [g1, g2]   = this.grad(colorClass);
+      const subtitle = c.maxStamps > 0
+        ? `${c.stamps} / ${c.maxStamps} Tampons • ${c.stamps >= c.maxStamps ? '1 Cadeau disponible ★' : '0 Cadeau(x)'}`
+        : 'Carte principale';
+      return `<div role="listitem" onclick="wc.goTo(${i})" style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:12px;background:${i === this.idx ? 'rgba(255,255,255,0.055)' : 'transparent'};cursor:pointer;transition:background 0.2s;">
+        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,${g1},${g2});display:flex;align-items:center;justify-content:center;font-size:14px;font-family:var(--font-display);font-weight:700;color:rgba(255,255,255,0.85);flex-shrink:0;">${this.esc((c.logoText||c.shortCode||'PB').substring(0,2).toUpperCase())}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:700;color:white;margin-bottom:2px;">${this.esc(c.name)}</div>
+          <div style="font-size:10.5px;color:rgba(255,255,255,0.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${this.esc(subtitle)}</div>
+        </div>
+        <div style="font-size:10.5px;color:var(--gold);font-weight:600;flex-shrink:0;">Voir →</div>
+      </div>`;
     }).join('');
   },
 
   goTo(i) { this.idx = i; this.flipped = {}; this.render(); }
 };
 
-/* ── Navigation ── */
+/* ══════════════════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════════════════ */
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const t = document.getElementById(`screen-${id}`);
@@ -652,7 +692,9 @@ function showScreen(id) {
   window.scrollTo(0, 0);
 }
 
-/* ── Firebase Auth ── */
+/* ══════════════════════════════════════════════════════════════════
+   FIREBASE AUTH
+══════════════════════════════════════════════════════════════════ */
 let _fbAuth = null;
 async function getFbAuth() {
   if (_fbAuth) return _fbAuth;
@@ -661,12 +703,12 @@ async function getFbAuth() {
     import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js')
   ]);
   const app = getApps().length ? getApp() : initializeApp(window.FIREBASE_CONFIG);
-  _fbAuth = getAuth(app);
+  _fbAuth   = getAuth(app);
   return _fbAuth;
 }
 
-let _fbDb = null;
-let _fsModule = null;
+let _fbDb      = null;
+let _fsModule  = null;
 async function getFbDb() {
   if (_fbDb) return _fbDb;
   const [{ getApps, getApp, initializeApp }, fs] = await Promise.all([
@@ -674,8 +716,8 @@ async function getFbDb() {
     import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
   ]);
   const app = getApps().length ? getApp() : initializeApp(window.FIREBASE_CONFIG);
-  _fbDb = fs.getFirestore(app);
-  _fsModule = fs;
+  _fbDb      = fs.getFirestore(app);
+  _fsModule  = fs;
   fs.enableIndexedDbPersistence(_fbDb).catch(() => {});
   return _fbDb;
 }
@@ -715,20 +757,18 @@ async function handleForgotPassword() {
     document.getElementById('forgot-success').style.display = '';
     document.getElementById('forgot-email').value = '';
   } catch (err) {
-    const map = { 'auth/user-not-found': 'Aucun compte trouvé pour cet email.', 'auth/invalid-email': 'Adresse email invalide.', 'auth/too-many-requests': 'Trop de demandes. Réessayez plus tard.', 'auth/network-request-failed': 'Erreur réseau. Vérifiez votre connexion.' };
-    showAuthError(map[err.code] || 'Une erreur est survenue. Réessayez.');
-  } finally {
-    btn.disabled = false; btn.innerHTML = 'Envoyer le lien de réinitialisation';
-  }
+    const map = { 'auth/user-not-found': 'Aucun compte trouvé pour cet email.', 'auth/invalid-email': 'Adresse email invalide.', 'auth/too-many-requests': 'Trop de demandes. Réessayez plus tard.', 'auth/network-request-failed': 'Erreur réseau.' };
+    showAuthError(map[err.code] || 'Une erreur est survenue.');
+  } finally { btn.disabled = false; btn.innerHTML = 'Envoyer le lien de réinitialisation'; }
 }
 
-function showAuthError(msg) { const el = document.getElementById('auth-error'); el.textContent = msg; el.classList.add('visible'); }
-function clearAuthError() { const el = document.getElementById('auth-error'); el.textContent = ''; el.classList.remove('visible'); }
+function showAuthError(msg)  { const el = document.getElementById('auth-error'); el.textContent = msg; el.classList.add('visible'); }
+function clearAuthError()    { const el = document.getElementById('auth-error'); el.textContent = ''; el.classList.remove('visible'); }
 function togglePwd(inputId, btn) { const inp = document.getElementById(inputId); if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; } else { inp.type = 'password'; btn.textContent = '👁'; } }
 
 async function handleEmailLogin() {
   clearAuthError();
-  const email = document.getElementById('login-email').value.trim();
+  const email    = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
   if (!email || !password) { showAuthError('Veuillez remplir tous les champs.'); return; }
   const btn = document.getElementById('btn-login');
@@ -744,7 +784,7 @@ async function handleEmailLogin() {
 
 async function handleEmailRegister() {
   clearAuthError();
-  const email = document.getElementById('reg-email').value.trim();
+  const email    = document.getElementById('reg-email').value.trim();
   const password = document.getElementById('reg-password').value;
   if (!email || !password) { showAuthError('Veuillez remplir tous les champs.'); return; }
   if (password.length < 6) { showAuthError('Le mot de passe doit contenir au moins 6 caractères.'); return; }
@@ -772,23 +812,6 @@ async function signInWithGoogle() {
   finally { document.getElementById('btn-google').disabled = false; }
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   APPLE SIGN-IN — CORRIGÉ
-   ─────────────────────────────────────────────────────────────────
-   signInWithPopup est bloqué par Safari/iOS et par la politique
-   Apple qui exige une redirection. On passe à signInWithRedirect :
-   la page se recharge après authentification et onAuthStateChanged
-   (dans DOMContentLoaded) reprend automatiquement la session.
-
-   PRÉ-REQUIS FIREBASE (indépendants du code) :
-     1. Console Firebase → Authentication → Sign-in method → Apple
-     2. Apple Developer Console : créer un Services ID, activer
-        "Sign In with Apple", ajouter le domaine Firebase comme
-        redirect URI (https://<projet>.firebaseapp.com/__/auth/handler)
-     3. Générer une clé privée (.p8) et l'importer dans Firebase
-   Sans ces étapes, l'erreur "auth/operation-not-supported-in-this-environment"
-   ou "auth/invalid-oauth-client-id" apparaîtra.
-══════════════════════════════════════════════════════════════════ */
 async function signInWithApple() {
   clearAuthError();
   const btn = document.getElementById('btn-apple');
@@ -796,15 +819,12 @@ async function signInWithApple() {
   btn.innerHTML = '<span class="spinner" style="border-top-color:#f0ece0;"></span> Redirection Apple…';
   try {
     const { OAuthProvider, signInWithRedirect } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
-    const auth = await getFbAuth();
+    const auth     = await getFbAuth();
     const provider = new OAuthProvider('apple.com');
     provider.addScope('email');
     provider.addScope('name');
-    /* La page va rediriger vers Apple puis revenir.
-       onAuthStateChanged (ci-dessous) reprendra la session. */
     await signInWithRedirect(auth, provider);
   } catch (err) {
-    /* Erreurs immédiates (config manquante, navigateur non supporté) */
     showAuthError(firebaseAuthError(err.code));
     btn.disabled = false;
     btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 814 1000" fill="currentColor"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.5-155.5-127.4C46.3 790.6.1 656.4.1 577.2c0-207.2 135.4-316.7 269.1-316.7 71 0 130.5 46.4 175 46.4 42.8 0 109.9-49.5 190.5-49.5zm-88-76.4c40.8-48.6 70-116.1 70-183.6 0-9.5-.6-19-2.5-26.9-66.4 2.5-145.4 44.1-193 98.5-37.5 42.8-72.5 110.3-72.5 178.8 0 10.8 1.9 21.7 2.5 25.2 3.8.6 10.1 1.3 16.4 1.3 59.6 0 133.2-40.1 179.1-93.3z"/></svg> Continuer avec Apple';
@@ -825,7 +845,6 @@ function firebaseAuthError(code) {
     'auth/popup-blocked': 'Le popup a été bloqué. Autorisez les popups pour ce site.',
     'auth/account-exists-with-different-credential': 'Un compte existe déjà avec cet email via un autre fournisseur.',
     'auth/operation-not-supported-in-this-environment': 'Apple Sign-In non configuré dans Firebase — voir les pré-requis.',
-    'auth/invalid-oauth-client-id': 'Apple Services ID invalide — vérifiez la configuration Firebase.',
   };
   return map[code] || 'Une erreur est survenue. Réessayez.';
 }
@@ -834,10 +853,10 @@ function loginSuccess(user) {
   appState.currentUser = user;
   appState.cards = [];
   const initials = (user.displayName || user.email || 'U').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
-  document.getElementById('user-avatar').textContent     = initials;
-  document.getElementById('profile-avatar').textContent  = initials;
-  document.getElementById('profile-email').textContent   = user.email || '—';
-  document.getElementById('profile-uid').textContent     = user.uid ? `ID : ${user.uid}` : '';
+  document.getElementById('user-avatar').textContent    = initials;
+  document.getElementById('profile-avatar').textContent = initials;
+  document.getElementById('profile-email').textContent  = user.email || '—';
+  document.getElementById('profile-uid').textContent    = user.uid ? `ID : ${user.uid}` : '';
   renderCardList();
   showScreen('wallet');
   loadWallet(user);
@@ -852,12 +871,16 @@ async function logout() {
   } catch (err) { showToast('Erreur lors de la déconnexion', 'error'); }
 }
 
-/* ── Wallet Firestore ── */
+/* ══════════════════════════════════════════════════════════════════
+   WALLET FIRESTORE
+══════════════════════════════════════════════════════════════════ */
 async function loadWallet(user) {
   const db = await getFbDb();
   const fs = _fsModule;
   if (user.email) {
-    fs.setDoc(fs.doc(db, 'users', user.uid), { email: user.email.toLowerCase(), displayName: user.displayName || null, updatedAt: fs.serverTimestamp() }, { merge: true }).catch(err => console.warn('[Wallet] Maj annuaire impossible :', err.message));
+    fs.setDoc(fs.doc(db, 'users', user.uid), {
+      email: user.email.toLowerCase(), displayName: user.displayName || null, updatedAt: fs.serverTimestamp()
+    }, { merge: true }).catch(err => console.warn('[Wallet] Maj annuaire impossible :', err.message));
   }
   if (_unsubscribeCards) { _unsubscribeCards(); _unsubscribeCards = null; }
   const cardsRef   = fs.collection(db, 'users', user.uid, 'cards');
@@ -869,7 +892,7 @@ async function loadWallet(user) {
       try {
         const commerceSnap = await fs.getDoc(fs.doc(db, 'commerces', cardDoc.id));
         if (commerceSnap.exists()) commerceData = commerceSnap.data();
-      } catch (e) {}
+      } catch (_) {}
       return {
         id:            cardDoc.id,
         stamps:        cardData.stamps    || 0,
@@ -878,11 +901,11 @@ async function loadWallet(user) {
         lastVisit:     formatRelativeDate(cardData.lastVisit),
         memberSince:   formatMonthYear(cardData.createdAt),
         history:       (cardData.history || []).slice(-20).reverse(),
-        brand:         commerceData.name        || 'Commerce',
-        category:      commerceData.category    || '',
-        colorClass:    commerceData.colorClass  || 'card-noir',
-        logoText:      commerceData.logoText    || '?',
-        logoColor:     commerceData.logoColor   || 'rgba(201,168,76,0.15)',
+        brand:         commerceData.name         || 'Commerce',
+        category:      commerceData.category     || '',
+        colorClass:    commerceData.colorClass   || 'card-noir',
+        logoText:      commerceData.logoText     || '?',
+        logoColor:     commerceData.logoColor    || 'rgba(201,168,76,0.15)',
         logoTextColor: commerceData.logoTextColor || 'var(--gold)'
       };
     }));
@@ -901,26 +924,38 @@ function renderCardList() {
     id: '__general__', name: 'Carte Universelle', shortCode: 'PB',
     colorClass: 'card-general', stamps: 0, maxStamps: 0,
     holder: userEmail.toUpperCase(), expiry: '12 / 28',
-    signCode: signCode, logoText: 'PB', offers: 'Carte principale'
+    signCode, logoText: 'PB', offers: 'Carte principale'
   };
   const storeCards = appState.cards.map(card => ({
-    id: card.id, name: card.brand,
-    shortCode: (card.logoText || card.brand || 'XX').substring(0, 4).toUpperCase(),
+    id:         card.id,
+    name:       card.brand,
+    shortCode:  (card.logoText || card.brand || 'XX').substring(0, 4).toUpperCase(),
     colorClass: card.colorClass || 'card-noir',
-    stamps: card.stamps || 0, maxStamps: card.maxStamps || 10,
-    holder: userEmail.toUpperCase(), expiry: '12 / 28',
-    signCode: signCode,
-    logoText: card.logoText || (card.brand || 'XX').substring(0, 2).toUpperCase(),
-    offers: card.reward || 'Récompense'
+    stamps:     card.stamps    || 0,
+    maxStamps:  card.maxStamps || 10,
+    holder:     userEmail.toUpperCase(),
+    expiry:     '12 / 28',
+    signCode,
+    logoText:   card.logoText || (card.brand || 'XX').substring(0, 2).toUpperCase(),
+    offers:     card.reward   || 'Récompense'
   }));
   document.getElementById('stat-cards').textContent   = appState.cards.length;
   document.getElementById('stat-rewards').textContent = appState.cards.filter(c => c.stamps >= c.maxStamps).length;
   wc.init([generalCard, ...storeCards]);
 }
 
+/* ── QR depuis la Carte Universelle (card_id = null) ── */
 function openGeneralQR() {
   appState.selectedCardId = null;
   document.getElementById('qr-modal-brand').textContent = 'Carte Universelle';
+  openQROverlay();
+}
+
+/* ── QR depuis le dos d'une carte de commerce dans le carrousel ── */
+function openStoreCardQR(cardId) {
+  appState.selectedCardId = cardId;
+  const card = appState.cards.find(c => c.id === cardId);
+  document.getElementById('qr-modal-brand').textContent = card ? card.brand : 'Carte Fidélité';
   openQROverlay();
 }
 
@@ -928,11 +963,11 @@ function openCardDetail(cardId) {
   const card = appState.cards.find(c => c.id === cardId);
   if (!card) return;
   appState.selectedCardId = cardId;
-  document.getElementById('detail-brand').textContent = card.brand;
+  document.getElementById('detail-brand').textContent    = card.brand;
   document.getElementById('detail-category').textContent = card.category;
   document.getElementById('detail-member-since').textContent = `Membre depuis ${card.memberSince}`;
   document.getElementById('detail-card').className = `detail-loyalty-card ${card.colorClass}`;
-  document.getElementById('qr-modal-brand').textContent = card.brand;
+  document.getElementById('qr-modal-brand').textContent  = card.brand;
   document.getElementById('detail-stamps-grid').innerHTML = Array.from({ length: card.maxStamps }, (_, i) =>
     `<div class="detail-stamp ${i < card.stamps ? 'filled' : ''} ${i === card.maxStamps - 1 ? 'reward' : ''}">${i < card.stamps ? '✦' : ''}</div>`
   ).join('');
@@ -947,11 +982,11 @@ function openCardDetail(cardId) {
   showScreen('detail');
 }
 
-function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escH(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function formatRelativeDate(timestamp) {
   if (!timestamp) return 'Jamais';
-  const date = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp);
+  const date     = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp);
   const diffDays = Math.floor((Date.now() - date) / 86400000);
   if (diffDays <= 0) return "Aujourd'hui"; if (diffDays === 1) return 'Hier';
   if (diffDays < 7) return `Il y a ${diffDays} jours`; if (diffDays < 14) return 'Il y a 1 semaine';
@@ -973,22 +1008,60 @@ function formatHistoryDate(date) {
   return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
-/* ── QR Code dynamique ── */
+/* ══════════════════════════════════════════════════════════════════
+   QR CODE DYNAMIQUE
+   Génère un vrai QR code scannable via la lib qrcode.js
+   Token : { v:1, card_id, uid, ts, exp, nonce }
+     • card_id = null       → Carte Universelle (passe-partout)
+     • card_id = commerceId → Carte de commerce spécifique
+══════════════════════════════════════════════════════════════════ */
 let qrInstance = null;
-function generateNonce() { if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID(); return `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 9)}`; }
-function generateQRToken() { const now = Date.now(); return JSON.stringify({ v: 1, card_id: appState.selectedCardId || null, uid: appState.currentUser?.uid || '', ts: now, exp: now + (QR_DURATION * 1000), nonce: generateNonce() }); }
+
+function generateNonce() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+  return `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
+function generateQRToken() {
+  const now = Date.now();
+  return JSON.stringify({
+    v:       1,
+    card_id: appState.selectedCardId || null,
+    uid:     appState.currentUser?.uid || '',
+    ts:      now,
+    exp:     now + (QR_DURATION * 1000),
+    nonce:   generateNonce()
+  });
+}
+
 function renderQRCode() {
   const container = document.getElementById('qr-canvas-container');
   container.innerHTML = '';
-  if (typeof QRCode === 'undefined') { container.innerHTML = '<div style="padding:8px;font-size:10px;color:#999;text-align:center">QR indisponible</div>'; return; }
-  qrInstance = new QRCode(container, { text: generateQRToken(), width: 144, height: 144, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  if (typeof QRCode === 'undefined') {
+    container.innerHTML = '<div style="padding:8px;font-size:10px;color:#999;text-align:center">QR indisponible</div>';
+    return;
+  }
+  qrInstance = new QRCode(container, {
+    text:         generateQRToken(),
+    width:        144,
+    height:       144,
+    colorDark:    '#000000',
+    colorLight:   '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
 }
+
 function updateRing(timeLeft) {
-  const ring = document.getElementById('qr-ring-progress');
+  const ring    = document.getElementById('qr-ring-progress');
   const timerEl = document.getElementById('qr-timer');
-  if (ring) { const offset = QR_CIRCUMFERENCE * (1 - timeLeft / QR_DURATION); ring.style.strokeDashoffset = offset; ring.style.stroke = timeLeft > 18 ? 'var(--gold)' : timeLeft > 9 ? '#d4700a' : '#d43a3a'; }
+  if (ring) {
+    const offset = QR_CIRCUMFERENCE * (1 - timeLeft / QR_DURATION);
+    ring.style.strokeDashoffset = offset;
+    ring.style.stroke = timeLeft > 18 ? 'var(--gold)' : timeLeft > 9 ? '#d4700a' : '#d43a3a';
+  }
   if (timerEl) timerEl.textContent = timeLeft;
 }
+
 function openQROverlay() {
   const overlay = document.getElementById('qr-overlay');
   overlay.classList.add('open');
@@ -999,9 +1072,13 @@ function openQROverlay() {
   appState.qrTimer = setInterval(() => {
     appState.qrTimerValue--;
     updateRing(appState.qrTimerValue);
-    if (appState.qrTimerValue <= 0) { renderQRCode(); appState.qrTimerValue = QR_DURATION; }
+    if (appState.qrTimerValue <= 0) {
+      renderQRCode();
+      appState.qrTimerValue = QR_DURATION;
+    }
   }, 1000);
 }
+
 function closeQROverlay(e) {
   if (e && e.target !== document.getElementById('qr-overlay')) return;
   document.getElementById('qr-overlay').classList.remove('open');
@@ -1014,7 +1091,10 @@ function showToast(msg, type = '') {
   const c = document.getElementById('toast-container');
   const t = document.createElement('div');
   t.className = `toast ${type}`; t.textContent = msg; c.appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3000);
+  setTimeout(() => {
+    t.style.opacity = '0'; t.style.transition = 'opacity 0.3s';
+    setTimeout(() => t.remove(), 300);
+  }, 3000);
 }
 
 /* ── Init ── */
@@ -1024,23 +1104,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.shiftKey && e.altKey && (e.key === 'A' || e.key === 'a')) window.location.href = 'admin.html';
   });
 
-  /* ══════════════════════════════════════════════════════════════
-     GESTION DU RETOUR APRÈS REDIRECTION APPLE SIGN-IN — CORRIGÉ
-     Firebase appelle onAuthStateChanged automatiquement après un
-     redirect réussi. getRedirectResult sert uniquement à capturer
-     les erreurs qui se produisent au retour (token expiré, config
-     Apple manquante, domaine non autorisé, etc.).
-  ══════════════════════════════════════════════════════════════ */
+  /* Retour après redirection Apple Sign-In */
   (async () => {
     try {
       const { getRedirectResult } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
-      const auth = await getFbAuth();
+      const auth   = await getFbAuth();
       const result = await getRedirectResult(auth);
-      /* Si result est non-null, onAuthStateChanged a déjà été appelé.
-         On ne fait rien de plus ici (loginSuccess sera appelé par l'observer). */
       if (result) console.log('[Auth] Redirect Apple Sign-In réussi :', result.user?.email);
     } catch (err) {
-      /* Erreur au retour de la redirection Apple (ex: Services ID invalide) */
       if (err.code && err.code !== 'auth/no-current-user') {
         console.error('[Auth] Erreur redirect Apple :', err.code, err.message);
         showAuthError(firebaseAuthError(err.code));
@@ -1048,7 +1119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })();
 
-  /* Session persistante Firebase + observer d'état */
+  /* Session persistante + observer d'état Firebase */
   (async () => {
     const { onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
     const auth = await getFbAuth();

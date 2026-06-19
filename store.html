@@ -10,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
-  <!-- QR Scanner library -->
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <title>PB-Cates — Espace Caisse</title>
 
@@ -74,13 +73,35 @@
     .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-ghost { width: 100%; padding: 0.8rem 1.5rem; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-body); font-size: 0.88rem; cursor: pointer; transition: border-color 0.2s, color 0.2s; margin-top: 0.75rem; }
     .btn-ghost:hover { border-color: var(--gold-dim); color: var(--gold); }
-    .divider { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; color: var(--text-muted); font-size: 0.78rem; }
+    .btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+    .divider { display: flex; align-items: center; gap: 1rem; margin: 1.25rem 0; color: var(--text-muted); font-size: 0.78rem; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-soft); }
     .auth-error { font-size: 0.82rem; color: var(--danger); text-align: center; padding: 0.5rem 0.75rem; background: var(--danger-bg); border-radius: var(--radius-sm); display: none; margin-bottom: 0.75rem; }
     .auth-error.visible { display: block; animation: fadeUp 0.2s ease; }
     .password-wrap { position: relative; }
     .password-wrap input { padding-right: 3rem; }
     .toggle-pwd { position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 0; line-height: 1; }
+
+    /* ── RESTAURANT PICKER ── */
+    #screen-picker { justify-content: flex-start; padding: 2rem 1.5rem; min-height: 100dvh; }
+    .picker-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.25rem; background: var(--bg-card);
+      border: 1px solid var(--border-soft); border-radius: var(--radius-lg);
+      cursor: pointer; text-align: left; width: 100%; font-family: var(--font-body);
+      transition: border-color 0.2s, transform 0.15s; color: var(--text-primary);
+    }
+    .picker-item:hover { border-color: var(--border); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .picker-item:active { transform: scale(0.98); }
+    .picker-logo {
+      width: 46px; height: 46px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; flex-shrink: 0;
+    }
+    .picker-name { font-size: 0.95rem; font-weight: 500; }
+    .picker-cat  { font-size: 0.74rem; color: var(--text-muted); margin-top: 2px; }
+    .picker-loading { text-align: center; color: var(--text-muted); padding: 2.5rem 0; font-size: 0.85rem; }
+    .picker-empty  { text-align: center; color: var(--text-muted); padding: 2.5rem 1rem; font-size: 0.84rem; line-height: 1.6; }
 
     /* ── SCANNER HEADER ── */
     .scanner-header {
@@ -105,15 +126,12 @@
     .scanner-viewport-wrap { padding: 1.25rem 1rem 0.75rem; flex: 1; display: flex; flex-direction: column; }
     .scanner-viewport {
       position: relative; width: 100%;
-      aspect-ratio: 1 / 1;
-      max-height: 340px;
-      background: #000; border-radius: var(--radius-lg); overflow: hidden;
-      flex-shrink: 0;
+      aspect-ratio: 1 / 1; max-height: 340px;
+      background: #000; border-radius: var(--radius-lg); overflow: hidden; flex-shrink: 0;
     }
     #scanner-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     #scanner-canvas-hidden { display: none; }
 
-    /* Scan brackets */
     .scan-bracket { position: absolute; width: 36px; height: 36px; border-color: var(--gold); border-style: solid; }
     .scan-bracket.tl { top: 14px; left: 14px; border-width: 3px 0 0 3px; border-radius: 5px 0 0 0; }
     .scan-bracket.tr { top: 14px; right: 14px; border-width: 3px 3px 0 0; border-radius: 0 5px 0 0; }
@@ -122,12 +140,10 @@
     .scan-line { position: absolute; left: 20px; right: 20px; height: 2px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.8), transparent); animation: scanDown 2.4s ease-in-out infinite; }
     @keyframes scanDown { 0% { top: 20px; opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { top: calc(100% - 20px); opacity: 0; } }
 
-    /* Camera status / No camera fallback */
     .no-camera-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; gap: 1rem; }
     .no-camera-icon { font-size: 48px; color: var(--text-muted); }
     .no-camera-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--text-secondary); }
     .no-camera-sub { font-size: 0.82rem; color: var(--text-muted); max-width: 260px; }
-
     .scanner-hint { text-align: center; padding: 0.75rem 1rem; font-size: 0.8rem; color: var(--text-muted); }
 
     /* ── HISTORY TAB ── */
@@ -154,17 +170,23 @@
     .validation-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 100; align-items: flex-end; justify-content: center; backdrop-filter: blur(6px); }
     .validation-overlay.open { display: flex; }
     .validation-sheet {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-bottom: none;
+      background: var(--bg-surface); border: 1px solid var(--border); border-bottom: none;
       border-radius: var(--radius-xl) var(--radius-xl) 0 0;
       padding: 1.5rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom));
-      width: 100%; max-width: var(--max-w);
-      animation: slideUp 0.3s cubic-bezier(.25,.46,.45,.94);
+      width: 100%; max-width: var(--max-w); animation: slideUp 0.3s cubic-bezier(.25,.46,.45,.94);
     }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     .sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 1.5rem; }
     .sheet-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 500; margin-bottom: 1.25rem; }
+
+    /* Enrollment badge */
+    .enroll-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; background: rgba(201,168,76,0.12);
+      border: 1px solid var(--border); border-radius: 100px;
+      font-size: 0.75rem; color: var(--gold); margin-bottom: 1rem;
+    }
+
     .customer-card-preview {
       border-radius: var(--radius-lg); padding: 1.25rem;
       border: 1px solid var(--border-soft); margin-bottom: 1.5rem;
@@ -179,7 +201,6 @@
     .preview-stamp.new-stamp { background: rgba(78,203,113,0.2); border-color: var(--success); color: var(--success); animation: stampAppear 0.4s ease; }
     @keyframes stampAppear { from { transform: scale(0); } to { transform: scale(1); } }
 
-    /* Stamp count selector */
     .stamp-selector { display: flex; align-items: center; justify-content: center; gap: 1.25rem; margin-bottom: 1.5rem; }
     .stamp-selector-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-soft); color: var(--text-primary); font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
     .stamp-selector-btn:hover { background: var(--bg-card-hover); border-color: var(--border); }
@@ -193,146 +214,72 @@
     .btn-cancel { width: 100%; padding: 0.8rem; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-body); font-size: 0.9rem; cursor: pointer; transition: border-color 0.2s, color 0.2s; margin-top: 0.6rem; }
     .btn-cancel:hover { border-color: rgba(220,80,80,0.4); color: var(--danger); }
 
-    /* Token validation details */
     .token-meta { font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); text-align: center; padding: 0.5rem 0; margin-bottom: 1rem; }
     .token-meta span { color: var(--success); }
 
-    /* Success/Error flash states */
     .scanner-viewport.success-flash { animation: successFlash 0.6s ease; }
-    .scanner-viewport.error-flash { animation: errorFlash 0.6s ease; }
+    .scanner-viewport.error-flash   { animation: errorFlash   0.6s ease; }
     @keyframes successFlash { 0%, 100% { box-shadow: none; } 50% { box-shadow: 0 0 0 4px rgba(78,203,113,0.4); } }
-    @keyframes errorFlash { 0%, 100% { box-shadow: none; } 50% { box-shadow: 0 0 0 4px rgba(224,85,85,0.4); } }
+    @keyframes errorFlash   { 0%, 100% { box-shadow: none; } 50% { box-shadow: 0 0 0 4px rgba(224,85,85,0.4);  } }
 
     /* TOASTS */
     .toast-container { position: fixed; top: 1.25rem; left: 50%; transform: translateX(-50%); z-index: 300; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
     .toast { padding: 0.7rem 1.2rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 100px; font-size: 0.85rem; color: var(--text-primary); white-space: nowrap; animation: toastIn 0.3s ease both; }
     .toast.success { border-color: rgba(78,203,113,0.4); color: var(--success); }
-    .toast.error   { border-color: rgba(224,85,85,0.4); color: var(--danger); }
+    .toast.error   { border-color: rgba(224,85,85,0.4);  color: var(--danger); }
     @keyframes toastIn { from { opacity: 0; transform: translateY(-8px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(13,13,15,0.3); border-top-color: #0d0d0f; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 5px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ══════════════════════════════════════════════════════
-       CONSOLE CAISSE
-    ══════════════════════════════════════════════════════ */
-    .console-section {
-      background: var(--bg-card);
-      border: 1px solid var(--border-soft);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem;
-      margin: 1rem 1rem 0;
-    }
+    /* ══ CONSOLE CAISSE ══ */
+    .console-section { background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: var(--radius-lg); padding: 1.25rem; margin: 1rem 1rem 0; }
     #tab-console > .console-section:last-child { margin-bottom: 1rem; }
-    .console-section-title {
-      font-family: var(--font-display);
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 1.1rem;
-    }
+    .console-section-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.1rem; }
     .console-section-title.center { text-align: center; }
-    .console-field-label {
-      display: block;
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-      letter-spacing: 0.3px;
-      margin-bottom: 0.6rem;
-    }
-
+    .console-field-label { display: block; font-size: 0.78rem; color: var(--text-secondary); letter-spacing: 0.3px; margin-bottom: 0.6rem; }
     .stepper-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.35rem; }
     .stepper-label { font-size: 0.9rem; color: var(--text-primary); margin-bottom: 2px; }
     .stepper-hint  { font-size: 0.75rem; color: var(--text-muted); }
     .stepper-control { display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0; }
     .stepper-value { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--gold); min-width: 30px; text-align: center; }
-
     .console-actions-row { display: flex; gap: 0.75rem; margin-bottom: 0.85rem; }
-    .btn-console-add, .btn-console-gift {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 0.95rem; border: none; border-radius: var(--radius-md);
-      font-family: var(--font-body); font-size: 0.95rem; font-weight: 500;
-      cursor: pointer; transition: filter 0.2s, transform 0.1s, opacity 0.2s;
-    }
-    .btn-console-add  { background: var(--gold); color: #0d0d0f; }
-    .btn-console-gift { background: var(--teal); color: #07221f; }
+    .btn-console-add, .btn-console-gift { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0.95rem; border: none; border-radius: var(--radius-md); font-family: var(--font-body); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: filter 0.2s, transform 0.1s, opacity 0.2s; }
+    .btn-console-add  { background: var(--gold);  color: #0d0d0f; }
+    .btn-console-gift { background: var(--teal);  color: #07221f; }
     .btn-console-add:hover, .btn-console-gift:hover { filter: brightness(1.08); }
     .btn-console-add:active, .btn-console-gift:active { transform: scale(0.98); }
     .btn-console-add:disabled, .btn-console-gift:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
-
-    .btn-console-outline {
-      width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 0.85rem; background: transparent; border: 1px solid var(--border);
-      border-radius: var(--radius-md); color: var(--gold);
-      font-family: var(--font-body); font-size: 0.88rem; cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .btn-console-outline:hover  { background: rgba(201,168,76,0.06); border-color: var(--gold-dim); }
+    .btn-console-outline { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0.85rem; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--gold); font-family: var(--font-body); font-size: 0.88rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    .btn-console-outline:hover { background: rgba(201,168,76,0.06); border-color: var(--gold-dim); }
     .btn-console-outline:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-icon { font-size: 16px; line-height: 1; }
-
-    .console-toggle-row {
-      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
-      padding-bottom: 1.35rem; margin-bottom: 1.35rem; border-bottom: 1px solid var(--border-soft);
-    }
+    .console-toggle-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding-bottom: 1.35rem; margin-bottom: 1.35rem; border-bottom: 1px solid var(--border-soft); }
     .console-row-label { font-size: 0.9rem; color: var(--text-primary); margin-bottom: 4px; }
     .console-row-sub   { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; max-width: 300px; }
-
     .toggle { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
     .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
-    .toggle-slider {
-      position: absolute; inset: 0; background: var(--bg-input);
-      border: 1px solid var(--border-soft); border-radius: 100px; cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
-    }
-    .toggle-slider::before {
-      content: ''; position: absolute; width: 20px; height: 20px; left: 2px; top: 2px;
-      background: var(--text-muted); border-radius: 50%; transition: transform 0.2s, background 0.2s;
-    }
+    .toggle-slider { position: absolute; inset: 0; background: var(--bg-input); border: 1px solid var(--border-soft); border-radius: 100px; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+    .toggle-slider::before { content: ''; position: absolute; width: 20px; height: 20px; left: 2px; top: 2px; background: var(--text-muted); border-radius: 50%; transition: transform 0.2s, background 0.2s; }
     .toggle input:checked + .toggle-slider { background: rgba(201,168,76,0.22); border-color: var(--gold-dim); }
     .toggle input:checked + .toggle-slider::before { transform: translateX(20px); background: var(--gold); }
     .toggle input:disabled + .toggle-slider { opacity: 0.4; cursor: not-allowed; }
-
     .range-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
     .range-value { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--gold); white-space: nowrap; }
-    .console-range {
-      --fill: 30%;
-      width: 100%; -webkit-appearance: none; appearance: none; height: 5px; margin-top: 0.85rem;
-      border-radius: 3px; outline: none; cursor: pointer;
-      background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--fill), var(--bg-input) var(--fill), var(--bg-input) 100%);
-    }
-    .console-range::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
-      background: var(--gold); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 0 1px var(--border);
-    }
-    .console-range::-moz-range-thumb {
-      width: 20px; height: 20px; border-radius: 50%; background: var(--gold);
-      cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 0 1px var(--border);
-    }
+    .console-range { --fill: 30%; width: 100%; -webkit-appearance: none; appearance: none; height: 5px; margin-top: 0.85rem; border-radius: 3px; outline: none; cursor: pointer; background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--fill), var(--bg-input) var(--fill), var(--bg-input) 100%); }
+    .console-range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--gold); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 0 1px var(--border); }
+    .console-range::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--gold); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 0 1px var(--border); }
     .console-range:disabled { opacity: 0.4; cursor: not-allowed; }
-
     .network-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
     .network-info { display: flex; align-items: center; gap: 0.9rem; }
-    .network-icon {
-      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center; font-size: 20px;
-      background: var(--success-bg); color: var(--success); transition: background 0.2s, color 0.2s;
-    }
+    .network-icon { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--success-bg); color: var(--success); transition: background 0.2s, color 0.2s; }
     .network-row.offline .network-icon { background: var(--danger-bg); color: var(--danger); }
-    .btn-network-sim {
-      padding: 0.65rem 1.1rem; background: var(--danger); border: none; border-radius: var(--radius-md);
-      color: #fff; font-family: var(--font-body); font-size: 0.85rem; font-weight: 500;
-      cursor: pointer; transition: opacity 0.2s, background 0.2s; white-space: nowrap;
-    }
+    .btn-network-sim { padding: 0.65rem 1.1rem; background: var(--danger); border: none; border-radius: var(--radius-md); color: #fff; font-family: var(--font-body); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s, background 0.2s; white-space: nowrap; }
     .btn-network-sim:hover { opacity: 0.88; }
     .btn-network-sim.is-offline { background: var(--success); color: #06231d; }
-
     .console-export-icon { text-align: center; font-size: 26px; color: var(--text-muted); margin-bottom: 0.6rem; }
-
     .activity-row { display: flex; align-items: center; gap: 0.85rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-soft); }
     .activity-row:last-child { border-bottom: none; }
-    .activity-row-icon {
-      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; font-size: 13px;
-      display: flex; align-items: center; justify-content: center;
-    }
+    .activity-row-icon { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; font-size: 13px; display: flex; align-items: center; justify-content: center; }
     .activity-row-icon.positive { background: var(--success-bg); color: var(--success); }
     .activity-row-icon.negative { background: rgba(201,168,76,0.12); color: var(--gold); }
     .activity-row-main { flex: 1; min-width: 0; }
@@ -378,6 +325,29 @@
           <button type="button" class="toggle-pwd" onclick="togglePwd('store-password', this)" aria-label="Afficher le mot de passe">👁</button>
         </div>
         <button class="btn-primary" id="btn-store-login" onclick="handleStoreLogin()">Accéder à la caisse</button>
+
+        <div class="divider">ou</div>
+
+        <button class="btn-ghost" id="btn-store-demo" onclick="handleDemoLogin()">▷ Mode démo — sans email</button>
+      </div>
+    </section>
+
+    <!-- ══ ÉCRAN PICKER — sélection du commerce ══ -->
+    <section id="screen-picker" class="screen" aria-label="Sélection du commerce">
+      <div class="auth-logo" style="margin-bottom:1.5rem">
+        <div class="logo-mark">PB</div>
+        <div class="logo-title">Votre Commerce</div>
+        <div class="logo-sub">Sélection</div>
+      </div>
+      <div style="padding: 0 1.5rem; flex:1; display:flex; flex-direction:column;">
+        <div class="auth-form" style="flex:1">
+          <h2>Sélectionnez votre commerce</h2>
+          <p>Aucun commerce n'est lié automatiquement à ce compte. Choisissez votre établissement.</p>
+          <div id="picker-list" style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.5rem;flex:1">
+            <div class="picker-loading">Chargement des commerces…</div>
+          </div>
+          <button class="btn-ghost" onclick="logoutFromPicker()">← Changer de compte</button>
+        </div>
       </div>
     </section>
 
@@ -386,7 +356,7 @@
 
       <div class="scanner-header">
         <div>
-          <div class="scanner-resto-name" id="header-resto-name">Le Bistro du Coin</div>
+          <div class="scanner-resto-name" id="header-resto-name">PB-Cates</div>
           <div class="scanner-resto-sub" id="header-shift-info">Session en cours</div>
         </div>
         <div class="stamp-counter">
@@ -396,16 +366,14 @@
       </div>
 
       <div class="scanner-tabs">
-        <button class="scanner-tab active" id="tab-scan-btn" onclick="switchTab('scanner')">📷 Scanner</button>
-        <button class="scanner-tab" id="tab-hist-btn" onclick="switchTab('history')">📋 Historique</button>
-        <button class="scanner-tab" id="tab-console-btn" onclick="switchTab('console')">🧾 Console</button>
+        <button class="scanner-tab active" id="tab-scan-btn"     onclick="switchTab('scanner')">📷 Scanner</button>
+        <button class="scanner-tab"        id="tab-hist-btn"     onclick="switchTab('history')">📋 Historique</button>
+        <button class="scanner-tab"        id="tab-console-btn"  onclick="switchTab('console')">🧾 Console</button>
       </div>
 
       <!-- TAB: SCANNER -->
       <div id="tab-scanner" style="display:flex;flex-direction:column;flex:1;">
         <div class="scanner-viewport-wrap">
-
-          <!-- Camera viewport -->
           <div class="scanner-viewport" id="scanner-viewport">
             <video id="scanner-video" autoplay playsinline muted></video>
             <canvas id="scanner-canvas-hidden"></canvas>
@@ -415,15 +383,12 @@
             <div class="scan-bracket br"></div>
             <div class="scan-line" id="scan-line"></div>
           </div>
-
-          <!-- No camera fallback -->
           <div class="no-camera-state" id="no-camera" style="display:none">
             <div class="no-camera-icon">📷</div>
             <div class="no-camera-title">Caméra non disponible</div>
             <div class="no-camera-sub">Autorisez l'accès à la caméra, ou utilisez la Console (onglet 🧾) pour encaisser par email.</div>
             <button class="btn-primary" style="max-width:240px;margin-top:0.5rem" onclick="startScanner()">Réessayer</button>
           </div>
-
           <p class="scanner-hint" id="scanner-hint">Pointez la caméra vers le QR Code du client</p>
         </div>
       </div>
@@ -447,16 +412,13 @@
       <!-- TAB: CONSOLE -->
       <div id="tab-console" style="display:none;flex-direction:column;flex:1;overflow-y:auto;">
 
-        <!-- Actions d'encaissement -->
         <div class="console-section">
           <div class="console-section-title">Actions d'Encaissement</div>
-
           <label class="console-field-label" for="console-email">Adresse E-mail du Client</label>
           <div class="input-group" style="margin-bottom:1.35rem">
             <span class="input-icon">✉</span>
             <input type="email" id="console-email" placeholder="client@exemple.com" autocomplete="off" inputmode="email" aria-label="Adresse email du client" />
           </div>
-
           <div class="stepper-row">
             <div>
               <div class="stepper-label">Volume Tampons à Valider</div>
@@ -468,36 +430,31 @@
               <button class="stamp-selector-btn" id="console-btn-plus" onclick="consoleAdjustStamps(1)" aria-label="Augmenter">+</button>
             </div>
           </div>
-
           <div class="console-actions-row">
             <button class="btn-console-add" id="btn-console-add" onclick="consoleAddStamps()">
-              <span class="btn-icon" aria-hidden="true">▣</span> Ajouter
+              <span class="btn-icon">▣</span> Ajouter
             </button>
             <button class="btn-console-gift" id="btn-console-gift" onclick="consoleRedeemReward()">
-              <span class="btn-icon" aria-hidden="true">🎁</span> Cadeau
+              <span class="btn-icon">🎁</span> Cadeau
             </button>
           </div>
-
           <button class="btn-console-outline" onclick="switchTab('scanner')">
-            <span class="btn-icon" aria-hidden="true">📷</span> Simuler Scan QR Client (Plan B)
+            <span class="btn-icon">📷</span> Passer au scanner QR
           </button>
         </div>
 
-        <!-- Règles métier de l'instance -->
         <div class="console-section">
           <div class="console-section-title">Règles Métier de l'Instance</div>
-
           <div class="console-toggle-row">
             <div>
               <div class="console-row-label">Autoriser le Multi-Tampon</div>
-              <div class="console-row-sub">Permet de valider plusieurs tampons par encaissement (ex: commande grand groupe).</div>
+              <div class="console-row-sub">Permet de valider plusieurs tampons par encaissement.</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="console-multistamp" onchange="toggleMultiStamp(this.checked)" aria-label="Autoriser le multi-tampon" />
               <span class="toggle-slider"></span>
             </label>
           </div>
-
           <div>
             <div class="range-row">
               <div class="console-row-label" style="margin-bottom:0">Limite Anti-Fraude Journalière</div>
@@ -505,16 +462,14 @@
             </div>
             <div class="console-row-sub" style="margin-bottom:0.4rem">Accumulation maximale autorisée par e-mail client par jour.</div>
             <input type="range" class="console-range" id="console-daily-limit" min="1" max="10" value="3" step="1"
-                   oninput="onDailyLimitInput(this.value)" onchange="onDailyLimitChange(this.value)"
-                   aria-label="Limite anti-fraude journalière" />
+                   oninput="onDailyLimitInput(this.value)" onchange="onDailyLimitChange(this.value)" />
           </div>
         </div>
 
-        <!-- Réseau de l'instance -->
         <div class="console-section">
           <div class="network-row" id="network-row">
             <div class="network-info">
-              <span class="network-icon" id="network-status-icon" aria-hidden="true">☁</span>
+              <span class="network-icon" id="network-status-icon">☁</span>
               <div>
                 <div class="console-row-label">Réseau de l'Instance</div>
                 <div class="console-row-sub" id="network-status-label">Connecté en direct</div>
@@ -524,17 +479,15 @@
           </div>
         </div>
 
-        <!-- Export de données -->
         <div class="console-section">
-          <div class="console-export-icon" aria-hidden="true">⬇</div>
+          <div class="console-export-icon">⬇</div>
           <div class="console-section-title center">Export de Données Fidélité</div>
           <div class="console-row-sub" style="text-align:center;max-width:none;margin-bottom:1.1rem">Analysez l'activité des tampons et exportez le fichier de données clients.</div>
           <button class="btn-console-outline" id="btn-export-csv" onclick="generateActivityExport()">
-            <span class="btn-icon" aria-hidden="true">📊</span> Générer l'Export CSV
+            <span class="btn-icon">📊</span> Générer l'Export CSV
           </button>
         </div>
 
-        <!-- Activité récente de l'établissement -->
         <div class="console-section">
           <div class="console-section-title">Activité Récente de l'Établissement</div>
           <div id="activity-list">
@@ -547,10 +500,10 @@
     </section>
 
     <nav class="bottom-nav" id="bottom-nav" style="display:none">
-      <button class="nav-item active" id="nav-scan" onclick="switchTab('scanner')"><span>📷</span>Scanner</button>
-      <button class="nav-item" id="nav-hist" onclick="switchTab('history')"><span>📋</span>Historique</button>
-      <button class="nav-item" id="nav-console" onclick="switchTab('console')"><span>🧾</span>Console</button>
-      <button class="nav-item" onclick="logout()"><span>⎋</span>Déconnexion</button>
+      <button class="nav-item active" id="nav-scan"    onclick="switchTab('scanner')"><span>📷</span>Scanner</button>
+      <button class="nav-item"        id="nav-hist"    onclick="switchTab('history')"><span>📋</span>Historique</button>
+      <button class="nav-item"        id="nav-console" onclick="switchTab('console')"><span>🧾</span>Console</button>
+      <button class="nav-item"                         onclick="logout()"><span>⎋</span>Déconnexion</button>
     </nav>
 
   </div>
@@ -562,9 +515,11 @@
     <div class="sheet-handle"></div>
     <div class="sheet-title">Valider un tampon</div>
 
+    <div id="enroll-badge-wrap"></div>
+
     <div class="customer-card-preview card-noir" id="preview-card">
       <div class="preview-brand" id="preview-brand">—</div>
-      <div class="preview-uid" id="preview-uid">uid: —</div>
+      <div class="preview-uid"   id="preview-uid">uid: —</div>
       <div class="preview-stamps" id="preview-stamps"></div>
     </div>
 
@@ -582,11 +537,11 @@
     </div>
 
     <button class="btn-confirm" onclick="confirmStamp()">✓ Confirmer <span id="confirm-label">1 tampon</span></button>
-    <button class="btn-cancel" onclick="cancelValidation()">Annuler</button>
+    <button class="btn-cancel"  onclick="cancelValidation()">Annuler</button>
   </div>
 </div>
 
-<div class="toast-wrap" id="toast-container"></div>
+<div class="toast-container" id="toast-container"></div>
 
 <script>
   window.FIREBASE_CONFIG = {
@@ -602,26 +557,34 @@
 <script>
 'use strict';
 
-/* ── State ── */
+/* ══════════════════════════════════════════════════════════════════
+   ÉTAT
+══════════════════════════════════════════════════════════════════ */
 const state = {
-  user: null,
+  user:              null,
   currentRestaurant: null,
-  stampCount: 1,
-  scannedToken: null,
-  cardRef: null,
-  cardExists: false,
-  cardData: null,
-  validations: [],
-  scanPaused: false,
-  videoStream: null,
-  rafId: null,
-  activeTab: 'scanner',
+  stampCount:        1,
+  scannedToken:      null,
+  cardRef:           null,
+  cardExists:        false,
+  cardData:          null,
+  validations:       [],
+  scanPaused:        false,
+  videoStream:       null,
+  rafId:             null,
+  activeTab:         'scanner',
   consoleStampCount: 1
 };
 
-/* ── Firestore ── */
-let _storeDb = null;
-let _fsModule = null;
+/* ── Sélecteur de restaurant ── */
+let _pickerRestos = [];
+
+/* ══════════════════════════════════════════════════════════════════
+   FIREBASE / FIRESTORE
+══════════════════════════════════════════════════════════════════ */
+let _storeDb   = null;
+let _fsModule  = null;
+
 async function getStoreDb() {
   if (_storeDb) return _storeDb;
   const [{ getApps, getApp, initializeApp }, fs] = await Promise.all([
@@ -629,8 +592,8 @@ async function getStoreDb() {
     import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
   ]);
   const app = getApps().length ? getApp() : initializeApp(window.FIREBASE_CONFIG);
-  _storeDb = fs.getFirestore(app);
-  _fsModule = fs;
+  _storeDb   = fs.getFirestore(app);
+  _fsModule  = fs;
   fs.enableIndexedDbPersistence(_storeDb).catch(() => {});
   return _storeDb;
 }
@@ -639,14 +602,19 @@ async function findRestaurantForUser(uid, email) {
   const db = await getStoreDb();
   const { collection, query, where, getDocs } =
     await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-  let snap = await getDocs(query(collection(db, 'commerces'), where('storeUid', '==', uid)));
+  /* Cherche d'abord par UID, puis par email */
+  let snap = await getDocs(query(collection(db, 'commerces'), where('storeUid',   '==', uid)));
   if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
-  snap = await getDocs(query(collection(db, 'commerces'), where('storeEmail', '==', email)));
-  if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
+  if (email) {
+    snap = await getDocs(query(collection(db, 'commerces'), where('storeEmail', '==', email)));
+    if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
+  }
   return null;
 }
 
-/* ── Nonces anti-rejeu ── */
+/* ══════════════════════════════════════════════════════════════════
+   SÉCURITÉ — NONCES ANTI-REJEU
+══════════════════════════════════════════════════════════════════ */
 function isNonceUsed(nonce) {
   const used = JSON.parse(localStorage.getItem('pb_used_nonces') || '[]');
   return used.includes(nonce);
@@ -658,7 +626,15 @@ function consumeNonce(nonce) {
   localStorage.setItem('pb_used_nonces', JSON.stringify(used));
 }
 
-/* ── Validation du token ── */
+/* ══════════════════════════════════════════════════════════════════
+   VALIDATION DU TOKEN QR
+   Accepte :
+     • Carte Universelle    → card_id === null
+     • Carte de ce commerce → card_id === myCommerceId
+   Refuse :
+     • Token expiré, version incorrecte, nonce déjà vu
+     • Carte d'un autre commerce (card_id présent et ≠ myCommerceId)
+══════════════════════════════════════════════════════════════════ */
 function validateToken(raw) {
   let token;
   try { token = JSON.parse(raw); } catch { return { ok: false, msg: 'Format QR invalide' }; }
@@ -669,7 +645,9 @@ function validateToken(raw) {
   return { ok: true, token };
 }
 
-/* ── Auth ── */
+/* ══════════════════════════════════════════════════════════════════
+   AUTHENTIFICATION
+══════════════════════════════════════════════════════════════════ */
 let _storeAuth = null;
 async function getStoreAuth() {
   if (_storeAuth) return _storeAuth;
@@ -718,41 +696,58 @@ async function handleStoreLogin() {
   }
 }
 
+/* ── MODE DÉMO : connexion anonyme puis sélection du commerce ── */
+async function handleDemoLogin() {
+  const btn = document.getElementById('btn-store-demo');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Démonstration…';
+  try {
+    const { signInAnonymously } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    const auth = await getStoreAuth();
+    const cred = await signInAnonymously(auth);
+    await loginSuccess({ email: '', name: 'Mode Démo', uid: cred.user.uid });
+  } catch {
+    /* Firebase indisponible : mode local pur */
+    await loginSuccess({ email: '', name: 'Mode Démo', uid: 'demo-' + Date.now().toString(36) });
+  } finally {
+    btn.disabled = false; btn.innerHTML = '▷ Mode démo — sans email';
+  }
+}
+
+/* ── Résultat de la connexion : trouver le commerce lié ou afficher le sélecteur ── */
 async function loginSuccess(user) {
   state.user = user;
-  showScreen('scanner');
-  document.getElementById('header-resto-name').textContent  = 'Chargement du commerce…';
-  document.getElementById('header-shift-info').textContent  = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('header-shift-info').textContent =
+    new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
 
   let restaurant = null;
   try { restaurant = await findRestaurantForUser(user.uid, user.email); }
-  catch (err) { console.error('[Store] Erreur Firestore :', err); }
+  catch (err) { console.warn('[Store] findRestaurantForUser :', err.message); }
 
   if (restaurant) {
-    state.currentRestaurant = {
-      id:          restaurant.id,
-      name:        restaurant.name        || 'Commerce',
-      maxStamps:   restaurant.maxStamps   || 10,
-      reward:      restaurant.reward      || 'Récompense',
-      multiStamp:  restaurant.multiStamp  ?? false,
-      dailyLimit:  restaurant.dailyLimit  || 3,
-      colorClass:  restaurant.colorClass  || 'card-noir',
-      logoText:    restaurant.logoText    || restaurant.name?.charAt(0) || '?',
-      logoColor:   restaurant.logoColor   || 'rgba(201,168,76,0.15)',
-    };
-    document.getElementById('header-resto-name').textContent = state.currentRestaurant.name;
+    applyRestaurant(restaurant);
+    showScreen('scanner');
+    startActivityFeed();
+    startScanner();
   } else {
-    state.currentRestaurant = {
-      id: null, name: 'Commerce non configuré',
-      maxStamps: 10, reward: 'Récompense', multiStamp: false, dailyLimit: 3,
-      colorClass: 'card-noir', logoText: '?', logoColor: 'rgba(201,168,76,0.15)'
-    };
-    document.getElementById('header-resto-name').textContent = 'Commerce non configuré';
-    showToast('Aucun commerce lié à ce compte — contactez l\'administrateur', 'error');
+    /* Aucun commerce lié automatiquement → sélecteur */
+    await loadAndShowPicker(user);
   }
+}
 
-  startActivityFeed();
-  startScanner();
+/* Applique un restaurant comme commerce actif de la session */
+function applyRestaurant(r) {
+  state.currentRestaurant = {
+    id:         r.id,
+    name:       r.name        || 'Commerce',
+    maxStamps:  r.maxStamps   || 10,
+    reward:     r.reward      || 'Récompense',
+    multiStamp: r.multiStamp  ?? false,
+    dailyLimit: r.dailyLimit  || 3,
+    colorClass: r.colorClass  || 'card-noir',
+    logoText:   r.logoText    || (r.name || '').charAt(0) || '?',
+    logoColor:  r.logoColor   || 'rgba(201,168,76,0.15)',
+  };
+  document.getElementById('header-resto-name').textContent = r.name || 'Commerce';
 }
 
 function logout() {
@@ -762,11 +757,72 @@ function logout() {
   state.user = null;
   state.currentRestaurant = null;
   state.consoleStampCount = 1;
+  _pickerRestos = [];
   showScreen('auth');
   document.getElementById('bottom-nav').style.display = 'none';
   showToast('Déconnexion effectuée');
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   SÉLECTEUR DE COMMERCE
+══════════════════════════════════════════════════════════════════ */
+async function loadAndShowPicker(user) {
+  showScreen('picker');
+  const listEl = document.getElementById('picker-list');
+  listEl.innerHTML = '<div class="picker-loading">Chargement des commerces…</div>';
+
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    const snap = await fs.getDocs(fs.collection(db, 'commerces'));
+    _pickerRestos = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => r.active !== false);
+  } catch {
+    /* Firestore indisponible → localStorage */
+    const raw = localStorage.getItem('pb_admin_restaurants');
+    _pickerRestos = raw ? (() => { try { return JSON.parse(raw); } catch { return []; } })() : [];
+  }
+
+  if (!_pickerRestos.length) {
+    listEl.innerHTML = '<p class="picker-empty">Aucun commerce disponible.<br>Créez d\'abord un commerce via le panneau d\'administration (Maj+Alt+A depuis index.html).</p>';
+    return;
+  }
+
+  listEl.innerHTML = _pickerRestos.map((r, i) => `
+    <button class="picker-item" onclick="selectRestaurant(${i})">
+      <div class="picker-logo" style="background:${r.logoColor || 'rgba(201,168,76,0.15)'};color:${r.logoTextColor || 'var(--gold)'}">
+        ${escapeBrand((r.logoText || r.name || '?').substring(0, 2).toUpperCase())}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="picker-name">${escapeBrand(r.name)}</div>
+        <div class="picker-cat">${escapeBrand(r.category || '')} · ${escapeBrand(r.city || '')}</div>
+      </div>
+      <span style="color:var(--text-muted);font-size:20px;flex-shrink:0">›</span>
+    </button>
+  `).join('');
+}
+
+function selectRestaurant(i) {
+  const r = _pickerRestos[i];
+  if (!r) return;
+  applyRestaurant(r);
+  document.getElementById('header-shift-info').textContent =
+    new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  showScreen('scanner');
+  startActivityFeed();
+  startScanner();
+  showToast(`${r.name} — session ouverte`, 'success');
+}
+
+function logoutFromPicker() {
+  state.user = null;
+  _pickerRestos = [];
+  showScreen('auth');
+  document.getElementById('bottom-nav').style.display = 'none';
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════════════════ */
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const t = document.getElementById(`screen-${id}`);
@@ -779,11 +835,11 @@ function switchTab(tab) {
   document.getElementById('tab-scanner').style.display = tab === 'scanner' ? 'flex' : 'none';
   document.getElementById('tab-history').style.display = tab === 'history' ? 'flex' : 'none';
   document.getElementById('tab-console').style.display = tab === 'console' ? 'flex' : 'none';
-  document.getElementById('tab-scan-btn').classList.toggle('active', tab === 'scanner');
-  document.getElementById('tab-hist-btn').classList.toggle('active', tab === 'history');
+  document.getElementById('tab-scan-btn').classList.toggle('active',    tab === 'scanner');
+  document.getElementById('tab-hist-btn').classList.toggle('active',    tab === 'history');
   document.getElementById('tab-console-btn').classList.toggle('active', tab === 'console');
-  document.getElementById('nav-scan').classList.toggle('active', tab === 'scanner');
-  document.getElementById('nav-hist').classList.toggle('active', tab === 'history');
+  document.getElementById('nav-scan').classList.toggle('active',    tab === 'scanner');
+  document.getElementById('nav-hist').classList.toggle('active',    tab === 'history');
   document.getElementById('nav-console').classList.toggle('active', tab === 'console');
   if (tab === 'scanner' && !state.scanPaused) startScanner();
   if (tab === 'history') renderHistory();
@@ -791,16 +847,13 @@ function switchTab(tab) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   SCANNER — CORRIGÉ
-   Remplace le listener loadedmetadata (qui s'accumulait à chaque
-   appel de startScanner sans jamais être retiré) par await video.play()
-   qui garantit un unique démarrage de la boucle de scan.
+   SCANNER QR — CORRIGÉ
+   • stopScanner() appelé avant chaque démarrage → pas d'accumulation de listeners
+   • await video.play() au lieu de loadedmetadata
 ══════════════════════════════════════════════════════════════════ */
 async function startScanner() {
   if (typeof jsQR === 'undefined') { showNoCameraFallback(); return; }
-
-  /* ── FIX : arrêter COMPLÈTEMENT le scanner précédent avant de redémarrer ── */
-  stopScanner();
+  stopScanner(); /* libère complètement le flux précédent */
 
   const video    = document.getElementById('scanner-video');
   const noCamera = document.getElementById('no-camera');
@@ -816,11 +869,8 @@ async function startScanner() {
     hint.textContent = 'Pointez la caméra vers le QR Code du client';
     state.scanPaused = false;
 
-    /* ── FIX : await video.play() au lieu de addEventListener('loadedmetadata')
-       L'ancien code ajoutait un nouveau listener à chaque appel (tab switch,
-       reconnexion) sans jamais les retirer, créant N boucles en parallèle ou
-       aucune boucle si loadedmetadata ne se redéclenchait pas. ── */
-    try { await video.play(); } catch (_) { /* l'attribut autoplay gère le fallback */ }
+    /* Un seul démarrage garanti via la promesse de play() */
+    try { await video.play(); } catch (_) { /* autoplay attribute handles fallback */ }
     scheduleScan();
 
   } catch (err) {
@@ -829,7 +879,6 @@ async function startScanner() {
   }
 }
 
-/* ── FIX stopScanner : libère aussi srcObject et remet rafId à null ── */
 function stopScanner() {
   cancelAnimationFrame(state.rafId);
   state.rafId = null;
@@ -838,7 +887,7 @@ function stopScanner() {
     state.videoStream = null;
   }
   const video = document.getElementById('scanner-video');
-  if (video) video.srcObject = null;
+  if (video) { video.pause(); video.srcObject = null; }
 }
 
 function showNoCameraFallback() {
@@ -863,7 +912,10 @@ function scanFrame() {
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
+    /* inversionAttempts: 'attemptBoth' pour scanner aussi les QR inversés (fond sombre) */
+    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+      inversionAttempts: 'attemptBoth'
+    });
     if (code && code.data) {
       onQRDetected(code.data);
       return;
@@ -872,10 +924,17 @@ function scanFrame() {
   state.rafId = requestAnimationFrame(scanFrame);
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   TRAITEMENT DU QR DÉTECTÉ
+   Logique d'acceptation :
+     • card_id === null  → Carte Universelle  → ACCEPTÉ (inscription + tampon)
+     • card_id === myId  → Carte de CE commerce → ACCEPTÉ (tampon)
+     • card_id === autreId → Carte d'un autre commerce → REFUSÉ
+══════════════════════════════════════════════════════════════════ */
 function onQRDetected(raw) {
   state.scanPaused = true;
-  const result = validateToken(raw);
 
+  const result = validateToken(raw);
   if (!result.ok) {
     flashViewport('error');
     showToast(result.msg, 'error');
@@ -886,22 +945,24 @@ function onQRDetected(raw) {
   const myCommerceId = state.currentRestaurant?.id;
   if (!myCommerceId) {
     flashViewport('error');
-    showToast('Aucun commerce lié à ce compte — contactez l\'administrateur', 'error');
+    showToast('Aucun commerce sélectionné — utilisez le sélecteur', 'error');
     setTimeout(() => { state.scanPaused = false; scheduleScan(); }, 2500);
     return;
   }
 
   const scannedCardId = result.token.card_id;
+  /* card_id null = Carte Universelle (passe-partout) */
+  /* card_id présent ≠ myCommerceId = carte d'un autre commerce → refus */
   if (scannedCardId && scannedCardId !== myCommerceId) {
     flashViewport('error');
-    showToast('Cette carte appartient à un autre commerce — demandez la Carte Universelle', 'error');
+    showToast('Carte d\'un autre commerce — demandez la Carte Universelle au client', 'error');
     setTimeout(() => { state.scanPaused = false; scheduleScan(); }, 2500);
     return;
   }
 
   flashViewport('success');
   state.scannedToken = result.token;
-  state.stampCount = 1;
+  state.stampCount   = 1;
   openValidationSheet(result.token);
 }
 
@@ -913,15 +974,16 @@ function flashViewport(type) {
   setTimeout(() => vp.classList.remove(`${type}-flash`), 600);
 }
 
-/* ── Feuille de validation ── */
+/* ══════════════════════════════════════════════════════════════════
+   FEUILLE DE VALIDATION
+══════════════════════════════════════════════════════════════════ */
 async function openValidationSheet(token) {
-  const resto = state.currentRestaurant;
+  const resto   = state.currentRestaurant;
+  const secLeft = Math.max(0, Math.round((token.exp - Date.now()) / 1000));
 
   document.getElementById('preview-brand').textContent = resto.name;
-  document.getElementById('preview-uid').textContent = `uid : ${token.uid.substring(0,16)}…`;
-
-  const secLeft = Math.max(0, Math.round((token.exp - Date.now()) / 1000));
-  document.getElementById('token-meta').innerHTML = `Token valide · <span>${secLeft}s restantes</span>`;
+  document.getElementById('preview-uid').textContent   = `uid : ${token.uid.substring(0, 16)}…`;
+  document.getElementById('token-meta').innerHTML      = `Token valide · <span>${secLeft}s restantes</span>`;
 
   const db = await getStoreDb();
   const fs = _fsModule;
@@ -944,22 +1006,25 @@ async function openValidationSheet(token) {
     colorClass: resto.colorClass
   };
 
+  /* Badge d'inscription si première visite */
+  const enrollWrap = document.getElementById('enroll-badge-wrap');
+  enrollWrap.innerHTML = !existing
+    ? `<div class="enroll-badge">⭐ Première visite — inscription automatique</div>`
+    : '';
+
   if (!existing) {
     document.getElementById('token-meta').innerHTML =
       `<span style="color:var(--gold)">Nouvelle carte — ${escapeBrand(resto.name)}</span> · ${secLeft}s restantes`;
   }
 
   renderPreviewStamps(state.cardData, 1);
-  updateStampSelector(1, resto.multiStamp ? Math.min(3, resto.dailyLimit) : 1);
+  const maxSel = resto.multiStamp ? Math.min(3, resto.dailyLimit) : 1;
+  updateStampSelector(1, maxSel);
   updateConfirmLabel();
 
   document.getElementById('preview-card').className = `customer-card-preview ${state.cardData.colorClass}`;
   document.getElementById('validation-overlay').classList.add('open');
   document.getElementById('bottom-nav').style.display = 'none';
-}
-
-function escapeBrand(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 function renderPreviewStamps(card, newCount) {
@@ -1025,15 +1090,18 @@ async function confirmStamp() {
   try {
     await fs.setDoc(state.cardRef, payload, { merge: true });
 
+    /* Récupérer l'email du client pour le journal */
     let clientEmail = '';
     try {
       const userSnap = await fs.getDoc(fs.doc(_storeDb, 'users', state.scannedToken.uid));
       if (userSnap.exists()) clientEmail = userSnap.data().email || '';
-    } catch (e) {}
+    } catch (_) {}
     logActivity({
       email: clientEmail || `uid:${state.scannedToken.uid.substring(0, 8)}…`,
       uid:   state.scannedToken.uid,
-      label: count === 1 ? 'Point ajouté (+1) · QR' : `Points ajoutés (+${count}) · QR`,
+      label: state.cardExists
+        ? (count === 1 ? 'Point ajouté (+1) · QR' : `Points ajoutés (+${count}) · QR`)
+        : `Inscription + ${count} point${count > 1 ? 's' : ''} · QR`,
       delta: count
     });
   } catch (err) {
@@ -1041,39 +1109,41 @@ async function confirmStamp() {
     showToast('Erreur lors de l\'enregistrement — réessayez', 'error');
   }
 
-  const validation = {
-    time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+  state.validations.unshift({
+    time:   new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
     cardId: resto.id,
-    uid: state.scannedToken.uid,
+    uid:    state.scannedToken.uid,
     stamps: count,
-    brand: resto.name
-  };
-  state.validations.unshift(validation);
+    brand:  resto.name,
+    isNew:  !state.cardExists
+  });
 
   const total = state.validations.reduce((s, v) => s + v.stamps, 0);
   document.getElementById('today-count').textContent = total;
 
+  const msg = state.cardExists
+    ? `✓ ${count} tampon${count > 1 ? 's' : ''} validé${count > 1 ? 's' : ''}`
+    : `⭐ Nouveau client inscrit + ${count} tampon${count > 1 ? 's' : ''}`;
   closeValidation();
-  showToast(`✓ ${count} tampon${count > 1 ? 's' : ''} validé${count > 1 ? 's' : ''}`, 'success');
+  showToast(msg, 'success');
 }
 
-function cancelValidation() {
-  closeValidation();
-  showToast('Validation annulée');
-}
+function cancelValidation() { closeValidation(); showToast('Validation annulée'); }
 
 function closeValidation() {
   document.getElementById('validation-overlay').classList.remove('open');
   document.getElementById('bottom-nav').style.display = 'flex';
   state.scannedToken = null;
-  state.cardRef    = null;
-  state.cardExists = false;
-  state.cardData   = null;
-  state.scanPaused = false;
+  state.cardRef      = null;
+  state.cardExists   = false;
+  state.cardData     = null;
+  state.scanPaused   = false;
   scheduleScan();
 }
 
-/* ── Historique ── */
+/* ══════════════════════════════════════════════════════════════════
+   HISTORIQUE
+══════════════════════════════════════════════════════════════════ */
 function renderHistory() {
   const container = document.getElementById('history-list');
   const total = state.validations.reduce((s, v) => s + v.stamps, 0);
@@ -1087,14 +1157,16 @@ function renderHistory() {
   container.innerHTML = state.validations.map(v => `
     <div class="history-row">
       <div class="history-row-left">
-        <div class="history-row-time">${v.time}</div>
+        <div class="history-row-time">${v.time}${v.isNew ? ' · ⭐ inscription' : ''}</div>
         <div class="history-row-card">${v.brand} · ${v.uid.substring(0, 12)}…</div>
       </div>
       <div class="stamp-badge">+${v.stamps} tampon${v.stamps > 1 ? 's' : ''}</div>
     </div>`).join('');
 }
 
-/* ── Visibilité ── */
+/* ══════════════════════════════════════════════════════════════════
+   VISIBILITÉ PAGE
+══════════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
@@ -1118,12 +1190,9 @@ async function findUserByEmail(email) {
   const db = await getStoreDb();
   const fs = _fsModule;
   const snap = await fs.getDocs(fs.query(
-    fs.collection(db, 'users'),
-    fs.where('email', '==', email),
-    fs.limit(1)
+    fs.collection(db, 'users'), fs.where('email', '==', email), fs.limit(1)
   ));
-  if (snap.empty) return null;
-  return { uid: snap.docs[0].id, ...snap.docs[0].data() };
+  return snap.empty ? null : { uid: snap.docs[0].id, ...snap.docs[0].data() };
 }
 
 async function logActivity({ email, uid, label, delta }) {
@@ -1133,16 +1202,10 @@ async function logActivity({ email, uid, label, delta }) {
     const db = await getStoreDb();
     const fs = _fsModule;
     await fs.addDoc(fs.collection(db, 'commerces', resto.id, 'activity'), {
-      email:   email || '',
-      uid:     uid || null,
-      label:   label || '',
-      delta:   delta ?? 0,
-      date:    fs.serverTimestamp(),
-      staffId: state.user?.uid || ''
+      email: email || '', uid: uid || null, label: label || '',
+      delta: delta ?? 0, date: fs.serverTimestamp(), staffId: state.user?.uid || ''
     });
-  } catch (err) {
-    console.warn('[Console] Journal impossible :', err.message);
-  }
+  } catch (err) { console.warn('[Console] Journal impossible :', err.message); }
 }
 
 function consoleMaxStamps() {
@@ -1166,7 +1229,7 @@ function consoleAdjustStamps(delta) { consoleSetStampCount(state.consoleStampCou
 
 async function consoleAddStamps() {
   const resto = state.currentRestaurant;
-  if (!resto?.id) { showToast('Aucun commerce lié à ce compte', 'error'); return; }
+  if (!resto?.id) { showToast('Aucun commerce sélectionné', 'error'); return; }
 
   const emailInput = document.getElementById('console-email');
   const email = (emailInput.value || '').trim().toLowerCase();
@@ -1182,7 +1245,6 @@ async function consoleAddStamps() {
     const db = await getStoreDb();
     const fs = _fsModule;
     const count = state.consoleStampCount;
-
     const match = await findUserByEmail(email);
     if (!match) {
       showToast('Aucun compte client pour cet email — le client doit se connecter une fois dans l\'app', 'error');
@@ -1191,13 +1253,12 @@ async function consoleAddStamps() {
 
     const cardRef = fs.doc(db, 'users', match.uid, 'cards', resto.id);
     let existing = null;
-    try { const snap = await fs.getDoc(cardRef); if (snap.exists()) existing = snap.data(); } catch (e) {}
+    try { const snap = await fs.getDoc(cardRef); if (snap.exists()) existing = snap.data(); } catch (_) {}
 
     const historyEntry = {
-      date:    fs.Timestamp.now(),
-      action:  count === 1 ? 'Visite validée (email)' : `${count} tampons validés (email)`,
-      stamps:  count,
-      staffId: state.user?.uid || ''
+      date: fs.Timestamp.now(),
+      action: count === 1 ? 'Visite validée (email)' : `${count} tampons validés (email)`,
+      stamps: count, staffId: state.user?.uid || ''
     };
 
     const payload = {
@@ -1207,9 +1268,13 @@ async function consoleAddStamps() {
     if (!existing) payload.createdAt = fs.serverTimestamp();
 
     await fs.setDoc(cardRef, payload, { merge: true });
-    logActivity({ email, uid: match.uid, label: count === 1 ? 'Point ajouté (+1)' : `Points ajoutés (+${count})`, delta: count });
+    logActivity({
+      email, uid: match.uid,
+      label: existing ? (count === 1 ? 'Point ajouté (+1)' : `Points ajoutés (+${count})`) : `Inscription + ${count} point${count > 1 ? 's' : ''}`,
+      delta: count
+    });
 
-    showToast(`✓ ${count} tampon${count > 1 ? 's' : ''} ajouté${count > 1 ? 's' : ''} pour ${email}`, 'success');
+    showToast(`✓ ${count} tampon${count > 1 ? 's' : ''} pour ${email}`, 'success');
     emailInput.value = '';
     consoleSetStampCount(1);
   } catch (err) {
@@ -1222,7 +1287,7 @@ async function consoleAddStamps() {
 
 async function consoleRedeemReward() {
   const resto = state.currentRestaurant;
-  if (!resto?.id) { showToast('Aucun commerce lié à ce compte', 'error'); return; }
+  if (!resto?.id) { showToast('Aucun commerce sélectionné', 'error'); return; }
 
   const emailInput = document.getElementById('console-email');
   const email = (emailInput.value || '').trim().toLowerCase();
@@ -1237,7 +1302,6 @@ async function consoleRedeemReward() {
   try {
     const db = await getStoreDb();
     const fs = _fsModule;
-
     const match = await findUserByEmail(email);
     if (!match) { showToast('Aucun compte client pour cet email', 'error'); return; }
 
@@ -1270,9 +1334,9 @@ async function consoleRedeemReward() {
 }
 
 async function toggleMultiStamp(checked) {
-  const resto = state.currentRestaurant;
+  const resto    = state.currentRestaurant;
   const toggleEl = document.getElementById('console-multistamp');
-  if (!resto?.id) { showToast('Aucun commerce lié à ce compte', 'error'); if (toggleEl) toggleEl.checked = !checked; return; }
+  if (!resto?.id) { showToast('Aucun commerce sélectionné', 'error'); if (toggleEl) toggleEl.checked = !checked; return; }
   try {
     const db = await getStoreDb();
     const fs = _fsModule;
@@ -1281,7 +1345,6 @@ async function toggleMultiStamp(checked) {
     updateMultiStampHint(); consoleSetStampCount(1);
     showToast(checked ? 'Multi-tampon activé' : 'Multi-tampon désactivé', 'success');
   } catch (err) {
-    console.error('[Console] Erreur multi-tampon :', err);
     if (toggleEl) toggleEl.checked = !checked;
     showToast('Erreur de mise à jour', 'error');
   }
@@ -1297,62 +1360,55 @@ function updateMultiStampHint() {
 }
 
 function onDailyLimitInput(value) {
-  const pct = ((value - 1) / 9) * 100;
+  const pct    = ((value - 1) / 9) * 100;
   const slider = document.getElementById('console-daily-limit');
   if (slider) slider.style.setProperty('--fill', `${pct}%`);
-  const label = document.getElementById('console-daily-limit-value');
+  const label  = document.getElementById('console-daily-limit-value');
   if (label) label.textContent = `${value} max`;
 }
 
 async function onDailyLimitChange(value) {
   const resto = state.currentRestaurant;
   const n = Math.max(1, Math.min(10, parseInt(value, 10) || 1));
-  if (!resto?.id) { showToast('Aucun commerce lié à ce compte', 'error'); return; }
+  if (!resto?.id) { showToast('Aucun commerce sélectionné', 'error'); return; }
   try {
     const db = await getStoreDb();
     const fs = _fsModule;
     await fs.updateDoc(fs.doc(db, 'commerces', resto.id), { dailyLimit: n });
     resto.dailyLimit = n; updateMultiStampHint(); consoleSetStampCount(state.consoleStampCount);
     showToast('Limite anti-fraude mise à jour', 'success');
-  } catch (err) {
-    console.error('[Console] Erreur limite anti-fraude :', err);
-    showToast('Erreur de mise à jour', 'error');
-  }
+  } catch (err) { showToast('Erreur de mise à jour', 'error'); }
 }
 
 async function toggleNetworkSim() {
-  const db  = await getStoreDb();
-  const fs  = _fsModule;
+  const db    = await getStoreDb();
+  const fs    = _fsModule;
   const btn   = document.getElementById('btn-network-sim');
   const row   = document.getElementById('network-row');
   const icon  = document.getElementById('network-status-icon');
   const label = document.getElementById('network-status-label');
-
   try {
     if (!_netSimOffline) {
       await fs.disableNetwork(db);
       _netSimOffline = true;
       row?.classList.add('offline');
-      icon.textContent  = '⚠'; label.textContent = 'Hors-ligne — écritures mises en file locale';
+      icon.textContent = '⚠'; label.textContent = 'Hors-ligne — écritures en file locale';
       btn.textContent = 'Rétablir la Connexion'; btn.classList.add('is-offline');
       showToast('Coupure réseau simulée', '');
     } else {
       await fs.enableNetwork(db);
       _netSimOffline = false;
       row?.classList.remove('offline');
-      icon.textContent  = '☁'; label.textContent = 'Connecté en direct';
+      icon.textContent = '☁'; label.textContent = 'Connecté en direct';
       btn.textContent = 'Simuler Coupure'; btn.classList.remove('is-offline');
-      showToast('Connexion rétablie — synchronisation en cours', 'success');
+      showToast('Connexion rétablie', 'success');
     }
-  } catch (err) {
-    console.error('[Console] Erreur simulation réseau :', err);
-    showToast('Erreur', 'error');
-  }
+  } catch (err) { showToast('Erreur', 'error'); }
 }
 
 async function restoreNetworkIfSimulatedOffline() {
   if (!_netSimOffline || !_storeDb || !_fsModule) return;
-  try { await _fsModule.enableNetwork(_storeDb); } catch (e) {}
+  try { await _fsModule.enableNetwork(_storeDb); } catch (_) {}
   _netSimOffline = false;
 }
 
@@ -1363,7 +1419,7 @@ function csvEscape(v) {
 
 async function generateActivityExport() {
   const resto = state.currentRestaurant;
-  if (!resto?.id) { showToast('Aucun commerce lié à ce compte', 'error'); return; }
+  if (!resto?.id) { showToast('Aucun commerce sélectionné', 'error'); return; }
 
   const btn = document.getElementById('btn-export-csv');
   const originalHTML = btn.innerHTML;
@@ -1395,7 +1451,6 @@ async function generateActivityExport() {
     const a = document.createElement('a');
     a.href = url; a.download = `pb-cates-${resto.id}-${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-
     showToast(`Export généré (${snap.size} entrée${snap.size > 1 ? 's' : ''})`, 'success');
   } catch (err) {
     console.error('[Console] Erreur export CSV :', err);
@@ -1430,16 +1485,14 @@ function stopActivityFeed() {
 function renderActivityFeed(items) {
   const container = document.getElementById('activity-list');
   if (!container) return;
-
   if (!items.length) {
     container.innerHTML = `<div class="empty-activity">Aucune activité pour le moment.</div>`;
     return;
   }
-
   container.innerHTML = items.map(it => {
-    const date = it.date?.toDate ? it.date.toDate() : new Date();
+    const date     = it.date?.toDate ? it.date.toDate() : new Date();
     const positive = (it.delta || 0) >= 0;
-    const badge = positive ? `+${it.delta ?? 0}` : `${it.delta ?? ''}`;
+    const badge    = positive ? `+${it.delta ?? 0}` : `${it.delta ?? ''}`;
     return `
       <div class="activity-row">
         <div class="activity-row-icon ${positive ? 'positive' : 'negative'}">${positive ? '✓' : '★'}</div>
@@ -1474,7 +1527,7 @@ function initConsoleTab() {
   const netBtn = document.getElementById('btn-network-sim');
   if (row && icon && label && netBtn) {
     if (_netSimOffline) {
-      row.classList.add('offline'); icon.textContent = '⚠'; label.textContent = 'Hors-ligne — écritures mises en file locale';
+      row.classList.add('offline'); icon.textContent = '⚠'; label.textContent = 'Hors-ligne — écritures en file locale';
       netBtn.textContent = 'Rétablir la Connexion'; netBtn.classList.add('is-offline');
     } else {
       row.classList.remove('offline'); icon.textContent = '☁'; label.textContent = 'Connecté en direct';
@@ -1487,12 +1540,21 @@ function initConsoleTab() {
   ].forEach(id => { const el = document.getElementById(id); if (el) el.disabled = !linked; });
 }
 
-/* ── Toasts ── */
+/* ══════════════════════════════════════════════════════════════════
+   UTILITAIRES
+══════════════════════════════════════════════════════════════════ */
+function escapeBrand(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function showToast(msg, type = '') {
   const c = document.getElementById('toast-container');
   const t = document.createElement('div');
   t.className = `toast ${type}`; t.textContent = msg; c.appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3000);
+  setTimeout(() => {
+    t.style.opacity = '0'; t.style.transition = 'opacity 0.3s';
+    setTimeout(() => t.remove(), 300);
+  }, 3000);
 }
 </script>
 </body>
