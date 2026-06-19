@@ -145,6 +145,8 @@
     .no-camera-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--text-secondary); }
     .no-camera-sub { font-size: 0.82rem; color: var(--text-muted); max-width: 260px; }
     .scanner-hint { text-align: center; padding: 0.75rem 1rem; font-size: 0.8rem; color: var(--text-muted); }
+    .scan-debug { text-align: center; font-size: 0.72rem; font-family: var(--font-mono); color: var(--text-muted); padding: 0 1rem 0.5rem; letter-spacing: 0.3px; }
+    .scan-debug strong { color: var(--text-secondary); font-weight: 500; }
 
     /* ── HISTORY TAB ── */
     .history-header { padding: 1.25rem 1.25rem 0.5rem; }
@@ -390,6 +392,11 @@
             <button class="btn-primary" style="max-width:240px;margin-top:0.5rem" onclick="startScanner()">Réessayer</button>
           </div>
           <p class="scanner-hint" id="scanner-hint">Pointez la caméra vers le QR Code du client</p>
+
+          <div class="scan-debug" id="scan-debug">
+            Images analysées : <strong id="scan-debug-frames">0</strong> · Dernier résultat : <strong id="scan-debug-result">—</strong>
+          </div>
+          <button class="btn-ghost" id="btn-manual-capture" onclick="captureAndAnalyze()">📸 Capturer une photo et analyser</button>
         </div>
       </div>
 
@@ -575,6 +582,9 @@ const state = {
   activeTab:         'scanner',
   consoleStampCount: 1
 };
+const SCAN_MAX_DIM = 800;       /* taille max du canvas d'analyse — réduit le coût CPU de getImageData() */
+let _scanFrameCount   = 0;
+let _scanLastUiUpdate = 0;
 
 /* ── Sélecteur de restaurant ── */
 let _pickerRestos = [];
@@ -868,6 +878,7 @@ async function startScanner() {
     noCamera.style.display = 'none';
     hint.textContent = 'Pointez la caméra vers le QR Code du client';
     state.scanPaused = false;
+    _scanFrameCount = 0;
 
     /* Un seul démarrage garanti via la promesse de play() */
     try { await video.play(); } catch (_) { /* autoplay attribute handles fallback */ }
@@ -908,20 +919,85 @@ function scanFrame() {
   const ctx    = canvas.getContext('2d', { willReadFrequently: true });
 
   if (video.readyState >= video.HAVE_ENOUGH_DATA) {
-    canvas.width  = video.videoWidth;
-    canvas.height = video.videoHeight;
+    /* Résolution d'analyse réduite pour soulager le thread principal
+       (c'est ce qui rendait l'animation saccadée) — jsQR n'a pas besoin
+       de la pleine résolution caméra. */
+    const vw = video.videoWidth, vh = video.videoHeight;
+    const scale = Math.min(1, SCAN_MAX_DIM / Math.max(vw, vh));
+    canvas.width  = Math.round(vw * scale);
+    canvas.height = Math.round(vh * scale);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    /* inversionAttempts: 'attemptBoth' pour scanner aussi les QR inversés (fond sombre) */
     const code = jsQR(imageData.data, imageData.width, imageData.height, {
       inversionAttempts: 'attemptBoth'
     });
+
+    _scanFrameCount++;
+    updateScanDebugUI(code ? 'QR détecté !' : 'aucun QR dans l\'image', !!code);
+
     if (code && code.data) {
       onQRDetected(code.data);
       return;
     }
+  } else {
+    updateScanDebugUI('vidéo pas encore prête…', false);
   }
   state.rafId = requestAnimationFrame(scanFrame);
+}
+
+function updateScanDebugUI(resultText, found) {
+  const now = performance.now();
+  if (!found && now - _scanLastUiUpdate < 200) return; /* throttle pour ne pas ajouter de saccades */
+  _scanLastUiUpdate = now;
+  const frEl  = document.getElementById('scan-debug-frames');
+  const resEl = document.getElementById('scan-debug-result');
+  if (frEl)  frEl.textContent = _scanFrameCount;
+  if (resEl) { resEl.textContent = resultText; resEl.style.color = found ? 'var(--success)' : ''; }
+}
+/* ══════════════════════════════════════════════════════════════════
+   CAPTURE MANUELLE — alternative au scan continu
+   Fige l'image en pleine résolution et l'analyse une seule fois.
+   Utile quand le flux continu est instable (écran qui scintille,
+   main qui bouge, etc.)
+══════════════════════════════════════════════════════════════════ */
+async function captureAndAnalyze() {
+  const video = document.getElementById('scanner-video');
+  const btn   = document.getElementById('btn-manual-capture');
+  if (!video.videoWidth) { showToast('Caméra non prête — réessayez dans un instant', 'error'); return; }
+
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Analyse…';
+
+  const wasPaused = state.scanPaused;
+  state.scanPaused = true;
+  cancelAnimationFrame(state.rafId);
+
+  try {
+    const canvas = document.getElementById('scanner-canvas-hidden');
+    const ctx    = canvas.getContext('2d', { willReadFrequently: true });
+    canvas.width  = video.videoWidth;   /* pleine résolution pour cette capture unique */
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
+
+    if (code && code.data) {
+      updateScanDebugUI('QR détecté (capture manuelle) !', true);
+      onQRDetected(code.data);
+    } else {
+      updateScanDebugUI('aucun QR sur la capture manuelle', false);
+      showToast('Aucun QR trouvé sur cette photo — rapprochez-vous et évitez les reflets d\'écran', 'error');
+      state.scanPaused = wasPaused;
+      if (!wasPaused) scheduleScan();
+    }
+  } catch (err) {
+    console.error('[Scanner] Erreur capture manuelle :', err);
+    showToast('Erreur lors de l\'analyse de la photo', 'error');
+    state.scanPaused = wasPaused;
+    if (!wasPaused) scheduleScan();
+  } finally {
+    btn.disabled = false; btn.innerHTML = originalHTML;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════

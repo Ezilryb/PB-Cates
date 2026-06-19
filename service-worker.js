@@ -14,7 +14,7 @@
 'use strict';
 
 /* ── Nom et version du cache (à incrémenter à chaque déploiement) ── */
-const CACHE_NAME    = 'pb-cates-v2';
+const CACHE_NAME    = 'pb-cates-v3';
 const SYNC_TAG      = 'sync-tampons-offline';
 
 /* ── Ressources du "App Shell" à mettre en cache immédiatement ── */
@@ -104,6 +104,15 @@ self.addEventListener('fetch', event => {
   }
 
   /* ── 4. Assets de l'App Shell → Cache First ── */
+  /* ── 4. Pages HTML (navigation) → Network First
+        En développement actif on veut TOUJOURS la dernière version
+        déployée ; le cache ne sert qu'en secours si hors-ligne. ── */
+  if (event.request.mode === 'navigate' || url.pathname.endsWith('.html')) {
+    event.respondWith(networkFirstStrategy(event.request));
+    return;
+  }
+
+  /* ── 5. Autres assets de l'App Shell (JS, manifest…) → Cache First ── */
   event.respondWith(cacheFirstStrategy(event.request));
 });
 
