@@ -1,554 +1,431 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0d0d0f" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="manifest" href="store-manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-  <title>PB-Cates — Espace Caisse</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+<meta name="theme-color" content="#f8fafc" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<link rel="manifest" href="store-manifest.json" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<title>PB-Cates — Espace Caisse</title>
 
-  <style>
-    :root {
-      --bg-deep:        #0d0d0f;
-      --bg-surface:     #141417;
-      --bg-card:        #1a1a1f;
-      --bg-card-hover:  #202028;
-      --bg-input:       #1f1f26;
-      --gold:           #c9a84c;
-      --gold-light:     #e0c170;
-      --gold-dim:       #7a6330;
-      --success:        #4ecb71;
-      --success-bg:     rgba(78,203,113,0.1);
-      --danger:         #e05555;
-      --danger-bg:      rgba(224,85,85,0.1);
-      --teal:           #3ecdbd;
-      --teal-bg:        rgba(62,205,189,0.1);
-      --text-primary:   #f0ece0;
-      --text-secondary: #9a9080;
-      --text-muted:     #555048;
-      --border:         rgba(201,168,76,0.18);
-      --border-soft:    rgba(255,255,255,0.06);
-      --radius-sm:      8px;
-      --radius-md:      14px;
-      --radius-lg:      20px;
-      --radius-xl:      28px;
-      --font-display:   'Playfair Display', Georgia, serif;
-      --font-body:      'DM Sans', system-ui, sans-serif;
-      --font-mono:      'DM Mono', monospace;
-      --max-w:          440px;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: var(--bg-deep); color: var(--text-primary); font-family: var(--font-body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-    #app { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; padding-bottom: env(safe-area-inset-bottom); }
-    .shell { width: 100%; max-width: var(--max-w); flex: 1; display: flex; flex-direction: column; position: relative; }
-    .screen { display: none; flex: 1; flex-direction: column; animation: fadeUp 0.3s ease both; }
-    .screen.active { display: flex; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          mono: ['"DM Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        },
+        boxShadow: {
+          card:     '0 1px 2px rgba(15,23,42,0.04), 0 8px 24px -10px rgba(15,23,42,0.12)',
+          elevated: '0 4px 14px rgba(15,23,42,0.06), 0 28px 56px -16px rgba(15,23,42,0.24)',
+        },
+        keyframes: {
+          slideUp:  { '0%': { transform: 'translateY(100%)' }, '100%': { transform: 'translateY(0)' } },
+          fadeIn:   { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+          scaleIn:  { '0%': { opacity: 0, transform: 'scale(.96)' }, '100%': { opacity: 1, transform: 'scale(1)' } },
+          riseIn:   { '0%': { opacity: 0, transform: 'translateY(10px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+          ringPulse:{ '0%': { transform: 'scale(1)', opacity: .45 }, '100%': { transform: 'scale(1.9)', opacity: 0 } },
+        },
+        animation: {
+          'slide-up':   'slideUp .32s cubic-bezier(.25,.46,.45,.94)',
+          'fade-in':    'fadeIn .2s ease',
+          'scale-in':   'scaleIn .18s ease',
+          'rise-in':    'riseIn .25s ease both',
+          'ring-pulse': 'ringPulse 2.4s cubic-bezier(0,0,.2,1) infinite',
+        },
+      },
+    },
+  };
+</script>
 
-    /* ── AUTH ── */
-    #screen-auth { justify-content: center; padding: 2rem 1.5rem; min-height: 100dvh; }
-    .auth-logo { text-align: center; margin-bottom: 2.5rem; }
-    .logo-mark { width: 64px; height: 64px; border-radius: var(--radius-lg); border: 1px solid var(--gold-dim); background: linear-gradient(135deg, #1e1a10 0%, #0d0d0f 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--gold); }
-    .logo-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
-    .logo-sub { font-size: 0.72rem; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
-    .auth-form h2 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 500; margin-bottom: 0.4rem; }
-    .auth-form p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.75rem; }
-    .input-group { position: relative; margin-bottom: 1rem; }
-    .input-group input { width: 100%; padding: 0.85rem 1rem 0.85rem 2.8rem; background: var(--bg-input); border: 1px solid var(--border-soft); border-radius: var(--radius-md); color: var(--text-primary); font-family: var(--font-body); font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
-    .input-group input:focus { border-color: var(--gold-dim); }
-    .input-group input::placeholder { color: var(--text-muted); }
-    .input-icon { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px; pointer-events: none; }
-    .btn-primary { width: 100%; padding: 0.9rem 1.5rem; background: var(--gold); border: none; border-radius: var(--radius-md); color: #0d0d0f; font-family: var(--font-body); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s, transform 0.1s; }
-    .btn-primary:hover { background: var(--gold-light); }
-    .btn-primary:active { transform: scale(0.98); }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-ghost { width: 100%; padding: 0.8rem 1.5rem; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-body); font-size: 0.88rem; cursor: pointer; transition: border-color 0.2s, color 0.2s; margin-top: 0.75rem; }
-    .btn-ghost:hover { border-color: var(--gold-dim); color: var(--gold); }
-    .btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
-    .divider { display: flex; align-items: center; gap: 1rem; margin: 1.25rem 0; color: var(--text-muted); font-size: 0.78rem; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-soft); }
-    .auth-error { font-size: 0.82rem; color: var(--danger); text-align: center; padding: 0.5rem 0.75rem; background: var(--danger-bg); border-radius: var(--radius-sm); display: none; margin-bottom: 0.75rem; }
-    .auth-error.visible { display: block; animation: fadeUp 0.2s ease; }
-    .password-wrap { position: relative; }
-    .password-wrap input { padding-right: 3rem; }
-    .toggle-pwd { position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 0; line-height: 1; }
-
-    /* ── RESTAURANT PICKER ── */
-    #screen-picker { justify-content: flex-start; padding: 2rem 1.5rem; min-height: 100dvh; }
-    .picker-item {
-      display: flex; align-items: center; gap: 1rem;
-      padding: 1rem 1.25rem; background: var(--bg-card);
-      border: 1px solid var(--border-soft); border-radius: var(--radius-lg);
-      cursor: pointer; text-align: left; width: 100%; font-family: var(--font-body);
-      transition: border-color 0.2s, transform 0.15s; color: var(--text-primary);
-    }
-    .picker-item:hover { border-color: var(--border); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-    .picker-item:active { transform: scale(0.98); }
-    .picker-logo {
-      width: 46px; height: 46px; border-radius: var(--radius-sm);
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; flex-shrink: 0;
-    }
-    .picker-name { font-size: 0.95rem; font-weight: 500; }
-    .picker-cat  { font-size: 0.74rem; color: var(--text-muted); margin-top: 2px; }
-    .picker-loading { text-align: center; color: var(--text-muted); padding: 2.5rem 0; font-size: 0.85rem; }
-    .picker-empty  { text-align: center; color: var(--text-muted); padding: 2.5rem 1rem; font-size: 0.84rem; line-height: 1.6; }
-
-    /* ── SCANNER HEADER ── */
-    .scanner-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 1.25rem; background: var(--bg-deep);
-      position: sticky; top: 0; z-index: 10;
-      border-bottom: 1px solid var(--border-soft);
-    }
-    .scanner-resto-name { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-primary); }
-    .scanner-resto-sub { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 1px; }
-    .stamp-counter { display: flex; flex-direction: column; align-items: flex-end; }
-    .stamp-count-value { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--gold); line-height: 1; }
-    .stamp-count-label { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 1px; }
-
-    /* ── SCANNER TABS ── */
-    .scanner-tabs { display: flex; border-bottom: 1px solid var(--border-soft); }
-    .scanner-tab { flex: 1; padding: 0.75rem; text-align: center; font-size: 0.82rem; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-muted); cursor: pointer; border: none; background: none; transition: color 0.2s; font-family: var(--font-body); border-bottom: 2px solid transparent; margin-bottom: -1px; }
-    .scanner-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-
-    /* ── SCANNER VIEW ── */
-    #tab-scanner, #tab-history { flex: 1; }
-    .scanner-viewport-wrap { padding: 1.25rem 1rem 0.75rem; flex: 1; display: flex; flex-direction: column; }
-    .scanner-viewport {
-      position: relative; width: 100%;
-      aspect-ratio: 1 / 1; max-height: 340px;
-      background: #000; border-radius: var(--radius-lg); overflow: hidden; flex-shrink: 0;
-    }
-    #scanner-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    #scanner-canvas-hidden { display: none; }
-
-    .scan-bracket { position: absolute; width: 36px; height: 36px; border-color: var(--gold); border-style: solid; }
-    .scan-bracket.tl { top: 14px; left: 14px; border-width: 3px 0 0 3px; border-radius: 5px 0 0 0; }
-    .scan-bracket.tr { top: 14px; right: 14px; border-width: 3px 3px 0 0; border-radius: 0 5px 0 0; }
-    .scan-bracket.bl { bottom: 14px; left: 14px; border-width: 0 0 3px 3px; border-radius: 0 0 0 5px; }
-    .scan-bracket.br { bottom: 14px; right: 14px; border-width: 0 3px 3px 0; border-radius: 0 0 5px 0; }
-    .scan-line { position: absolute; left: 20px; right: 20px; height: 2px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.8), transparent); animation: scanDown 2.4s ease-in-out infinite; }
-    @keyframes scanDown { 0% { top: 20px; opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { top: calc(100% - 20px); opacity: 0; } }
-
-    .no-camera-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; gap: 1rem; }
-    .no-camera-icon { font-size: 48px; color: var(--text-muted); }
-    .no-camera-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--text-secondary); }
-    .no-camera-sub { font-size: 0.82rem; color: var(--text-muted); max-width: 260px; }
-    .scanner-hint { text-align: center; padding: 0.75rem 1rem; font-size: 0.8rem; color: var(--text-muted); }
-    .scan-debug { text-align: center; font-size: 0.72rem; font-family: var(--font-mono); color: var(--text-muted); padding: 0 1rem 0.5rem; letter-spacing: 0.3px; }
-    .scan-debug strong { color: var(--text-secondary); font-weight: 500; }
-
-    /* ── HISTORY TAB ── */
-    .history-header { padding: 1.25rem 1.25rem 0.5rem; }
-    .history-today-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: var(--success-bg); border: 1px solid rgba(78,203,113,0.25); border-radius: 100px; font-size: 0.8rem; color: var(--success); }
-    .history-list { flex: 1; overflow-y: auto; padding: 0 1rem 2rem; }
-    .history-row { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 0; border-bottom: 1px solid var(--border-soft); gap: 1rem; }
-    .history-row:last-child { border-bottom: none; }
-    .history-row-left { flex: 1; min-width: 0; }
-    .history-row-time { font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.5px; }
-    .history-row-card { font-size: 0.88rem; color: var(--text-primary); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .stamp-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; background: rgba(201,168,76,0.1); border-radius: 100px; font-size: 0.78rem; color: var(--gold); white-space: nowrap; }
-    .empty-history { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 3rem 2rem; text-align: center; gap: 0.75rem; }
-    .empty-history-icon { font-size: 36px; color: var(--text-muted); }
-    .empty-history-text { font-size: 0.85rem; color: var(--text-muted); }
-
-    /* ── BOTTOM NAV ── */
-    .bottom-nav { display: flex; background: var(--bg-surface); border-top: 1px solid var(--border-soft); padding: 0.6rem 0; padding-bottom: calc(0.6rem + env(safe-area-inset-bottom)); }
-    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0.4rem 0; cursor: pointer; color: var(--text-muted); font-size: 0.65rem; letter-spacing: 0.5px; text-transform: uppercase; transition: color 0.2s; background: none; border: none; font-family: var(--font-body); }
-    .nav-item span { font-size: 22px; }
-    .nav-item.active { color: var(--gold); }
-
-    /* ── VALIDATION OVERLAY ── */
-    .validation-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 100; align-items: flex-end; justify-content: center; backdrop-filter: blur(6px); }
-    .validation-overlay.open { display: flex; }
-    .validation-sheet {
-      background: var(--bg-surface); border: 1px solid var(--border); border-bottom: none;
-      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-      padding: 1.5rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom));
-      width: 100%; max-width: var(--max-w); animation: slideUp 0.3s cubic-bezier(.25,.46,.45,.94);
-    }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 1.5rem; }
-    .sheet-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 500; margin-bottom: 1.25rem; }
-
-    /* Enrollment badge */
-    .enroll-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 12px; background: rgba(201,168,76,0.12);
-      border: 1px solid var(--border); border-radius: 100px;
-      font-size: 0.75rem; color: var(--gold); margin-bottom: 1rem;
-    }
-
-    .customer-card-preview {
-      border-radius: var(--radius-lg); padding: 1.25rem;
-      border: 1px solid var(--border-soft); margin-bottom: 1.5rem;
-      position: relative; overflow: hidden;
-    }
-    .customer-card-preview::before { content: ''; position: absolute; top: -40%; right: -10%; width: 120px; height: 120px; border-radius: 50%; opacity: 0.07; pointer-events: none; background: radial-gradient(circle, var(--gold), transparent); }
-    .preview-brand { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: 2px; }
-    .preview-uid { font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.5px; margin-bottom: 0.75rem; }
-    .preview-stamps { display: flex; gap: 6px; flex-wrap: wrap; }
-    .preview-stamp { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 10px; }
-    .preview-stamp.filled { background: var(--gold); border-color: var(--gold); color: #0d0d0f; }
-    .preview-stamp.new-stamp { background: rgba(78,203,113,0.2); border-color: var(--success); color: var(--success); animation: stampAppear 0.4s ease; }
-    @keyframes stampAppear { from { transform: scale(0); } to { transform: scale(1); } }
-
-    .stamp-selector { display: flex; align-items: center; justify-content: center; gap: 1.25rem; margin-bottom: 1.5rem; }
-    .stamp-selector-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-soft); color: var(--text-primary); font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
-    .stamp-selector-btn:hover { background: var(--bg-card-hover); border-color: var(--border); }
-    .stamp-selector-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .stamp-selector-value { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; color: var(--gold); min-width: 64px; text-align: center; line-height: 1; }
-    .stamp-selector-label { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; text-align: center; margin-top: 2px; }
-
-    .btn-confirm { width: 100%; padding: 1rem; background: var(--success); border: none; border-radius: var(--radius-md); color: #fff; font-family: var(--font-body); font-size: 1rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s, transform 0.1s; letter-spacing: 0.3px; }
-    .btn-confirm:hover { opacity: 0.9; }
-    .btn-confirm:active { transform: scale(0.98); }
-    .btn-cancel { width: 100%; padding: 0.8rem; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-body); font-size: 0.9rem; cursor: pointer; transition: border-color 0.2s, color 0.2s; margin-top: 0.6rem; }
-    .btn-cancel:hover { border-color: rgba(220,80,80,0.4); color: var(--danger); }
-
-    .token-meta { font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); text-align: center; padding: 0.5rem 0; margin-bottom: 1rem; }
-    .token-meta span { color: var(--success); }
-
-    .scanner-viewport.success-flash { animation: successFlash 0.6s ease; }
-    .scanner-viewport.error-flash   { animation: errorFlash   0.6s ease; }
-    @keyframes successFlash { 0%, 100% { box-shadow: none; } 50% { box-shadow: 0 0 0 4px rgba(78,203,113,0.4); } }
-    @keyframes errorFlash   { 0%, 100% { box-shadow: none; } 50% { box-shadow: 0 0 0 4px rgba(224,85,85,0.4);  } }
-
-    /* TOASTS */
-    .toast-container { position: fixed; top: 1.25rem; left: 50%; transform: translateX(-50%); z-index: 300; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
-    .toast { padding: 0.7rem 1.2rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 100px; font-size: 0.85rem; color: var(--text-primary); white-space: nowrap; animation: toastIn 0.3s ease both; }
-    .toast.success { border-color: rgba(78,203,113,0.4); color: var(--success); }
-    .toast.error   { border-color: rgba(224,85,85,0.4);  color: var(--danger); }
-    @keyframes toastIn { from { opacity: 0; transform: translateY(-8px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(13,13,15,0.3); border-top-color: #0d0d0f; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 5px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ══ CONSOLE CAISSE ══ */
-    .console-section { background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: var(--radius-lg); padding: 1.25rem; margin: 1rem 1rem 0; }
-    #tab-console > .console-section:last-child { margin-bottom: 1rem; }
-    .console-section-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.1rem; }
-    .console-section-title.center { text-align: center; }
-    .console-field-label { display: block; font-size: 0.78rem; color: var(--text-secondary); letter-spacing: 0.3px; margin-bottom: 0.6rem; }
-    .stepper-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.35rem; }
-    .stepper-label { font-size: 0.9rem; color: var(--text-primary); margin-bottom: 2px; }
-    .stepper-hint  { font-size: 0.75rem; color: var(--text-muted); }
-    .stepper-control { display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0; }
-    .stepper-value { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--gold); min-width: 30px; text-align: center; }
-    .console-actions-row { display: flex; gap: 0.75rem; margin-bottom: 0.85rem; }
-    .btn-console-add, .btn-console-gift { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0.95rem; border: none; border-radius: var(--radius-md); font-family: var(--font-body); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: filter 0.2s, transform 0.1s, opacity 0.2s; }
-    .btn-console-add  { background: var(--gold);  color: #0d0d0f; }
-    .btn-console-gift { background: var(--teal);  color: #07221f; }
-    .btn-console-add:hover, .btn-console-gift:hover { filter: brightness(1.08); }
-    .btn-console-add:active, .btn-console-gift:active { transform: scale(0.98); }
-    .btn-console-add:disabled, .btn-console-gift:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
-    .btn-console-outline { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0.85rem; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--gold); font-family: var(--font-body); font-size: 0.88rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
-    .btn-console-outline:hover { background: rgba(201,168,76,0.06); border-color: var(--gold-dim); }
-    .btn-console-outline:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-icon { font-size: 16px; line-height: 1; }
-    .console-toggle-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding-bottom: 1.35rem; margin-bottom: 1.35rem; border-bottom: 1px solid var(--border-soft); }
-    .console-row-label { font-size: 0.9rem; color: var(--text-primary); margin-bottom: 4px; }
-    .console-row-sub   { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; max-width: 300px; }
-    .toggle { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
-    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
-    .toggle-slider { position: absolute; inset: 0; background: var(--bg-input); border: 1px solid var(--border-soft); border-radius: 100px; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
-    .toggle-slider::before { content: ''; position: absolute; width: 20px; height: 20px; left: 2px; top: 2px; background: var(--text-muted); border-radius: 50%; transition: transform 0.2s, background 0.2s; }
-    .toggle input:checked + .toggle-slider { background: rgba(201,168,76,0.22); border-color: var(--gold-dim); }
-    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); background: var(--gold); }
-    .toggle input:disabled + .toggle-slider { opacity: 0.4; cursor: not-allowed; }
-    .range-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
-    .range-value { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--gold); white-space: nowrap; }
-    .console-range { --fill: 30%; width: 100%; -webkit-appearance: none; appearance: none; height: 5px; margin-top: 0.85rem; border-radius: 3px; outline: none; cursor: pointer; background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--fill), var(--bg-input) var(--fill), var(--bg-input) 100%); }
-    .console-range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--gold); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 0 1px var(--border); }
-    .console-range::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--gold); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 0 1px var(--border); }
-    .console-range:disabled { opacity: 0.4; cursor: not-allowed; }
-    .network-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-    .network-info { display: flex; align-items: center; gap: 0.9rem; }
-    .network-icon { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--success-bg); color: var(--success); transition: background 0.2s, color 0.2s; }
-    .network-row.offline .network-icon { background: var(--danger-bg); color: var(--danger); }
-    .btn-network-sim { padding: 0.65rem 1.1rem; background: var(--danger); border: none; border-radius: var(--radius-md); color: #fff; font-family: var(--font-body); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s, background 0.2s; white-space: nowrap; }
-    .btn-network-sim:hover { opacity: 0.88; }
-    .btn-network-sim.is-offline { background: var(--success); color: #06231d; }
-    .console-export-icon { text-align: center; font-size: 26px; color: var(--text-muted); margin-bottom: 0.6rem; }
-    .activity-row { display: flex; align-items: center; gap: 0.85rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-soft); }
-    .activity-row:last-child { border-bottom: none; }
-    .activity-row-icon { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; font-size: 13px; display: flex; align-items: center; justify-content: center; }
-    .activity-row-icon.positive { background: var(--success-bg); color: var(--success); }
-    .activity-row-icon.negative { background: rgba(201,168,76,0.12); color: var(--gold); }
-    .activity-row-main { flex: 1; min-width: 0; }
-    .activity-row-email { font-size: 0.86rem; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .activity-row-label { font-size: 0.74rem; color: var(--text-muted); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .activity-row-badge { font-size: 0.82rem; font-weight: 600; flex-shrink: 0; }
-    .activity-row-badge.positive { color: var(--success); }
-    .activity-row-badge.negative { color: var(--gold); }
-    .empty-activity { font-size: 0.82rem; color: var(--text-muted); text-align: center; padding: 1.5rem 0; }
-
-    @media (min-width: 500px) {
-      #app { background: #08080a; padding-top: 2rem; padding-bottom: 2rem; }
-      .shell { border-radius: var(--radius-xl); border: 1px solid var(--border-soft); overflow: hidden; max-height: 820px; box-shadow: 0 40px 100px rgba(0,0,0,0.6); }
-      .validation-overlay { align-items: center; }
-      .validation-sheet { border-radius: var(--radius-xl); border: 1px solid var(--border); max-width: 400px; padding-bottom: 1.5rem; }
-    }
-  </style>
+<style>
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  html, body { -webkit-font-smoothing: antialiased; height: 100%; }
+  #scanner-video { object-fit: cover; }
+</style>
 </head>
-<body>
-<div id="app">
-  <div class="shell">
+<body class="bg-slate-50 text-slate-900 font-sans min-h-dvh">
+<div class="min-h-dvh sm:py-8 sm:px-4 flex justify-center bg-slate-50">
+<div class="w-full sm:max-w-md bg-slate-50 sm:rounded-[28px] sm:border sm:border-slate-200 sm:shadow-elevated sm:overflow-hidden flex flex-col min-h-dvh sm:min-h-0 sm:h-[840px] relative">
 
-    <!-- ══ ÉCRAN AUTH ══ -->
-    <section id="screen-auth" class="screen active" aria-label="Connexion caisse">
-      <div class="auth-logo">
-        <div class="logo-mark">PB</div>
-        <div class="logo-title">PB-Cates</div>
-        <div class="logo-sub">Espace Caisse</div>
-      </div>
-      <div class="auth-form">
-        <h2>Accès vendeur</h2>
-        <p>Connectez-vous avec votre email et mot de passe professionnel.</p>
+  <!-- ══════════════════════════ ÉCRAN AUTH ══════════════════════════ -->
+  <section id="screen-auth" class="flex-1 flex flex-col justify-center px-6 py-10 overflow-y-auto">
+    <div class="text-center mb-10">
+      <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center mx-auto mb-4 font-extrabold text-lg shadow-card">PB</div>
+      <h1 class="text-xl font-bold tracking-tight">PB-Cates</h1>
+      <p class="text-xs font-semibold text-amber-600 tracking-[0.18em] uppercase mt-1">Espace Caisse</p>
+    </div>
 
-        <div id="store-auth-error" class="auth-error" role="alert"></div>
+    <h2 class="text-lg font-bold mb-1">Accès vendeur</h2>
+    <p class="text-sm text-slate-500 mb-6">Connectez-vous avec votre email et mot de passe professionnel.</p>
 
-        <div class="input-group">
-          <span class="input-icon">✉</span>
-          <input type="email" id="store-email" placeholder="caisse@restaurant.com" autocomplete="email" inputmode="email" aria-label="Adresse email" />
-        </div>
-        <div class="input-group password-wrap">
-          <span class="input-icon">🔒</span>
-          <input type="password" id="store-password" placeholder="Mot de passe" autocomplete="current-password" aria-label="Mot de passe" />
-          <button type="button" class="toggle-pwd" onclick="togglePwd('store-password', this)" aria-label="Afficher le mot de passe">👁</button>
-        </div>
-        <button class="btn-primary" id="btn-store-login" onclick="handleStoreLogin()">Accéder à la caisse</button>
+    <div id="store-auth-error" class="hidden text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl px-3.5 py-2.5 mb-4" role="alert"></div>
 
-        <div class="divider">ou</div>
-
-        <button class="btn-ghost" id="btn-store-demo" onclick="handleDemoLogin()">▷ Mode démo — sans email</button>
-      </div>
-    </section>
-
-    <!-- ══ ÉCRAN PICKER — sélection du commerce ══ -->
-    <section id="screen-picker" class="screen" aria-label="Sélection du commerce">
-      <div class="auth-logo" style="margin-bottom:1.5rem">
-        <div class="logo-mark">PB</div>
-        <div class="logo-title">Votre Commerce</div>
-        <div class="logo-sub">Sélection</div>
-      </div>
-      <div style="padding: 0 1.5rem; flex:1; display:flex; flex-direction:column;">
-        <div class="auth-form" style="flex:1">
-          <h2>Sélectionnez votre commerce</h2>
-          <p>Aucun commerce n'est lié automatiquement à ce compte. Choisissez votre établissement.</p>
-          <div id="picker-list" style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.5rem;flex:1">
-            <div class="picker-loading">Chargement des commerces…</div>
-          </div>
-          <button class="btn-ghost" onclick="logoutFromPicker()">← Changer de compte</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ ÉCRAN SCANNER ══ -->
-    <section id="screen-scanner" class="screen" aria-label="Scanner caisse">
-
-      <div class="scanner-header">
-        <div>
-          <div class="scanner-resto-name" id="header-resto-name">PB-Cates</div>
-          <div class="scanner-resto-sub" id="header-shift-info">Session en cours</div>
-        </div>
-        <div class="stamp-counter">
-          <div class="stamp-count-value" id="today-count">0</div>
-          <div class="stamp-count-label">tampons aujourd'hui</div>
-        </div>
+    <div class="space-y-3">
+      <div class="relative">
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+          <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Z"/><path d="m4 6 8 6 8-6"/></svg>
+        </span>
+        <input type="email" id="store-email" placeholder="caisse@restaurant.com" autocomplete="email" inputmode="email" aria-label="Adresse email"
+          class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm placeholder:text-slate-400 outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition" />
       </div>
 
-      <div class="scanner-tabs">
-        <button class="scanner-tab active" id="tab-scan-btn"     onclick="switchTab('scanner')">📷 Scanner</button>
-        <button class="scanner-tab"        id="tab-hist-btn"     onclick="switchTab('history')">📋 Historique</button>
-        <button class="scanner-tab"        id="tab-console-btn"  onclick="switchTab('console')">🧾 Console</button>
+      <div class="relative">
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+          <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 1 1 8 0v3"/></svg>
+        </span>
+        <input type="password" id="store-password" placeholder="Mot de passe" autocomplete="current-password" aria-label="Mot de passe"
+          class="w-full pl-11 pr-11 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm placeholder:text-slate-400 outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition" />
+        <button type="button" onclick="togglePwd('store-password', this)" aria-label="Afficher le mot de passe"
+          class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition">
+          <svg data-eye viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
 
-      <!-- TAB: SCANNER -->
-      <div id="tab-scanner" style="display:flex;flex-direction:column;flex:1;">
-        <div class="scanner-viewport-wrap">
-          <div class="scanner-viewport" id="scanner-viewport">
-            <video id="scanner-video" autoplay playsinline muted></video>
-            <canvas id="scanner-canvas-hidden"></canvas>
-            <div class="scan-bracket tl"></div>
-            <div class="scan-bracket tr"></div>
-            <div class="scan-bracket bl"></div>
-            <div class="scan-bracket br"></div>
-            <div class="scan-line" id="scan-line"></div>
-          </div>
-          <div class="no-camera-state" id="no-camera" style="display:none">
-            <div class="no-camera-icon">📷</div>
-            <div class="no-camera-title">Caméra non disponible</div>
-            <div class="no-camera-sub">Autorisez l'accès à la caméra, ou utilisez la Console (onglet 🧾) pour encaisser par email.</div>
-            <button class="btn-primary" style="max-width:240px;margin-top:0.5rem" onclick="startScanner()">Réessayer</button>
-          </div>
-          <p class="scanner-hint" id="scanner-hint">Pointez la caméra vers le QR Code du client</p>
+      <button id="btn-store-login" onclick="handleStoreLogin()"
+        class="w-full py-3.5 bg-amber-500 hover:bg-amber-600 active:scale-[.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 text-white font-semibold text-sm rounded-2xl shadow-card transition flex items-center justify-center gap-2">
+        Accéder à la caisse
+      </button>
+    </div>
 
-          <div class="scan-debug" id="scan-debug">
-            Images analysées : <strong id="scan-debug-frames">0</strong> · Dernier résultat : <strong id="scan-debug-result">—</strong>
-          </div>
-          <button class="btn-ghost" id="btn-manual-capture" onclick="captureAndAnalyze()">📸 Capturer une photo et analyser</button>
-        </div>
+    <div class="flex items-center gap-3 my-5 text-xs text-slate-400">
+      <div class="flex-1 h-px bg-slate-200"></div>ou<div class="flex-1 h-px bg-slate-200"></div>
+    </div>
+
+    <button id="btn-store-demo" onclick="handleDemoLogin()"
+      class="w-full py-3 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed text-slate-600 font-medium text-sm rounded-2xl transition">
+      ▷ Mode démo — sans email
+    </button>
+  </section>
+
+  <!-- ══════════════════════════ ÉCRAN PICKER ══════════════════════════ -->
+  <section id="screen-picker" class="hidden flex-1 flex-col px-6 py-10 overflow-y-auto">
+    <div class="text-center mb-8">
+      <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center mx-auto mb-4 font-extrabold text-lg shadow-card">PB</div>
+      <h1 class="text-lg font-bold">Votre Commerce</h1>
+      <p class="text-xs font-semibold text-amber-600 tracking-[0.18em] uppercase mt-1">Sélection</p>
+    </div>
+    <h2 class="text-lg font-bold mb-1">Sélectionnez votre commerce</h2>
+    <p class="text-sm text-slate-500 mb-5">Aucun commerce n'est lié automatiquement à ce compte. Choisissez votre établissement.</p>
+
+    <div id="picker-list" class="flex flex-col gap-2.5 mb-6 flex-1">
+      <div class="text-center text-sm text-slate-400 py-10">Chargement des commerces…</div>
+    </div>
+
+    <button onclick="logoutFromPicker()" class="w-full py-3 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 font-medium text-sm rounded-2xl transition">
+      ← Changer de compte
+    </button>
+  </section>
+
+  <!-- ══════════════════════════ TABLEAU DE BORD ══════════════════════════ -->
+  <section id="screen-dashboard" class="hidden flex-1 flex-col min-h-0">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-slate-200 px-5 py-3.5 flex items-center justify-between gap-3">
+      <div class="min-w-0">
+        <div id="header-resto-name" class="font-bold text-[15px] truncate">PB-Cates</div>
+        <div id="header-shift-info" class="text-[11px] text-slate-400 truncate">Session en cours</div>
       </div>
-
-      <!-- TAB: HISTORY -->
-      <div id="tab-history" style="display:none;flex-direction:column;flex:1;">
-        <div class="history-header">
-          <div class="history-today-badge">
-            <span>✓</span>
-            <span id="history-count-label">0 tampon validé aujourd'hui</span>
-          </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-1.5 pl-2.5 pr-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100" id="network-row-badge">
+          <span id="network-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span id="network-label" class="text-[11px] font-semibold text-emerald-700">Connecté</span>
         </div>
-        <div class="history-list" id="history-list">
-          <div class="empty-history">
-            <div class="empty-history-icon">🕐</div>
-            <div class="empty-history-text">Aucune validation pour l'instant.</div>
-          </div>
+        <button onclick="logout()" aria-label="Déconnexion" class="w-9 h-9 rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition">
+          <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto px-5 pb-10">
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 gap-3 mt-4">
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-card">
+          <div id="stat-today-count" class="text-3xl font-extrabold tracking-tight">0</div>
+          <div class="text-[11px] text-slate-500 font-medium mt-0.5">Tampons aujourd'hui</div>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-card">
+          <div id="stat-today-visits" class="text-3xl font-extrabold tracking-tight">0</div>
+          <div class="text-[11px] text-slate-500 font-medium mt-0.5">Clients servis</div>
         </div>
       </div>
 
-      <!-- TAB: CONSOLE -->
-      <div id="tab-console" style="display:none;flex-direction:column;flex:1;overflow-y:auto;">
+      <!-- Hero scan CTA -->
+      <div class="mt-4 bg-gradient-to-b from-slate-900 to-slate-800 rounded-3xl p-7 text-center shadow-elevated">
+        <div class="relative w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+          <span class="absolute inset-0 rounded-full bg-amber-400/30 animate-ring-pulse"></span>
+          <span class="absolute inset-0 rounded-full bg-amber-400/30 animate-ring-pulse" style="animation-delay:1.2s"></span>
+          <div class="relative w-16 h-16 rounded-full bg-amber-500 flex items-center justify-center shadow-lg">
+            <svg viewBox="0 0 24 24" class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7V5a1 1 0 0 1 1-1h2"/><path d="M4 17v2a1 1 0 0 0 1 1h2"/><path d="M20 7V5a1 1 0 0 0-1-1h-2"/><path d="M20 17v2a1 1 0 0 1-1 1h-2"/>
+              <rect x="7" y="7" width="3.2" height="3.2" rx=".4"/><rect x="13.8" y="7" width="3.2" height="3.2" rx=".4"/><rect x="7" y="13.8" width="3.2" height="3.2" rx=".4"/>
+              <path d="M14.5 14.5h2.8v2.8"/><path d="M17.3 17.3h.01"/>
+            </svg>
+          </div>
+        </div>
+        <h3 class="text-white font-bold text-base">Scanner une carte client</h3>
+        <p class="text-slate-400 text-xs mt-1 mb-5">Activez la caméra pour valider un QR code en un instant</p>
+        <button onclick="openScannerModal()"
+          class="w-full py-4 bg-amber-500 hover:bg-amber-400 active:scale-[.98] text-slate-900 font-bold text-sm rounded-2xl transition flex items-center justify-center gap-2 shadow-lg">
+          <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          Ouvrir le Scanner
+        </button>
+      </div>
 
-        <div class="console-section">
-          <div class="console-section-title">Actions d'Encaissement</div>
-          <label class="console-field-label" for="console-email">Adresse E-mail du Client</label>
-          <div class="input-group" style="margin-bottom:1.35rem">
-            <span class="input-icon">✉</span>
-            <input type="email" id="console-email" placeholder="client@exemple.com" autocomplete="off" inputmode="email" aria-label="Adresse email du client" />
+      <!-- Manual entry -->
+      <div class="mt-4 bg-white border border-slate-200 rounded-2xl p-5 shadow-card">
+        <div class="flex items-center gap-2.5 mb-0.5">
+          <svg viewBox="0 0 24 24" class="w-[18px] h-[18px] text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          <div class="font-bold text-[15px]">Saisie manuelle</div>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">Caméra indisponible ? Encaissez directement avec l'e-mail du client.</p>
+
+        <div class="relative mb-4">
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+            <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Z"/><path d="m4 6 8 6 8-6"/></svg>
+          </span>
+          <input type="email" id="console-email" placeholder="client@exemple.com" autocomplete="off" inputmode="email" aria-label="Adresse email du client"
+            class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder:text-slate-400 outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition" />
+        </div>
+
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <div>
+            <div class="text-sm font-medium">Tampons à valider</div>
+            <div id="console-multi-hint" class="text-[11px] text-slate-400 mt-0.5">Règle : multi-tampon désactivé</div>
           </div>
-          <div class="stepper-row">
-            <div>
-              <div class="stepper-label">Volume Tampons à Valider</div>
-              <div class="stepper-hint" id="console-multi-hint">Règle : multi-tampon désactivé</div>
-            </div>
-            <div class="stepper-control">
-              <button class="stamp-selector-btn" id="console-btn-minus" onclick="consoleAdjustStamps(-1)" aria-label="Diminuer">−</button>
-              <div class="stepper-value" id="console-stamp-value">1</div>
-              <button class="stamp-selector-btn" id="console-btn-plus" onclick="consoleAdjustStamps(1)" aria-label="Augmenter">+</button>
-            </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <button id="console-btn-minus" onclick="consoleAdjustStamps(-1)" aria-label="Diminuer"
+              class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 text-lg font-medium flex items-center justify-center transition">−</button>
+            <div id="console-stamp-value" class="text-xl font-extrabold w-6 text-center">1</div>
+            <button id="console-btn-plus" onclick="consoleAdjustStamps(1)" aria-label="Augmenter"
+              class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 text-lg font-medium flex items-center justify-center transition">+</button>
           </div>
-          <div class="console-actions-row">
-            <button class="btn-console-add" id="btn-console-add" onclick="consoleAddStamps()">
-              <span class="btn-icon">▣</span> Ajouter
-            </button>
-            <button class="btn-console-gift" id="btn-console-gift" onclick="consoleRedeemReward()">
-              <span class="btn-icon">🎁</span> Cadeau
-            </button>
-          </div>
-          <button class="btn-console-outline" onclick="switchTab('scanner')">
-            <span class="btn-icon">📷</span> Passer au scanner QR
+        </div>
+
+        <div class="flex gap-2.5">
+          <button id="btn-console-add" onclick="consoleAddStamps()"
+            class="flex-1 py-3 bg-slate-900 hover:bg-slate-800 active:scale-[.98] disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl transition flex items-center justify-center gap-1.5">
+            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Ajouter
+          </button>
+          <button id="btn-console-gift" onclick="consoleRedeemReward()"
+            class="flex-1 py-3 bg-teal-600 hover:bg-teal-700 active:scale-[.98] disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl transition flex items-center justify-center gap-1.5">
+            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7Z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7Z"/></svg>
+            Cadeau
           </button>
         </div>
+      </div>
 
-        <div class="console-section">
-          <div class="console-section-title">Règles Métier de l'Instance</div>
-          <div class="console-toggle-row">
-            <div>
-              <div class="console-row-label">Autoriser le Multi-Tampon</div>
-              <div class="console-row-sub">Permet de valider plusieurs tampons par encaissement.</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="console-multistamp" onchange="toggleMultiStamp(this.checked)" aria-label="Autoriser le multi-tampon" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div>
-            <div class="range-row">
-              <div class="console-row-label" style="margin-bottom:0">Limite Anti-Fraude Journalière</div>
-              <div class="range-value" id="console-daily-limit-value">3 max</div>
-            </div>
-            <div class="console-row-sub" style="margin-bottom:0.4rem">Accumulation maximale autorisée par e-mail client par jour.</div>
-            <input type="range" class="console-range" id="console-daily-limit" min="1" max="10" value="3" step="1"
-                   oninput="onDailyLimitInput(this.value)" onchange="onDailyLimitChange(this.value)" />
+      <!-- Session activity (secondary zone) -->
+      <div class="mt-4 bg-white border border-slate-200 rounded-2xl p-5 shadow-card">
+        <div class="flex items-center justify-between mb-3.5">
+          <div class="font-bold text-[15px]">Activité de la session</div>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-100">
+            <svg viewBox="0 0 24 24" class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span id="history-count-label" class="text-[11px] font-semibold text-emerald-700">0 tampon validé</span>
           </div>
         </div>
+        <div id="history-list" class="divide-y divide-slate-100">
+          <div class="flex flex-col items-center text-center gap-2 py-8">
+            <svg viewBox="0 0 24 24" class="w-7 h-7 text-slate-300" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            <div class="text-xs text-slate-400">Aucune validation pour l'instant.</div>
+          </div>
+        </div>
+      </div>
 
-        <div class="console-section">
-          <div class="network-row" id="network-row">
-            <div class="network-info">
-              <span class="network-icon" id="network-status-icon">☁</span>
+      <!-- Console / Simulation accordion -->
+      <div class="mt-4 bg-white border border-slate-200 rounded-2xl shadow-card overflow-hidden">
+        <button id="btn-toggle-console" onclick="toggleConsolePanel()" class="w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-slate-50 transition">
+          <div class="flex items-center gap-2.5">
+            <svg viewBox="0 0 24 24" class="w-[18px] h-[18px] text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg>
+            <span class="font-bold text-[15px]">Outils avancés</span>
+          </div>
+          <svg id="console-chevron" viewBox="0 0 24 24" class="w-[18px] h-[18px] text-slate-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+
+        <div id="console-panel" class="hidden border-t border-slate-100 px-5 py-5 space-y-6">
+
+          <!-- Règles métier -->
+          <div>
+            <div class="text-xs font-bold uppercase tracking-wide text-slate-400 mb-3.5">Règles métier de l'instance</div>
+            <div class="flex items-start justify-between gap-4 pb-4 mb-4 border-b border-slate-100">
               <div>
-                <div class="console-row-label">Réseau de l'Instance</div>
-                <div class="console-row-sub" id="network-status-label">Connecté en direct</div>
+                <div class="text-sm font-medium">Autoriser le multi-tampon</div>
+                <div class="text-xs text-slate-400 mt-0.5 max-w-[220px]">Permet de valider plusieurs tampons par encaissement.</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="console-multistamp" class="sr-only peer" onchange="toggleMultiStamp(this.checked)" aria-label="Autoriser le multi-tampon" />
+                <div class="w-11 h-6 bg-slate-200 peer-checked:bg-amber-500 peer-disabled:opacity-40 rounded-full transition-colors"></div>
+                <span class="absolute left-0.5 top-0.5 bg-white w-5 h-5 rounded-full shadow transition-transform peer-checked:translate-x-5"></span>
+              </label>
+            </div>
+            <div>
+              <div class="flex items-baseline justify-between mb-1">
+                <div class="text-sm font-medium">Limite anti-fraude journalière</div>
+                <div id="console-daily-limit-value" class="text-sm font-extrabold text-amber-600 whitespace-nowrap">3 max</div>
+              </div>
+              <div class="text-xs text-slate-400 mb-2.5">Accumulation maximale autorisée par e-mail client par jour.</div>
+              <input type="range" id="console-daily-limit" min="1" max="10" value="3" step="1" class="w-full accent-amber-500"
+                oninput="onDailyLimitInput(this.value)" onchange="onDailyLimitChange(this.value)" />
+            </div>
+          </div>
+
+          <!-- Réseau -->
+          <div class="flex items-center justify-between gap-3 flex-wrap" id="network-row">
+            <div class="flex items-center gap-3">
+              <span id="network-status-icon-wrap" class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <svg id="network-status-icon" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5a11 11 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/></svg>
+              </span>
+              <div>
+                <div class="text-sm font-medium">Réseau de l'instance</div>
+                <div id="network-status-label" class="text-xs text-slate-400">Connecté en direct</div>
               </div>
             </div>
-            <button class="btn-network-sim" id="btn-network-sim" onclick="toggleNetworkSim()">Simuler Coupure</button>
+            <button id="btn-network-sim" onclick="toggleNetworkSim()" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-xl transition whitespace-nowrap">Simuler Coupure</button>
           </div>
-        </div>
 
-        <div class="console-section">
-          <div class="console-export-icon">⬇</div>
-          <div class="console-section-title center">Export de Données Fidélité</div>
-          <div class="console-row-sub" style="text-align:center;max-width:none;margin-bottom:1.1rem">Analysez l'activité des tampons et exportez le fichier de données clients.</div>
-          <button class="btn-console-outline" id="btn-export-csv" onclick="generateActivityExport()">
-            <span class="btn-icon">📊</span> Générer l'Export CSV
-          </button>
-        </div>
-
-        <div class="console-section">
-          <div class="console-section-title">Activité Récente de l'Établissement</div>
-          <div id="activity-list">
-            <div class="empty-activity">Aucune activité pour le moment.</div>
+          <!-- Export -->
+          <div class="border-t border-slate-100 pt-5">
+            <div class="text-center mb-3">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              <div class="font-bold text-sm">Export de données fidélité</div>
+              <p class="text-xs text-slate-400 mt-1">Analysez l'activité des tampons et exportez le fichier client.</p>
+            </div>
+            <button id="btn-export-csv" onclick="generateActivityExport()"
+              class="w-full py-3 border border-slate-200 hover:border-amber-300 hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed text-amber-700 font-semibold text-sm rounded-xl transition flex items-center justify-center gap-2">
+              Générer l'export CSV
+            </button>
           </div>
-        </div>
 
+          <!-- Activity feed -->
+          <div class="border-t border-slate-100 pt-5">
+            <div class="font-bold text-sm mb-3">Activité récente de l'établissement</div>
+            <div id="activity-list" class="divide-y divide-slate-100">
+              <div class="text-xs text-slate-400 text-center py-4">Aucune activité pour le moment.</div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-    </section>
-
-    <nav class="bottom-nav" id="bottom-nav" style="display:none">
-      <button class="nav-item active" id="nav-scan"    onclick="switchTab('scanner')"><span>📷</span>Scanner</button>
-      <button class="nav-item"        id="nav-hist"    onclick="switchTab('history')"><span>📋</span>Historique</button>
-      <button class="nav-item"        id="nav-console" onclick="switchTab('console')"><span>🧾</span>Console</button>
-      <button class="nav-item"                         onclick="logout()"><span>⎋</span>Déconnexion</button>
-    </nav>
-
-  </div>
-</div>
-
-<!-- ══ VALIDATION OVERLAY ══ -->
-<div class="validation-overlay" id="validation-overlay">
-  <div class="validation-sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Valider un tampon</div>
-
-    <div id="enroll-badge-wrap"></div>
-
-    <div class="customer-card-preview card-noir" id="preview-card">
-      <div class="preview-brand" id="preview-brand">—</div>
-      <div class="preview-uid"   id="preview-uid">uid: —</div>
-      <div class="preview-stamps" id="preview-stamps"></div>
     </div>
+  </section>
 
-    <div class="token-meta" id="token-meta">
-      Token valide · <span id="token-expiry">—</span> restantes
-    </div>
+  <!-- ══════════════════════════ MODALE SCANNER ══════════════════════════ -->
+  <div id="scanner-modal" class="hidden fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in">
+    <div class="bg-slate-900 w-full sm:max-w-sm sm:rounded-3xl rounded-t-3xl overflow-hidden animate-slide-up sm:animate-scale-in">
 
-    <div class="stamp-selector">
-      <button class="stamp-selector-btn" id="btn-minus" onclick="adjustStamps(-1)">−</button>
-      <div>
-        <div class="stamp-selector-value" id="stamp-count-display">1</div>
-        <div class="stamp-selector-label">tampon(s)</div>
+      <div class="flex items-center justify-between px-5 py-4">
+        <div class="text-white font-bold text-sm">Scanner un QR Code</div>
+        <button id="btn-close-scanner" onclick="closeScannerModal()" aria-label="Fermer le scanner" class="w-9 h-9 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition">
+          <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
       </div>
-      <button class="stamp-selector-btn" id="btn-plus" onclick="adjustStamps(+1)">+</button>
+
+      <!-- STATE: live scanning -->
+      <div id="scanner-state-live" class="px-5 pb-5">
+        <div class="relative w-full aspect-square max-h-[340px] bg-black rounded-2xl overflow-hidden" id="scanner-viewport">
+          <video id="scanner-video" autoplay playsinline muted class="absolute inset-0 w-full h-full"></video>
+          <canvas id="scanner-canvas-hidden" class="hidden"></canvas>
+          <div class="absolute top-3.5 left-3.5 w-9 h-9 border-t-[3px] border-l-[3px] border-amber-400 rounded-tl-xl"></div>
+          <div class="absolute top-3.5 right-3.5 w-9 h-9 border-t-[3px] border-r-[3px] border-amber-400 rounded-tr-xl"></div>
+          <div class="absolute bottom-3.5 left-3.5 w-9 h-9 border-b-[3px] border-l-[3px] border-amber-400 rounded-bl-xl"></div>
+          <div class="absolute bottom-3.5 right-3.5 w-9 h-9 border-b-[3px] border-r-[3px] border-amber-400 rounded-br-xl"></div>
+        </div>
+
+        <p id="scanner-hint" class="text-center text-slate-400 text-xs mt-4">Présentez le QR code du client face à la caméra</p>
+
+        <div class="flex items-center justify-center gap-2 mt-1.5 mb-4">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+          <span class="text-[11px] font-mono text-slate-500">Recherche en cours · <span id="scan-debug-frames">0</span> images</span>
+          <span id="scan-debug-result" class="hidden"></span>
+        </div>
+
+        <button id="btn-manual-capture" onclick="captureAndAnalyze()"
+          class="w-full py-3 border border-white/15 hover:bg-white/5 active:scale-[.98] disabled:opacity-40 text-white font-medium text-sm rounded-xl transition flex items-center justify-center gap-2">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          Capturer une photo et analyser
+        </button>
+      </div>
+
+      <!-- STATE: no camera -->
+      <div id="scanner-state-nocamera" class="hidden px-6 pb-7 pt-2 flex flex-col items-center text-center gap-3">
+        <div class="w-14 h-14 rounded-full bg-amber-500/15 text-amber-400 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m2 2 20 20"/><path d="M9.5 4h5l2 3h4a2 2 0 0 1 2 2v9.5"/><path d="M19.97 16.95A2 2 0 0 1 18 19H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h.5"/><circle cx="12" cy="13" r="3.5"/></svg>
+        </div>
+        <div class="text-white font-bold text-sm">Caméra non disponible</div>
+        <p class="text-slate-400 text-xs max-w-[260px]">Autorisez l'accès à la caméra dans votre navigateur, ou utilisez la saisie manuelle pour encaisser par e-mail.</p>
+        <button onclick="startScanner()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 active:scale-[.98] text-slate-900 font-semibold text-sm rounded-xl transition mt-1">Réessayer</button>
+        <button onclick="useManualEntryFromScanner()" class="w-full py-3 border border-white/15 hover:bg-white/5 text-white font-medium text-sm rounded-xl transition">Utiliser la saisie manuelle</button>
+      </div>
+
+      <!-- STATE: scan rejected -->
+      <div id="scanner-state-error" class="hidden px-6 pb-7 pt-2 flex flex-col items-center text-center gap-3">
+        <div class="w-14 h-14 rounded-full bg-red-500/15 text-red-400 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+        </div>
+        <div class="text-white font-bold text-sm">Scan refusé</div>
+        <p id="scan-error-message" class="text-slate-400 text-xs max-w-[260px]">Ce QR code n'a pas pu être validé.</p>
+        <button onclick="startScanner()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 active:scale-[.98] text-slate-900 font-semibold text-sm rounded-xl transition mt-1 flex items-center justify-center gap-2">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v6h-6"/></svg>
+          Relancer le scanner
+        </button>
+        <button onclick="closeScannerModal()" class="w-full py-3 border border-white/15 hover:bg-white/5 text-white font-medium text-sm rounded-xl transition">Fermer</button>
+      </div>
+
     </div>
-
-    <button class="btn-confirm" onclick="confirmStamp()">✓ Confirmer <span id="confirm-label">1 tampon</span></button>
-    <button class="btn-cancel"  onclick="cancelValidation()">Annuler</button>
   </div>
-</div>
 
-<div class="toast-container" id="toast-container"></div>
+  <!-- ══════════════════════════ FEUILLE DE VALIDATION ══════════════════════════ -->
+  <div id="validation-overlay" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-end sm:items-center justify-center">
+    <div class="bg-white w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl px-6 pt-3 pb-6 sm:pb-7 animate-slide-up sm:animate-scale-in" onclick="event.stopPropagation()">
+      <div class="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-5 sm:hidden"></div>
+      <div class="font-bold text-lg mb-4">Valider une visite</div>
+
+      <div id="enroll-badge-wrap" class="mb-3"></div>
+
+      <div id="preview-card" class="rounded-2xl p-5 mb-4 relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-700 text-white">
+        <div id="preview-brand" class="font-bold text-base mb-0.5">—</div>
+        <div id="preview-uid" class="text-[11px] font-mono text-white/50 mb-3">uid: —</div>
+        <div id="preview-stamps" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <div id="token-meta" class="text-center text-xs font-mono text-slate-400 py-2 mb-3">Token valide · <span class="text-emerald-600">—</span> restantes</div>
+
+      <div class="flex items-center justify-center gap-6 mb-6">
+        <button id="btn-minus" onclick="adjustStamps(-1)" aria-label="Diminuer"
+          class="w-12 h-12 rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-xl flex items-center justify-center transition">−</button>
+        <div class="text-center">
+          <div id="stamp-count-display" class="text-4xl font-extrabold leading-none">1</div>
+          <div class="text-[11px] text-slate-400 uppercase tracking-wide mt-1">tampon(s)</div>
+        </div>
+        <button id="btn-plus" onclick="adjustStamps(1)" aria-label="Augmenter"
+          class="w-12 h-12 rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-xl flex items-center justify-center transition">+</button>
+      </div>
+
+      <button onclick="confirmStamp()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[.98] text-white font-bold text-sm rounded-2xl transition flex items-center justify-center gap-2">
+        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        Confirmer <span id="confirm-label">1 tampon</span>
+      </button>
+      <button onclick="cancelValidation()" class="w-full py-3 mt-2 border border-slate-200 hover:border-red-200 hover:text-red-500 text-slate-500 font-medium text-sm rounded-2xl transition">Annuler</button>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-[200] flex flex-col gap-2 items-center pointer-events-none px-4"></div>
+
+</div>
+</div>
 
 <script>
   window.FIREBASE_CONFIG = {
@@ -579,7 +456,6 @@ const state = {
   scanPaused:        false,
   videoStream:       null,
   rafId:             null,
-  activeTab:         'scanner',
   consoleStampCount: 1
 };
 const SCAN_MAX_DIM = 800;       /* taille max du canvas d'analyse — réduit le coût CPU de getImageData() */
@@ -672,13 +548,19 @@ async function getStoreAuth() {
 
 function togglePwd(inputId, btn) {
   const inp = document.getElementById(inputId);
-  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
-  else { inp.type = 'password'; btn.textContent = '👁'; }
+  const eye = btn.querySelector('[data-eye]');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    eye.innerHTML = '<path d="m2 2 20 20"/><path d="M9.5 4.2A10.6 10.6 0 0 1 12 4c7 0 10.5 7 10.5 7a17.5 17.5 0 0 1-3.1 4.1"/><path d="M6.5 6.6C3.7 8.4 1.5 11 1.5 11s3.5 7 10.5 7a10.4 10.4 0 0 0 4.2-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>';
+  } else {
+    inp.type = 'password';
+    eye.innerHTML = '<path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/>';
+  }
 }
 
 function showStoreAuthError(msg) {
   const el = document.getElementById('store-auth-error');
-  el.textContent = msg; el.classList.add('visible');
+  el.textContent = msg; el.classList.remove('hidden');
 }
 
 async function handleStoreLogin() {
@@ -686,7 +568,8 @@ async function handleStoreLogin() {
   const password = (document.getElementById('store-password').value || '');
   if (!email || !password) { showStoreAuthError('Veuillez remplir tous les champs.'); return; }
   const btn = document.getElementById('btn-store-login');
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Connexion…';
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = spinnerHTML() + 'Connexion…';
   try {
     const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
     const auth = await getStoreAuth();
@@ -702,14 +585,15 @@ async function handleStoreLogin() {
     };
     showStoreAuthError(map[err.code] || 'Une erreur est survenue.');
   } finally {
-    btn.disabled = false; btn.innerHTML = 'Accéder à la caisse';
+    btn.disabled = false; btn.innerHTML = originalHTML;
   }
 }
 
 /* ── MODE DÉMO : connexion anonyme puis sélection du commerce ── */
 async function handleDemoLogin() {
   const btn = document.getElementById('btn-store-demo');
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Démonstration…';
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = spinnerHTML() + 'Démonstration…';
   try {
     const { signInAnonymously } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
     const auth = await getStoreAuth();
@@ -719,7 +603,7 @@ async function handleDemoLogin() {
     /* Firebase indisponible : mode local pur */
     await loginSuccess({ email: '', name: 'Mode Démo', uid: 'demo-' + Date.now().toString(36) });
   } finally {
-    btn.disabled = false; btn.innerHTML = '▷ Mode démo — sans email';
+    btn.disabled = false; btn.innerHTML = originalHTML;
   }
 }
 
@@ -735,9 +619,8 @@ async function loginSuccess(user) {
 
   if (restaurant) {
     applyRestaurant(restaurant);
-    showScreen('scanner');
+    showScreen('dashboard');
     startActivityFeed();
-    startScanner();
   } else {
     /* Aucun commerce lié automatiquement → sélecteur */
     await loadAndShowPicker(user);
@@ -758,18 +641,20 @@ function applyRestaurant(r) {
     logoColor:  r.logoColor   || 'rgba(201,168,76,0.15)',
   };
   document.getElementById('header-resto-name').textContent = r.name || 'Commerce';
+  initConsoleTab();
 }
 
 function logout() {
-  stopScanner();
+  closeScannerModal();
+  closeValidation(true);
   stopActivityFeed();
   restoreNetworkIfSimulatedOffline();
   state.user = null;
   state.currentRestaurant = null;
   state.consoleStampCount = 1;
+  state.validations = [];
   _pickerRestos = [];
   showScreen('auth');
-  document.getElementById('bottom-nav').style.display = 'none';
   showToast('Déconnexion effectuée');
 }
 
@@ -779,7 +664,7 @@ function logout() {
 async function loadAndShowPicker(user) {
   showScreen('picker');
   const listEl = document.getElementById('picker-list');
-  listEl.innerHTML = '<div class="picker-loading">Chargement des commerces…</div>';
+  listEl.innerHTML = '<div class="text-center text-sm text-slate-400 py-10">Chargement des commerces…</div>';
 
   try {
     const db = await getStoreDb();
@@ -793,20 +678,20 @@ async function loadAndShowPicker(user) {
   }
 
   if (!_pickerRestos.length) {
-    listEl.innerHTML = '<p class="picker-empty">Aucun commerce disponible.<br>Créez d\'abord un commerce via le panneau d\'administration (Maj+Alt+A depuis index.html).</p>';
+    listEl.innerHTML = '<p class="text-center text-sm text-slate-400 py-10 leading-relaxed">Aucun commerce disponible.<br>Créez d\'abord un commerce via le panneau d\'administration (Maj+Alt+A depuis index.html).</p>';
     return;
   }
 
   listEl.innerHTML = _pickerRestos.map((r, i) => `
-    <button class="picker-item" onclick="selectRestaurant(${i})">
-      <div class="picker-logo" style="background:${r.logoColor || 'rgba(201,168,76,0.15)'};color:${r.logoTextColor || 'var(--gold)'}">
+    <button onclick="selectRestaurant(${i})" class="flex items-center gap-3.5 p-4 bg-white border border-slate-200 rounded-2xl hover:border-amber-300 hover:shadow-card active:scale-[.98] transition text-left w-full">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm shrink-0" style="background:${r.logoColor || 'rgba(201,168,76,0.15)'};color:${r.logoTextColor || '#b45309'}">
         ${escapeBrand((r.logoText || r.name || '?').substring(0, 2).toUpperCase())}
       </div>
-      <div style="flex:1;min-width:0">
-        <div class="picker-name">${escapeBrand(r.name)}</div>
-        <div class="picker-cat">${escapeBrand(r.category || '')} · ${escapeBrand(r.city || '')}</div>
+      <div class="min-w-0 flex-1">
+        <div class="text-sm font-semibold truncate">${escapeBrand(r.name)}</div>
+        <div class="text-xs text-slate-400 truncate">${escapeBrand(r.category || '')} · ${escapeBrand(r.city || '')}</div>
       </div>
-      <span style="color:var(--text-muted);font-size:20px;flex-shrink:0">›</span>
+      <svg viewBox="0 0 24 24" class="w-4 h-4 text-slate-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
     </button>
   `).join('');
 }
@@ -817,9 +702,8 @@ function selectRestaurant(i) {
   applyRestaurant(r);
   document.getElementById('header-shift-info').textContent =
     new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-  showScreen('scanner');
+  showScreen('dashboard');
   startActivityFeed();
-  startScanner();
   showToast(`${r.name} — session ouverte`, 'success');
 }
 
@@ -827,84 +711,126 @@ function logoutFromPicker() {
   state.user = null;
   _pickerRestos = [];
   showScreen('auth');
-  document.getElementById('bottom-nav').style.display = 'none';
 }
 
 /* ══════════════════════════════════════════════════════════════════
    NAVIGATION
 ══════════════════════════════════════════════════════════════════ */
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const t = document.getElementById(`screen-${id}`);
-  if (t) t.classList.add('active');
-  document.getElementById('bottom-nav').style.display = id === 'scanner' ? 'flex' : 'none';
+  ['auth', 'picker', 'dashboard'].forEach(s => {
+    const el = document.getElementById(`screen-${s}`);
+    if (!el) return;
+    if (s === id) { el.classList.remove('hidden'); el.classList.add('flex'); }
+    else          { el.classList.add('hidden');    el.classList.remove('flex'); }
+  });
 }
 
-function switchTab(tab) {
-  state.activeTab = tab;
-  document.getElementById('tab-scanner').style.display = tab === 'scanner' ? 'flex' : 'none';
-  document.getElementById('tab-history').style.display = tab === 'history' ? 'flex' : 'none';
-  document.getElementById('tab-console').style.display = tab === 'console' ? 'flex' : 'none';
-  document.getElementById('tab-scan-btn').classList.toggle('active',    tab === 'scanner');
-  document.getElementById('tab-hist-btn').classList.toggle('active',    tab === 'history');
-  document.getElementById('tab-console-btn').classList.toggle('active', tab === 'console');
-  document.getElementById('nav-scan').classList.toggle('active',    tab === 'scanner');
-  document.getElementById('nav-hist').classList.toggle('active',    tab === 'history');
-  document.getElementById('nav-console').classList.toggle('active', tab === 'console');
-  if (tab === 'scanner' && !state.scanPaused) startScanner();
-  if (tab === 'history') renderHistory();
-  if (tab === 'console') initConsoleTab();
+function toggleConsolePanel() {
+  const panel   = document.getElementById('console-panel');
+  const chevron = document.getElementById('console-chevron');
+  const willOpen = panel.classList.contains('hidden');
+  panel.classList.toggle('hidden');
+  chevron.classList.toggle('rotate-180', willOpen);
+  if (willOpen) initConsoleTab();
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   SCANNER QR — CORRIGÉ
-   • stopScanner() appelé avant chaque démarrage → pas d'accumulation de listeners
-   • await video.play() au lieu de loadedmetadata
+   STATUT RÉSEAU (badge d'en-tête)
+══════════════════════════════════════════════════════════════════ */
+function updateNetworkBadge() {
+  const offline = !navigator.onLine || _netSimOffline;
+  const dot   = document.getElementById('network-dot');
+  const label = document.getElementById('network-label');
+  const wrap  = document.getElementById('network-row-badge');
+  if (!dot || !label || !wrap) return;
+  if (offline) {
+    wrap.className = 'flex items-center gap-1.5 pl-2.5 pr-3 py-1.5 rounded-full bg-red-50 border border-red-100';
+    dot.className  = 'w-1.5 h-1.5 rounded-full bg-red-500';
+    label.className = 'text-[11px] font-semibold text-red-700';
+    label.textContent = 'Hors-ligne';
+  } else {
+    wrap.className = 'flex items-center gap-1.5 pl-2.5 pr-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100';
+    dot.className  = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
+    label.className = 'text-[11px] font-semibold text-emerald-700';
+    label.textContent = 'Connecté';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MODALE SCANNER — cycle de vie
+══════════════════════════════════════════════════════════════════ */
+function openScannerModal() {
+  document.getElementById('scanner-modal').classList.remove('hidden');
+  document.getElementById('scanner-modal').classList.add('flex');
+  document.body.style.overflow = 'hidden';
+  startScanner();
+}
+
+function closeScannerModal() {
+  stopScanner();
+  const modal = document.getElementById('scanner-modal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+  document.body.style.overflow = '';
+}
+
+function showScannerState(name) {
+  const states = { live: 'scanner-state-live', nocamera: 'scanner-state-nocamera', error: 'scanner-state-error' };
+  Object.values(states).forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById(states[name]).classList.remove('hidden');
+}
+
+function useManualEntryFromScanner() {
+  closeScannerModal();
+  const input = document.getElementById('console-email');
+  if (input) { input.scrollIntoView({ behavior: 'smooth', block: 'center' }); input.focus(); }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SCANNER QR
+   • Aucun lancement automatique : la caméra ne démarre que depuis
+     openScannerModal() (clic explicite sur "Ouvrir le Scanner").
+   • Dès qu'un QR code est détecté (valide ou non) OU si la modale
+     est fermée, le flux caméra est immédiatement coupé (track.stop())
+     — voir stopScanner() et onQRDetected().
 ══════════════════════════════════════════════════════════════════ */
 async function startScanner() {
-  if (typeof jsQR === 'undefined') { showNoCameraFallback(); return; }
+  if (typeof jsQR === 'undefined') { showScannerState('nocamera'); return; }
   stopScanner(); /* libère complètement le flux précédent */
+  showScannerState('live');
 
-  const video    = document.getElementById('scanner-video');
-  const noCamera = document.getElementById('no-camera');
-  const hint     = document.getElementById('scanner-hint');
+  const video = document.getElementById('scanner-video');
+  const hint  = document.getElementById('scanner-hint');
 
   try {
     state.videoStream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
     });
     video.srcObject = state.videoStream;
-    video.style.display = 'block';
-    noCamera.style.display = 'none';
-    hint.textContent = 'Pointez la caméra vers le QR Code du client';
+    hint.textContent = 'Présentez le QR code du client face à la caméra';
     state.scanPaused = false;
     _scanFrameCount = 0;
 
-    /* Un seul démarrage garanti via la promesse de play() */
-    try { await video.play(); } catch (_) { /* autoplay attribute handles fallback */ }
+    try { await video.play(); } catch (_) { /* autoplay attribute gère le repli */ }
     scheduleScan();
 
   } catch (err) {
     console.warn('[Scanner] Erreur caméra :', err.name, err.message);
-    showNoCameraFallback();
+    showScannerState('nocamera');
   }
 }
 
+/** Coupe immédiatement et proprement le flux caméra (économie batterie). */
 function stopScanner() {
   cancelAnimationFrame(state.rafId);
   state.rafId = null;
+  state.scanPaused = true;
   if (state.videoStream) {
     state.videoStream.getTracks().forEach(t => t.stop());
     state.videoStream = null;
   }
   const video = document.getElementById('scanner-video');
   if (video) { video.pause(); video.srcObject = null; }
-}
-
-function showNoCameraFallback() {
-  document.getElementById('scanner-video').style.display = 'none';
-  document.getElementById('no-camera').style.display = 'flex';
-  document.getElementById('scan-line').style.display = 'none';
 }
 
 function scheduleScan() {
@@ -919,9 +845,8 @@ function scanFrame() {
   const ctx    = canvas.getContext('2d', { willReadFrequently: true });
 
   if (video.readyState >= video.HAVE_ENOUGH_DATA) {
-    /* Résolution d'analyse réduite pour soulager le thread principal
-       (c'est ce qui rendait l'animation saccadée) — jsQR n'a pas besoin
-       de la pleine résolution caméra. */
+    /* Résolution d'analyse réduite pour soulager le thread principal —
+       jsQR n'a pas besoin de la pleine résolution caméra. */
     const vw = video.videoWidth, vh = video.videoHeight;
     const scale = Math.min(1, SCAN_MAX_DIM / Math.max(vw, vh));
     canvas.width  = Math.round(vw * scale);
@@ -933,32 +858,27 @@ function scanFrame() {
     });
 
     _scanFrameCount++;
-    updateScanDebugUI(code ? 'QR détecté !' : 'aucun QR dans l\'image', !!code);
+    updateScanDebugUI();
 
     if (code && code.data) {
       onQRDetected(code.data);
       return;
     }
-  } else {
-    updateScanDebugUI('vidéo pas encore prête…', false);
   }
   state.rafId = requestAnimationFrame(scanFrame);
 }
 
-function updateScanDebugUI(resultText, found) {
+function updateScanDebugUI() {
   const now = performance.now();
-  if (!found && now - _scanLastUiUpdate < 200) return; /* throttle pour ne pas ajouter de saccades */
+  if (now - _scanLastUiUpdate < 200) return; /* throttle pour ne pas ajouter de saccades */
   _scanLastUiUpdate = now;
-  const frEl  = document.getElementById('scan-debug-frames');
-  const resEl = document.getElementById('scan-debug-result');
-  if (frEl)  frEl.textContent = _scanFrameCount;
-  if (resEl) { resEl.textContent = resultText; resEl.style.color = found ? 'var(--success)' : ''; }
+  const frEl = document.getElementById('scan-debug-frames');
+  if (frEl) frEl.textContent = _scanFrameCount;
 }
+
 /* ══════════════════════════════════════════════════════════════════
    CAPTURE MANUELLE — alternative au scan continu
    Fige l'image en pleine résolution et l'analyse une seule fois.
-   Utile quand le flux continu est instable (écran qui scintille,
-   main qui bouge, etc.)
 ══════════════════════════════════════════════════════════════════ */
 async function captureAndAnalyze() {
   const video = document.getElementById('scanner-video');
@@ -966,7 +886,7 @@ async function captureAndAnalyze() {
   if (!video.videoWidth) { showToast('Caméra non prête — réessayez dans un instant', 'error'); return; }
 
   const originalHTML = btn.innerHTML;
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Analyse…';
+  btn.disabled = true; btn.innerHTML = spinnerHTML('text-white') + 'Analyse…';
 
   const wasPaused = state.scanPaused;
   state.scanPaused = true;
@@ -982,10 +902,8 @@ async function captureAndAnalyze() {
     const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
 
     if (code && code.data) {
-      updateScanDebugUI('QR détecté (capture manuelle) !', true);
       onQRDetected(code.data);
     } else {
-      updateScanDebugUI('aucun QR sur la capture manuelle', false);
       showToast('Aucun QR trouvé sur cette photo — rapprochez-vous et évitez les reflets d\'écran', 'error');
       state.scanPaused = wasPaused;
       if (!wasPaused) scheduleScan();
@@ -1003,51 +921,40 @@ async function captureAndAnalyze() {
 /* ══════════════════════════════════════════════════════════════════
    TRAITEMENT DU QR DÉTECTÉ
    Logique d'acceptation :
-     • card_id === null  → Carte Universelle  → ACCEPTÉ (inscription + tampon)
-     • card_id === myId  → Carte de CE commerce → ACCEPTÉ (tampon)
+     • card_id === null    → Carte Universelle    → ACCEPTÉ (inscription + tampon)
+     • card_id === myId    → Carte de ce commerce  → ACCEPTÉ (tampon)
      • card_id === autreId → Carte d'un autre commerce → REFUSÉ
+   Dans tous les cas, la caméra est coupée immédiatement.
 ══════════════════════════════════════════════════════════════════ */
 function onQRDetected(raw) {
-  state.scanPaused = true;
+  stopScanner(); /* coupe le flux dès qu'un code est lu, succès ou échec */
 
   const result = validateToken(raw);
   if (!result.ok) {
-    flashViewport('error');
-    showToast(result.msg, 'error');
-    setTimeout(() => { state.scanPaused = false; scheduleScan(); }, 2500);
+    document.getElementById('scan-error-message').textContent = result.msg;
+    showScannerState('error');
     return;
   }
 
   const myCommerceId = state.currentRestaurant?.id;
   if (!myCommerceId) {
-    flashViewport('error');
-    showToast('Aucun commerce sélectionné — utilisez le sélecteur', 'error');
-    setTimeout(() => { state.scanPaused = false; scheduleScan(); }, 2500);
+    document.getElementById('scan-error-message').textContent = 'Aucun commerce sélectionné — utilisez le sélecteur';
+    showScannerState('error');
     return;
   }
 
   const scannedCardId = result.token.card_id;
   /* card_id null = Carte Universelle (passe-partout) */
-  /* card_id présent ≠ myCommerceId = carte d'un autre commerce → refus */
   if (scannedCardId && scannedCardId !== myCommerceId) {
-    flashViewport('error');
-    showToast('Carte d\'un autre commerce — demandez la Carte Universelle au client', 'error');
-    setTimeout(() => { state.scanPaused = false; scheduleScan(); }, 2500);
+    document.getElementById('scan-error-message').textContent = 'Carte d\'un autre commerce — demandez la Carte Universelle au client';
+    showScannerState('error');
     return;
   }
 
-  flashViewport('success');
   state.scannedToken = result.token;
   state.stampCount   = 1;
+  closeScannerModal();
   openValidationSheet(result.token);
-}
-
-function flashViewport(type) {
-  const vp = document.getElementById('scanner-viewport');
-  vp.classList.remove('success-flash', 'error-flash');
-  void vp.offsetWidth;
-  vp.classList.add(`${type}-flash`);
-  setTimeout(() => vp.classList.remove(`${type}-flash`), 600);
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -1059,7 +966,7 @@ async function openValidationSheet(token) {
 
   document.getElementById('preview-brand').textContent = resto.name;
   document.getElementById('preview-uid').textContent   = `uid : ${token.uid.substring(0, 16)}…`;
-  document.getElementById('token-meta').innerHTML      = `Token valide · <span>${secLeft}s restantes</span>`;
+  document.getElementById('token-meta').innerHTML      = `Token valide · <span class="text-emerald-600">${secLeft}s</span> restantes`;
 
   const db = await getStoreDb();
   const fs = _fsModule;
@@ -1085,12 +992,15 @@ async function openValidationSheet(token) {
   /* Badge d'inscription si première visite */
   const enrollWrap = document.getElementById('enroll-badge-wrap');
   enrollWrap.innerHTML = !existing
-    ? `<div class="enroll-badge">⭐ Première visite — inscription automatique</div>`
+    ? `<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-100 text-amber-700 text-xs font-semibold">
+         <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7.1L12 17.8l-6.2 3.5L7 14.2 2 9.3l7.1-.7L12 2z"/></svg>
+         Première visite — inscription automatique
+       </div>`
     : '';
 
   if (!existing) {
     document.getElementById('token-meta').innerHTML =
-      `<span style="color:var(--gold)">Nouvelle carte — ${escapeBrand(resto.name)}</span> · ${secLeft}s restantes`;
+      `<span class="text-amber-600 font-semibold">Nouvelle carte — ${escapeBrand(resto.name)}</span> · ${secLeft}s restantes`;
   }
 
   renderPreviewStamps(state.cardData, 1);
@@ -1098,9 +1008,8 @@ async function openValidationSheet(token) {
   updateStampSelector(1, maxSel);
   updateConfirmLabel();
 
-  document.getElementById('preview-card').className = `customer-card-preview ${state.cardData.colorClass}`;
-  document.getElementById('validation-overlay').classList.add('open');
-  document.getElementById('bottom-nav').style.display = 'none';
+  document.getElementById('validation-overlay').classList.remove('hidden');
+  document.getElementById('validation-overlay').classList.add('flex');
 }
 
 function renderPreviewStamps(card, newCount) {
@@ -1108,9 +1017,12 @@ function renderPreviewStamps(card, newCount) {
   container.innerHTML = Array.from({ length: card.maxStamps }, (_, i) => {
     const filled = i < card.stamps;
     const isNew  = i >= card.stamps && i < card.stamps + newCount;
-    return `<div class="preview-stamp ${filled ? 'filled' : ''} ${isNew ? 'new-stamp' : ''}">
-      ${filled ? '✦' : isNew ? '+' : ''}
-    </div>`;
+    const cls = filled
+      ? 'bg-amber-400 border-amber-400 text-slate-900'
+      : isNew
+        ? 'bg-emerald-400/25 border-emerald-300 text-emerald-200'
+        : 'border-white/20 text-white/40';
+    return `<div class="w-6 h-6 rounded-full border-[1.5px] flex items-center justify-center text-[10px] ${cls}">${filled ? '✦' : isNew ? '+' : ''}</div>`;
   }).join('');
 }
 
@@ -1191,11 +1103,12 @@ async function confirmStamp() {
     uid:    state.scannedToken.uid,
     stamps: count,
     brand:  resto.name,
-    isNew:  !state.cardExists
+    isNew:  !state.cardExists,
+    via:    'QR'
   });
 
-  const total = state.validations.reduce((s, v) => s + v.stamps, 0);
-  document.getElementById('today-count').textContent = total;
+  updateTodayStats();
+  renderHistory();
 
   const msg = state.cardExists
     ? `✓ ${count} tampon${count > 1 ? 's' : ''} validé${count > 1 ? 's' : ''}`
@@ -1206,58 +1119,72 @@ async function confirmStamp() {
 
 function cancelValidation() { closeValidation(); showToast('Validation annulée'); }
 
-function closeValidation() {
-  document.getElementById('validation-overlay').classList.remove('open');
-  document.getElementById('bottom-nav').style.display = 'flex';
+function closeValidation(silent) {
+  document.getElementById('validation-overlay').classList.add('hidden');
+  document.getElementById('validation-overlay').classList.remove('flex');
   state.scannedToken = null;
   state.cardRef      = null;
   state.cardExists   = false;
   state.cardData     = null;
-  state.scanPaused   = false;
-  scheduleScan();
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   HISTORIQUE
+   STATISTIQUES & HISTORIQUE DE SESSION
 ══════════════════════════════════════════════════════════════════ */
+function updateTodayStats() {
+  const total  = state.validations.reduce((s, v) => s + v.stamps, 0);
+  const visits = state.validations.length;
+  const elCount  = document.getElementById('stat-today-count');
+  const elVisits = document.getElementById('stat-today-visits');
+  if (elCount)  elCount.textContent  = total;
+  if (elVisits) elVisits.textContent = visits;
+}
+
 function renderHistory() {
   const container = document.getElementById('history-list');
   const total = state.validations.reduce((s, v) => s + v.stamps, 0);
-  document.getElementById('history-count-label').textContent =
-    `${total} tampon${total > 1 ? 's' : ''} validé${total > 1 ? 's' : ''} aujourd'hui`;
+  const labelEl = document.getElementById('history-count-label');
+  if (labelEl) labelEl.textContent = `${total} tampon${total > 1 ? 's' : ''} validé${total > 1 ? 's' : ''}`;
 
   if (!state.validations.length) {
-    container.innerHTML = `<div class="empty-history"><div class="empty-history-icon">🕐</div><div class="empty-history-text">Aucune validation pour l'instant.</div></div>`;
+    container.innerHTML = `
+      <div class="flex flex-col items-center text-center gap-2 py-8">
+        <svg viewBox="0 0 24 24" class="w-7 h-7 text-slate-300" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <div class="text-xs text-slate-400">Aucune validation pour l'instant.</div>
+      </div>`;
     return;
   }
   container.innerHTML = state.validations.map(v => `
-    <div class="history-row">
-      <div class="history-row-left">
-        <div class="history-row-time">${v.time}${v.isNew ? ' · ⭐ inscription' : ''}</div>
-        <div class="history-row-card">${v.brand} · ${v.uid.substring(0, 12)}…</div>
+    <div class="flex items-center justify-between gap-3 py-3">
+      <div class="min-w-0">
+        <div class="text-[11px] font-mono text-slate-400">${v.time}${v.isNew ? ' · ⭐ inscription' : ''}</div>
+        <div class="text-sm truncate mt-0.5">${escapeBrand(v.brand)} · ${escapeBrand(v.uid.substring(0, 12))}…</div>
       </div>
-      <div class="stamp-badge">+${v.stamps} tampon${v.stamps > 1 ? 's' : ''}</div>
+      <div class="shrink-0 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-full whitespace-nowrap">+${v.stamps} tampon${v.stamps > 1 ? 's' : ''}</div>
     </div>`).join('');
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   VISIBILITÉ PAGE
+   VISIBILITÉ PAGE — coupe la caméra si l'app passe en arrière-plan
 ══════════════════════════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      state.scanPaused = true;
-      cancelAnimationFrame(state.rafId);
-      state.rafId = null;
-    } else if (state.user && state.activeTab === 'scanner') {
-      state.scanPaused = false;
-      scheduleScan();
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    if (state.videoStream) {
+      stopScanner();
+      const modal = document.getElementById('scanner-modal');
+      if (modal && !modal.classList.contains('hidden')) {
+        document.getElementById('scan-error-message').textContent = "Scan interrompu — l'application est passée en arrière-plan.";
+        showScannerState('error');
+      }
     }
-  });
+  }
 });
 
+window.addEventListener('online',  updateNetworkBadge);
+window.addEventListener('offline', updateNetworkBadge);
+
 /* ══════════════════════════════════════════════════════════════════
-   CONSOLE CAISSE
+   CONSOLE / SAISIE MANUELLE
 ══════════════════════════════════════════════════════════════════ */
 let _unsubscribeActivity = null;
 let _netSimOffline       = false;
@@ -1315,7 +1242,7 @@ async function consoleAddStamps() {
 
   const btn = document.getElementById('btn-console-add');
   const originalHTML = btn.innerHTML;
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Ajout…';
+  btn.disabled = true; btn.innerHTML = spinnerHTML('text-white') + 'Ajout…';
 
   try {
     const db = await getStoreDb();
@@ -1350,6 +1277,14 @@ async function consoleAddStamps() {
       delta: count
     });
 
+    state.validations.unshift({
+      time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      cardId: resto.id, uid: match.uid, stamps: count, brand: resto.name,
+      isNew: !existing, via: 'Email'
+    });
+    updateTodayStats();
+    renderHistory();
+
     showToast(`✓ ${count} tampon${count > 1 ? 's' : ''} pour ${email}`, 'success');
     emailInput.value = '';
     consoleSetStampCount(1);
@@ -1373,7 +1308,7 @@ async function consoleRedeemReward() {
 
   const btn = document.getElementById('btn-console-gift');
   const originalHTML = btn.innerHTML;
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>…';
+  btn.disabled = true; btn.innerHTML = spinnerHTML('text-white') + '…';
 
   try {
     const db = await getStoreDb();
@@ -1436,9 +1371,6 @@ function updateMultiStampHint() {
 }
 
 function onDailyLimitInput(value) {
-  const pct    = ((value - 1) / 9) * 100;
-  const slider = document.getElementById('console-daily-limit');
-  if (slider) slider.style.setProperty('--fill', `${pct}%`);
   const label  = document.getElementById('console-daily-limit-value');
   if (label) label.textContent = `${value} max`;
 }
@@ -1460,25 +1392,30 @@ async function toggleNetworkSim() {
   const db    = await getStoreDb();
   const fs    = _fsModule;
   const btn   = document.getElementById('btn-network-sim');
-  const row   = document.getElementById('network-row');
+  const iconWrap = document.getElementById('network-status-icon-wrap');
   const icon  = document.getElementById('network-status-icon');
   const label = document.getElementById('network-status-label');
   try {
     if (!_netSimOffline) {
       await fs.disableNetwork(db);
       _netSimOffline = true;
-      row?.classList.add('offline');
-      icon.textContent = '⚠'; label.textContent = 'Hors-ligne — écritures en file locale';
-      btn.textContent = 'Rétablir la Connexion'; btn.classList.add('is-offline');
+      iconWrap.className = 'w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0';
+      icon.innerHTML = '<path d="m2 2 20 20"/><path d="M8.5 16.5a6 6 0 0 1 4.6-1.7"/><path d="M5 12.5a11 11 0 0 1 5.5-3"/><path d="M2 8.5a16 16 0 0 1 4.2-2.6"/><path d="M16.5 8a16 16 0 0 1 5.5 3.5"/><circle cx="12" cy="19.5" r="1"/>';
+      label.textContent = 'Hors-ligne — écritures en file locale';
+      btn.textContent = 'Rétablir la Connexion';
+      btn.className = 'px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition whitespace-nowrap';
       showToast('Coupure réseau simulée', '');
     } else {
       await fs.enableNetwork(db);
       _netSimOffline = false;
-      row?.classList.remove('offline');
-      icon.textContent = '☁'; label.textContent = 'Connecté en direct';
-      btn.textContent = 'Simuler Coupure'; btn.classList.remove('is-offline');
+      iconWrap.className = 'w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0';
+      icon.innerHTML = '<path d="M5 12.5a11 11 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/>';
+      label.textContent = 'Connecté en direct';
+      btn.textContent = 'Simuler Coupure';
+      btn.className = 'px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-xl transition whitespace-nowrap';
       showToast('Connexion rétablie', 'success');
     }
+    updateNetworkBadge();
   } catch (err) { showToast('Erreur', 'error'); }
 }
 
@@ -1486,6 +1423,7 @@ async function restoreNetworkIfSimulatedOffline() {
   if (!_netSimOffline || !_storeDb || !_fsModule) return;
   try { await _fsModule.enableNetwork(_storeDb); } catch (_) {}
   _netSimOffline = false;
+  updateNetworkBadge();
 }
 
 function csvEscape(v) {
@@ -1499,7 +1437,7 @@ async function generateActivityExport() {
 
   const btn = document.getElementById('btn-export-csv');
   const originalHTML = btn.innerHTML;
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Génération…';
+  btn.disabled = true; btn.innerHTML = spinnerHTML('text-amber-700') + 'Génération…';
 
   try {
     const db = await getStoreDb();
@@ -1562,7 +1500,7 @@ function renderActivityFeed(items) {
   const container = document.getElementById('activity-list');
   if (!container) return;
   if (!items.length) {
-    container.innerHTML = `<div class="empty-activity">Aucune activité pour le moment.</div>`;
+    container.innerHTML = `<div class="text-xs text-slate-400 text-center py-4">Aucune activité pour le moment.</div>`;
     return;
   }
   container.innerHTML = items.map(it => {
@@ -1570,13 +1508,13 @@ function renderActivityFeed(items) {
     const positive = (it.delta || 0) >= 0;
     const badge    = positive ? `+${it.delta ?? 0}` : `${it.delta ?? ''}`;
     return `
-      <div class="activity-row">
-        <div class="activity-row-icon ${positive ? 'positive' : 'negative'}">${positive ? '✓' : '★'}</div>
-        <div class="activity-row-main">
-          <div class="activity-row-email">${escapeBrand(it.email || '—')}</div>
-          <div class="activity-row-label">${escapeBrand(it.label || '')} · ${formatActivityDate(date)}</div>
+      <div class="flex items-center gap-3 py-2.5">
+        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs shrink-0 ${positive ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}">${positive ? '✓' : '★'}</div>
+        <div class="min-w-0 flex-1">
+          <div class="text-[13px] truncate">${escapeBrand(it.email || '—')}</div>
+          <div class="text-[11px] text-slate-400 truncate">${escapeBrand(it.label || '')} · ${formatActivityDate(date)}</div>
         </div>
-        <div class="activity-row-badge ${positive ? 'positive' : 'negative'}">${badge}</div>
+        <div class="text-xs font-semibold shrink-0 ${positive ? 'text-emerald-600' : 'text-amber-600'}">${badge}</div>
       </div>`;
   }).join('');
 }
@@ -1593,21 +1531,26 @@ function initConsoleTab() {
   updateMultiStampHint();
 
   const multiToggle = document.getElementById('console-multistamp');
-  const dailySlider = document.getElementById('console-daily-limit');
+  const dailySlider  = document.getElementById('console-daily-limit');
   if (multiToggle) multiToggle.checked = !!resto?.multiStamp;
   if (dailySlider) { const dl = resto?.dailyLimit || 3; dailySlider.value = dl; onDailyLimitInput(dl); }
 
   const row    = document.getElementById('network-row');
+  const iconWrap = document.getElementById('network-status-icon-wrap');
   const icon   = document.getElementById('network-status-icon');
   const label  = document.getElementById('network-status-label');
   const netBtn = document.getElementById('btn-network-sim');
   if (row && icon && label && netBtn) {
     if (_netSimOffline) {
-      row.classList.add('offline'); icon.textContent = '⚠'; label.textContent = 'Hors-ligne — écritures en file locale';
-      netBtn.textContent = 'Rétablir la Connexion'; netBtn.classList.add('is-offline');
+      iconWrap.className = 'w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0';
+      label.textContent = 'Hors-ligne — écritures en file locale';
+      netBtn.textContent = 'Rétablir la Connexion';
+      netBtn.className = 'px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition whitespace-nowrap';
     } else {
-      row.classList.remove('offline'); icon.textContent = '☁'; label.textContent = 'Connecté en direct';
-      netBtn.textContent = 'Simuler Coupure'; netBtn.classList.remove('is-offline');
+      iconWrap.className = 'w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0';
+      label.textContent = 'Connecté en direct';
+      netBtn.textContent = 'Simuler Coupure';
+      netBtn.className = 'px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-xl transition whitespace-nowrap';
     }
   }
 
@@ -1623,15 +1566,33 @@ function escapeBrand(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+function spinnerHTML(colorClass) {
+  return `<svg class="animate-spin w-4 h-4 mr-1.5 inline ${colorClass || ''}" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle><path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V1.5A10.5 10.5 0 0 0 1.5 12H4Z"></path></svg>`;
+}
+
 function showToast(msg, type = '') {
   const c = document.getElementById('toast-container');
   const t = document.createElement('div');
-  t.className = `toast ${type}`; t.textContent = msg; c.appendChild(t);
+  const styles = {
+    success: 'bg-white border border-emerald-200 text-emerald-700',
+    error:   'bg-white border border-red-200 text-red-700',
+    '':      'bg-white border border-slate-200 text-slate-700',
+  };
+  t.className = `px-4 py-2.5 rounded-full text-sm font-medium shadow-card whitespace-nowrap animate-rise-in ${styles[type] || styles['']}`;
+  t.textContent = msg;
+  c.appendChild(t);
   setTimeout(() => {
-    t.style.opacity = '0'; t.style.transition = 'opacity 0.3s';
+    t.style.transition = 'opacity .3s, transform .3s';
+    t.style.opacity = '0'; t.style.transform = 'translateY(-6px)';
     setTimeout(() => t.remove(), 300);
   }, 3000);
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   INITIALISATION
+══════════════════════════════════════════════════════════════════ */
+updateNetworkBadge();
+renderHistory();
 </script>
 </body>
 </html>
