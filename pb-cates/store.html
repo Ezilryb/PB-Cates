@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+<meta name="theme-color" content="#f8fafc" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<link rel="manifest" href="store-manifest.json" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<title>PB-Cates — Espace Caisse</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          mono: ['"DM Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        },
+        boxShadow: {
+          card:     '0 1px 2px rgba(15,23,42,0.04), 0 8px 24px -10px rgba(15,23,42,0.12)',
+          elevated: '0 4px 14px rgba(15,23,42,0.06), 0 28px 56px -16px rgba(15,23,42,0.24)',
+        },
+        keyframes: {
+          slideUp:  { '0%': { transform: 'translateY(100%)' }, '100%': { transform: 'translateY(0)' } },
+          fadeIn:   { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+          scaleIn:  { '0%': { opacity: 0, transform: 'scale(.96)' }, '100%': { opacity: 1, transform: 'scale(1)' } },
+          riseIn:   { '0%': { opacity: 0, transform: 'translateY(10px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+          ringPulse:{ '0%': { transform: 'scale(1)', opacity: .45 }, '100%': { transform: 'scale(1.9)', opacity: 0 } },
+        },
+        animation: {
+          'slide-up':   'slideUp .32s cubic-bezier(.25,.46,.45,.94)',
+          'fade-in':    'fadeIn .2s ease',
+          'scale-in':   'scaleIn .18s ease',
+          'rise-in':    'riseIn .25s ease both',
+          'ring-pulse': 'ringPulse 2.4s cubic-bezier(0,0,.2,1) infinite',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  html, body { -webkit-font-smoothing: antialiased; height: 100%; }
+  #scanner-video { object-fit: cover; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-dvh">
+<div class="min-h-dvh sm:py-8 sm:px-4 flex justify-center bg-slate-50">
+<div class="w-full sm:max-w-md bg-slate-50 sm:rounded-[28px] sm:border sm:border-slate-200 sm:shadow-elevated sm:overflow-hidden flex flex-col min-h-dvh sm:min-h-0 sm:h-[840px] relative">
+
+  <!-- ══════════════════════════ ÉCRAN AUTH ══════════════════════════ -->
+  <section id="screen-auth" class="flex-1 flex flex-col justify-center px-6 py-10 overflow-y-auto">
+    <div class="text-center mb-10">
+      <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center mx-auto mb-4 font-extrabold text-lg shadow-card">PB</div>
+      <h1 class="text-xl font-bold tracking-tight">PB-Cates</h1>
+      <p class="text-xs font-semibold text-amber-600 tracking-[0.18em] uppercase mt-1">Espace Caisse</p>
+    </div>
+
+    <h2 class="text-lg font-bold mb-1">Accès vendeur</h2>
+    <p class="text-sm text-slate-500 mb-6">Connectez-vous avec votre email et mot de passe professionnel.</p>
+
+    <div id="store-auth-error" class="hidden text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl px-3.5 py-2.5 mb-4" role="alert"></div>
+
+    <div class="space-y-3">
+      <div class="relative">
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+          <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Z"/><path d="m4 6 8 6 8-6"/></svg>
+        </span>
+        <input type="email" id="store-email" placeholder="caisse@restaurant.com" autocomplete="email" inputmode="email" aria-label="Adresse email"
+          class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm placeholder:text-slate-400 outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition" />
+      </div>
+
+      <div class="relative">
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+          <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 1 1 8 0v3"/></svg>
+        </span>
+        <input type="password" id="store-password" placeholder="Mot de passe" autocomplete="current-password" aria-label="Mot de passe"
+          class="w-full pl-11 pr-11 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm placeholder:text-slate-400 outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition" />
+        <button type="button" onclick="togglePwd('store-password', this)" aria-label="Afficher le mot de passe"
+          class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition">
+          <svg data-eye viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+
+      <button id="btn-store-login" onclick="handleStoreLogin()"
+        class="w-full py-3.5 bg-amber-500 hover:bg-amber-600 active:scale-[.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 text-white font-semibold text-sm rounded-2xl shadow-card transition flex items-center justify-center gap-2">
+        Accéder à la caisse
+      </button>
+    </div>
+
+    <div class="flex items-center gap-3 my-5 text-xs text-slate-400">
+      <div class="flex-1 h-px bg-slate-200"></div>ou<div class="flex-1 h-px bg-slate-200"></div>
+    </div>
+
+    <button id="btn-store-demo" onclick="handleDemoLogin()"
+      class="w-full py-3 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed text-slate-600 font-medium text-sm rounded-2xl transition">
+      ▷ Mode démo — sans email
+    </button>
+  </section>
+
+  <!-- ══════════════════════════ ÉCRAN PICKER ══════════════════════════ -->
+  <section id="screen-picker" class="hidden flex-1 flex-col px-6 py-10 overflow-y-auto">
+    <div class="text-center mb-8">
+      <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center mx-auto mb-4 font-extrabold text-lg shadow-card">PB</div>
+      <h1 class="text-lg font-bold">Votre Commerce</h1>
+      <p class="text-xs font-semibold text-amber-600 tracking-[0.18em] uppercase mt-1">Sélection</p>
+    </div>
+    <h2 class="text-lg font-bold mb-1">Sélectionnez votre commerce</h2>
+    <p class="text-sm text-slate-500 mb-5">Aucun commerce n'est lié automatiquement à ce compte. Choisissez votre établissement.</p>
+
+    <div id="picker-list" class="flex flex-col gap-2.5 mb-6 flex-1">
+      <div class="text-center text-sm text-slate-400 py-10">Chargement des commerces…</div>
+    </div>
+
+    <button onclick="logoutFromPicker()" class="w-full py-3 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 font-medium text-sm rounded-2xl transition">
+      ← Changer de compte
+    </button>
+  </section>
+
+  <!-- ══════════════════════════ TABLEAU DE BORD ══════════════════════════ -->
+  <section id="screen-dashboard" class="hidden flex-1 flex-col min-h-0">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-slate-200 px-5 py-3.5 flex items-center justify-between gap-3">
+      <div class="min-w-0">
+        <div id="header-resto-name" class="font-bold text-[15px] truncate">PB-Cates</div>
+        <div id="header-shift-info" class="text-[11px] text-slate-400 truncate">Session en cours</div>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-1.5 pl-2.5 pr-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100" id="network-row-badge">
+          <span id="network-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span id="network-label" class="text-[11px] font-semibold text-emerald-700">Connecté</span>
+        </div>
+        <button onclick="logout()" aria-label="Déconnexion" class="w-9 h-9 rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition">
+          <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto px-5 pb-10">
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 gap-3 mt-4">
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-card">
+          <div id="stat-today-count" class="text-3xl font-extrabold tracking-tight">0</div>
+          <div class="text-[11px] text-slate-500 font-medium mt-0.5">Tampons aujourd'hui</div>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-card">
+          <div id="stat-today-visits" class="text-3xl font-extrabold tracking-tight">0</div>
+          <div class="text-[11px] text-slate-500 font-medium mt-0.5">Clients servis</div>
+        </div>
+      </div>
+
+      <!-- Hero scan CTA -->
+      <div class="mt-4 bg-gradient-to-b from-slate-900 to-slate-800 rounded-3xl p-7 text-center shadow-elevated">
+        <div class="relative w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+          <span class="absolute inset-0 rounded-full bg-amber-400/30 animate-ring-pulse"></span>
+          <span class="absolute inset-0 rounded-full bg-amber-400/30 animate-ring-pulse" style="animation-delay:1.2s"></span>
+          <div class="relative w-16 h-16 rounded-full bg-amber-500 flex items-center justify-center shadow-lg">
+            <svg viewBox="0 0 24 24" class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7V5a1 1 0 0 1 1-1h2"/><path d="M4 17v2a1 1 0 0 0 1 1h2"/><path d="M20 7V5a1 1 0 0 0-1-1h-2"/><path d="M20 17v2a1 1 0 0 1-1 1h-2"/>
+              <rect x="7" y="7" width="3.2" height="3.2" rx=".4"/><rect x="13.8" y="7" width="3.2" height="3.2" rx=".4"/><rect x="7" y="13.8" width="3.2" height="3.2" rx=".4"/>
+              <path d="M14.5 14.5h2.8v2.8"/><path d="M17.3 17.3h.01"/>
+            </svg>
+          </div>
+        </div>
+        <h3 class="text-white font-bold text-base">Scanner une carte client</h3>
+        <p class="text-slate-400 text-xs mt-1 mb-5">Activez la caméra pour valider un QR code en un instant</p>
+        <button onclick="openScannerModal()"
+          class="w-full py-4 bg-amber-500 hover:bg-amber-400 active:scale-[.98] text-slate-900 font-bold text-sm rounded-2xl transition flex items-center justify-center gap-2 shadow-lg">
+          <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          Ouvrir le Scanner
+        </button>
+      </div>
+
+      <!-- Manual entry -->
+      <div class="mt-4 bg-white border border-slate-200 rounded-2xl p-5 shadow-card">
+        <div class="flex items-center gap-2.5 mb-0.5">
+          <svg viewBox="0 0 24 24" class="w-[18px] h-[18px] text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          <div class="font-bold text-[15px]">Saisie manuelle</div>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">Caméra indisponible ? Encaissez directement avec l'e-mail du client.</p>
+
+        <div class="relative mb-4">
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+            <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Z"/><path d="m4 6 8 6 8-6"/></svg>
+          </span>
+          <input type="email" id="console-email" placeholder="client@exemple.com" autocomplete="off" inputmode="email" aria-label="Adresse email du client"
+            class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder:text-slate-400 outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition" />
+        </div>
+
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <div>
+            <div class="text-sm font-medium">Tampons à valider</div>
+            <div id="console-multi-hint" class="text-[11px] text-slate-400 mt-0.5">Règle : multi-tampon désactivé</div>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <button id="console-btn-minus" onclick="consoleAdjustStamps(-1)" aria-label="Diminuer"
+              class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 text-lg font-medium flex items-center justify-center transition">−</button>
+            <div id="console-stamp-value" class="text-xl font-extrabold w-6 text-center">1</div>
+            <button id="console-btn-plus" onclick="consoleAdjustStamps(1)" aria-label="Augmenter"
+              class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 text-lg font-medium flex items-center justify-center transition">+</button>
+          </div>
+        </div>
+
+        <div class="flex gap-2.5">
+          <button id="btn-console-add" onclick="consoleAddStamps()"
+            class="flex-1 py-3 bg-slate-900 hover:bg-slate-800 active:scale-[.98] disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl transition flex items-center justify-center gap-1.5">
+            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Ajouter
+          </button>
+          <button id="btn-console-gift" onclick="consoleRedeemReward()"
+            class="flex-1 py-3 bg-teal-600 hover:bg-teal-700 active:scale-[.98] disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl transition flex items-center justify-center gap-1.5">
+            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7Z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7Z"/></svg>
+            Cadeau
+          </button>
+        </div>
+      </div>
+
+      <!-- Session activity (secondary zone) -->
+      <div class="mt-4 bg-white border border-slate-200 rounded-2xl p-5 shadow-card">
+        <div class="flex items-center justify-between mb-3.5">
+          <div class="font-bold text-[15px]">Activité de la session</div>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-100">
+            <svg viewBox="0 0 24 24" class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span id="history-count-label" class="text-[11px] font-semibold text-emerald-700">0 tampon validé</span>
+          </div>
+        </div>
+        <div id="history-list" class="divide-y divide-slate-100">
+          <div class="flex flex-col items-center text-center gap-2 py-8">
+            <svg viewBox="0 0 24 24" class="w-7 h-7 text-slate-300" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            <div class="text-xs text-slate-400">Aucune validation pour l'instant.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Console / Simulation accordion -->
+      <div class="mt-4 bg-white border border-slate-200 rounded-2xl shadow-card overflow-hidden">
+        <button id="btn-toggle-console" onclick="toggleConsolePanel()" class="w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-slate-50 transition">
+          <div class="flex items-center gap-2.5">
+            <svg viewBox="0 0 24 24" class="w-[18px] h-[18px] text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg>
+            <span class="font-bold text-[15px]">Outils avancés</span>
+          </div>
+          <svg id="console-chevron" viewBox="0 0 24 24" class="w-[18px] h-[18px] text-slate-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+
+        <div id="console-panel" class="hidden border-t border-slate-100 px-5 py-5 space-y-6">
+
+          <!-- Règles métier -->
+          <div>
+            <div class="text-xs font-bold uppercase tracking-wide text-slate-400 mb-3.5">Règles métier de l'instance</div>
+            <div class="flex items-start justify-between gap-4 pb-4 mb-4 border-b border-slate-100">
+              <div>
+                <div class="text-sm font-medium">Autoriser le multi-tampon</div>
+                <div class="text-xs text-slate-400 mt-0.5 max-w-[220px]">Permet de valider plusieurs tampons par encaissement.</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="console-multistamp" class="sr-only peer" onchange="toggleMultiStamp(this.checked)" aria-label="Autoriser le multi-tampon" />
+                <div class="w-11 h-6 bg-slate-200 peer-checked:bg-amber-500 peer-disabled:opacity-40 rounded-full transition-colors"></div>
+                <span class="absolute left-0.5 top-0.5 bg-white w-5 h-5 rounded-full shadow transition-transform peer-checked:translate-x-5"></span>
+              </label>
+            </div>
+            <div>
+              <div class="flex items-baseline justify-between mb-1">
+                <div class="text-sm font-medium">Limite anti-fraude journalière</div>
+                <div id="console-daily-limit-value" class="text-sm font-extrabold text-amber-600 whitespace-nowrap">3 max</div>
+              </div>
+              <div class="text-xs text-slate-400 mb-2.5">Accumulation maximale autorisée par e-mail client par jour.</div>
+              <input type="range" id="console-daily-limit" min="1" max="10" value="3" step="1" class="w-full accent-amber-500"
+                oninput="onDailyLimitInput(this.value)" onchange="onDailyLimitChange(this.value)" />
+            </div>
+          </div>
+
+          <!-- Réseau -->
+          <div class="flex items-center justify-between gap-3 flex-wrap" id="network-row">
+            <div class="flex items-center gap-3">
+              <span id="network-status-icon-wrap" class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <svg id="network-status-icon" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5a11 11 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/></svg>
+              </span>
+              <div>
+                <div class="text-sm font-medium">Réseau de l'instance</div>
+                <div id="network-status-label" class="text-xs text-slate-400">Connecté en direct</div>
+              </div>
+            </div>
+            <button id="btn-network-sim" onclick="toggleNetworkSim()" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-xl transition whitespace-nowrap">Simuler Coupure</button>
+          </div>
+
+          <!-- Export -->
+          <div class="border-t border-slate-100 pt-5">
+            <div class="text-center mb-3">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              <div class="font-bold text-sm">Export de données fidélité</div>
+              <p class="text-xs text-slate-400 mt-1">Analysez l'activité des tampons et exportez le fichier client.</p>
+            </div>
+            <button id="btn-export-csv" onclick="generateActivityExport()"
+              class="w-full py-3 border border-slate-200 hover:border-amber-300 hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed text-amber-700 font-semibold text-sm rounded-xl transition flex items-center justify-center gap-2">
+              Générer l'export CSV
+            </button>
+          </div>
+
+          <!-- Activity feed -->
+          <div class="border-t border-slate-100 pt-5">
+            <div class="font-bold text-sm mb-3">Activité récente de l'établissement</div>
+            <div id="activity-list" class="divide-y divide-slate-100">
+              <div class="text-xs text-slate-400 text-center py-4">Aucune activité pour le moment.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ MODALE SCANNER ══════════════════════════ -->
+  <div id="scanner-modal" class="hidden fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in">
+    <div class="bg-slate-900 w-full sm:max-w-sm sm:rounded-3xl rounded-t-3xl overflow-hidden animate-slide-up sm:animate-scale-in">
+
+      <div class="flex items-center justify-between px-5 py-4">
+        <div class="text-white font-bold text-sm">Scanner un QR Code</div>
+        <button id="btn-close-scanner" onclick="closeScannerModal()" aria-label="Fermer le scanner" class="w-9 h-9 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition">
+          <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- STATE: live scanning -->
+      <div id="scanner-state-live" class="px-5 pb-5">
+        <div class="relative w-full aspect-square max-h-[340px] bg-black rounded-2xl overflow-hidden" id="scanner-viewport">
+          <video id="scanner-video" autoplay playsinline muted class="absolute inset-0 w-full h-full"></video>
+          <canvas id="scanner-canvas-hidden" class="hidden"></canvas>
+          <div class="absolute top-3.5 left-3.5 w-9 h-9 border-t-[3px] border-l-[3px] border-amber-400 rounded-tl-xl"></div>
+          <div class="absolute top-3.5 right-3.5 w-9 h-9 border-t-[3px] border-r-[3px] border-amber-400 rounded-tr-xl"></div>
+          <div class="absolute bottom-3.5 left-3.5 w-9 h-9 border-b-[3px] border-l-[3px] border-amber-400 rounded-bl-xl"></div>
+          <div class="absolute bottom-3.5 right-3.5 w-9 h-9 border-b-[3px] border-r-[3px] border-amber-400 rounded-br-xl"></div>
+        </div>
+
+        <p id="scanner-hint" class="text-center text-slate-400 text-xs mt-4">Présentez le QR code du client face à la caméra</p>
+
+        <div class="flex items-center justify-center gap-2 mt-1.5 mb-4">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+          <span class="text-[11px] font-mono text-slate-500">Recherche en cours · <span id="scan-debug-frames">0</span> images</span>
+          <span id="scan-debug-result" class="hidden"></span>
+        </div>
+
+        <button id="btn-manual-capture" onclick="captureAndAnalyze()"
+          class="w-full py-3 border border-white/15 hover:bg-white/5 active:scale-[.98] disabled:opacity-40 text-white font-medium text-sm rounded-xl transition flex items-center justify-center gap-2">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          Capturer une photo et analyser
+        </button>
+      </div>
+
+      <!-- STATE: no camera -->
+      <div id="scanner-state-nocamera" class="hidden px-6 pb-7 pt-2 flex flex-col items-center text-center gap-3">
+        <div class="w-14 h-14 rounded-full bg-amber-500/15 text-amber-400 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m2 2 20 20"/><path d="M9.5 4h5l2 3h4a2 2 0 0 1 2 2v9.5"/><path d="M19.97 16.95A2 2 0 0 1 18 19H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h.5"/><circle cx="12" cy="13" r="3.5"/></svg>
+        </div>
+        <div class="text-white font-bold text-sm">Caméra non disponible</div>
+        <p class="text-slate-400 text-xs max-w-[260px]">Autorisez l'accès à la caméra dans votre navigateur, ou utilisez la saisie manuelle pour encaisser par e-mail.</p>
+        <button onclick="startScanner()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 active:scale-[.98] text-slate-900 font-semibold text-sm rounded-xl transition mt-1">Réessayer</button>
+        <button onclick="useManualEntryFromScanner()" class="w-full py-3 border border-white/15 hover:bg-white/5 text-white font-medium text-sm rounded-xl transition">Utiliser la saisie manuelle</button>
+      </div>
+
+      <!-- STATE: scan rejected -->
+      <div id="scanner-state-error" class="hidden px-6 pb-7 pt-2 flex flex-col items-center text-center gap-3">
+        <div class="w-14 h-14 rounded-full bg-red-500/15 text-red-400 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+        </div>
+        <div class="text-white font-bold text-sm">Scan refusé</div>
+        <p id="scan-error-message" class="text-slate-400 text-xs max-w-[260px]">Ce QR code n'a pas pu être validé.</p>
+        <button onclick="startScanner()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 active:scale-[.98] text-slate-900 font-semibold text-sm rounded-xl transition mt-1 flex items-center justify-center gap-2">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v6h-6"/></svg>
+          Relancer le scanner
+        </button>
+        <button onclick="closeScannerModal()" class="w-full py-3 border border-white/15 hover:bg-white/5 text-white font-medium text-sm rounded-xl transition">Fermer</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ FEUILLE DE VALIDATION ══════════════════════════ -->
+  <div id="validation-overlay" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-end sm:items-center justify-center">
+    <div class="bg-white w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl px-6 pt-3 pb-6 sm:pb-7 animate-slide-up sm:animate-scale-in" onclick="event.stopPropagation()">
+      <div class="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-5 sm:hidden"></div>
+      <div class="font-bold text-lg mb-4">Valider une visite</div>
+
+      <div id="enroll-badge-wrap" class="mb-3"></div>
+
+      <div id="preview-card" class="rounded-2xl p-5 mb-4 relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-700 text-white">
+        <div id="preview-brand" class="font-bold text-base mb-0.5">—</div>
+        <div id="preview-uid" class="text-[11px] font-mono text-white/50 mb-3">uid: —</div>
+        <div id="preview-stamps" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <div id="token-meta" class="text-center text-xs font-mono text-slate-400 py-2 mb-3">Token valide · <span class="text-emerald-600">—</span> restantes</div>
+
+      <div class="flex items-center justify-center gap-6 mb-6">
+        <button id="btn-minus" onclick="adjustStamps(-1)" aria-label="Diminuer"
+          class="w-12 h-12 rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-xl flex items-center justify-center transition">−</button>
+        <div class="text-center">
+          <div id="stamp-count-display" class="text-4xl font-extrabold leading-none">1</div>
+          <div class="text-[11px] text-slate-400 uppercase tracking-wide mt-1">tampon(s)</div>
+        </div>
+        <button id="btn-plus" onclick="adjustStamps(1)" aria-label="Augmenter"
+          class="w-12 h-12 rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-xl flex items-center justify-center transition">+</button>
+      </div>
+
+      <button onclick="confirmStamp()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[.98] text-white font-bold text-sm rounded-2xl transition flex items-center justify-center gap-2">
+        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        Confirmer <span id="confirm-label">1 tampon</span>
+      </button>
+      <button onclick="cancelValidation()" class="w-full py-3 mt-2 border border-slate-200 hover:border-red-200 hover:text-red-500 text-slate-500 font-medium text-sm rounded-2xl transition">Annuler</button>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-[200] flex flex-col gap-2 items-center pointer-events-none px-4"></div>
+
+</div>
+</div>
+
+<script>
+  window.FIREBASE_CONFIG = {
+    apiKey:            "AIzaSyAY6M5puxY9bZITCDLw0fg__a3Fky3NJZ0",
+    authDomain:        "pb-cates-demo.firebaseapp.com",
+    projectId:         "pb-cates-demo",
+    storageBucket:     "pb-cates-demo.firebasestorage.app",
+    messagingSenderId: "786794482585",
+    appId:             "1:786794482585:web:21d3b2b210349b5a0a6108"
+  };
+</script>
+
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════════════════════════════
+   ÉTAT
+══════════════════════════════════════════════════════════════════ */
+const state = {
+  user:              null,
+  currentRestaurant: null,
+  stampCount:        1,
+  scannedToken:      null,
+  cardRef:           null,
+  cardExists:        false,
+  cardData:          null,
+  validations:       [],
+  scanPaused:        false,
+  videoStream:       null,
+  rafId:             null,
+  consoleStampCount: 1
+};
+const SCAN_MAX_DIM = 800;       /* taille max du canvas d'analyse — réduit le coût CPU de getImageData() */
+let _scanFrameCount   = 0;
+let _scanLastUiUpdate = 0;
+
+/* ── Sélecteur de restaurant ── */
+let _pickerRestos = [];
+
+/* ══════════════════════════════════════════════════════════════════
+   FIREBASE / FIRESTORE
+══════════════════════════════════════════════════════════════════ */
+let _storeDb   = null;
+let _fsModule  = null;
+
+async function getStoreDb() {
+  if (_storeDb) return _storeDb;
+  const [{ getApps, getApp, initializeApp }, fs] = await Promise.all([
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'),
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+  ]);
+  const app = getApps().length ? getApp() : initializeApp(window.FIREBASE_CONFIG);
+  _storeDb   = fs.getFirestore(app);
+  _fsModule  = fs;
+  fs.enableIndexedDbPersistence(_storeDb).catch(() => {});
+  return _storeDb;
+}
+
+async function findRestaurantForUser(uid, email) {
+  const db = await getStoreDb();
+  const { collection, query, where, getDocs } =
+    await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+  /* Cherche d'abord par UID, puis par email */
+  let snap = await getDocs(query(collection(db, 'commerces'), where('storeUid',   '==', uid)));
+  if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
+  if (email) {
+    snap = await getDocs(query(collection(db, 'commerces'), where('storeEmail', '==', email)));
+    if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
+  }
+  return null;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SÉCURITÉ — NONCES ANTI-REJEU
+══════════════════════════════════════════════════════════════════ */
+function isNonceUsed(nonce) {
+  const used = JSON.parse(localStorage.getItem('pb_used_nonces') || '[]');
+  return used.includes(nonce);
+}
+function consumeNonce(nonce) {
+  const used = JSON.parse(localStorage.getItem('pb_used_nonces') || '[]');
+  used.push(nonce);
+  if (used.length > 1000) used.splice(0, 200);
+  localStorage.setItem('pb_used_nonces', JSON.stringify(used));
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   VALIDATION DU TOKEN QR
+   Accepte :
+     • Carte Universelle    → card_id === null
+     • Carte de ce commerce → card_id === myCommerceId
+   Refuse :
+     • Token expiré, version incorrecte, nonce déjà vu
+     • Carte d'un autre commerce (card_id présent et ≠ myCommerceId)
+══════════════════════════════════════════════════════════════════ */
+function validateToken(raw) {
+  let token;
+  try { token = JSON.parse(raw); } catch { return { ok: false, msg: 'Format QR invalide' }; }
+  if (!token || token.v !== 1) return { ok: false, msg: 'QR Code non reconnu (mauvaise version)' };
+  if (!token.exp || token.exp < Date.now()) return { ok: false, msg: 'QR Code expiré — le client doit en générer un nouveau' };
+  if (!token.nonce) return { ok: false, msg: 'Token sans nonce — refusé' };
+  if (isNonceUsed(token.nonce)) return { ok: false, msg: 'QR Code déjà scanné — tentative de rejeu détectée' };
+  return { ok: true, token };
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   AUTHENTIFICATION
+══════════════════════════════════════════════════════════════════ */
+let _storeAuth = null;
+async function getStoreAuth() {
+  if (_storeAuth) return _storeAuth;
+  const [{ getApps, getApp, initializeApp }, { getAuth }] = await Promise.all([
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'),
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js')
+  ]);
+  const app = getApps().length ? getApp() : initializeApp(window.FIREBASE_CONFIG);
+  _storeAuth = getAuth(app);
+  return _storeAuth;
+}
+
+function togglePwd(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const eye = btn.querySelector('[data-eye]');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    eye.innerHTML = '<path d="m2 2 20 20"/><path d="M9.5 4.2A10.6 10.6 0 0 1 12 4c7 0 10.5 7 10.5 7a17.5 17.5 0 0 1-3.1 4.1"/><path d="M6.5 6.6C3.7 8.4 1.5 11 1.5 11s3.5 7 10.5 7a10.4 10.4 0 0 0 4.2-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>';
+  } else {
+    inp.type = 'password';
+    eye.innerHTML = '<path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
+
+function showStoreAuthError(msg) {
+  const el = document.getElementById('store-auth-error');
+  el.textContent = msg; el.classList.remove('hidden');
+}
+
+async function handleStoreLogin() {
+  const email    = (document.getElementById('store-email').value    || '').trim();
+  const password = (document.getElementById('store-password').value || '');
+  if (!email || !password) { showStoreAuthError('Veuillez remplir tous les champs.'); return; }
+  const btn = document.getElementById('btn-store-login');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = spinnerHTML() + 'Connexion…';
+  try {
+    const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    const auth = await getStoreAuth();
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    await loginSuccess({ email: cred.user.email, name: cred.user.displayName || email, uid: cred.user.uid });
+  } catch (err) {
+    const map = {
+      'auth/invalid-credential':     'Email ou mot de passe incorrect.',
+      'auth/user-not-found':         'Aucun compte pour cet email.',
+      'auth/wrong-password':         'Mot de passe incorrect.',
+      'auth/too-many-requests':      'Trop de tentatives. Réessayez plus tard.',
+      'auth/network-request-failed': 'Erreur réseau.',
+    };
+    showStoreAuthError(map[err.code] || 'Une erreur est survenue.');
+  } finally {
+    btn.disabled = false; btn.innerHTML = originalHTML;
+  }
+}
+
+/* ── MODE DÉMO : connexion anonyme puis sélection du commerce ── */
+async function handleDemoLogin() {
+  const btn = document.getElementById('btn-store-demo');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = spinnerHTML() + 'Démonstration…';
+  try {
+    const { signInAnonymously } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    const auth = await getStoreAuth();
+    const cred = await signInAnonymously(auth);
+    await loginSuccess({ email: '', name: 'Mode Démo', uid: cred.user.uid });
+  } catch {
+    /* Firebase indisponible : mode local pur */
+    await loginSuccess({ email: '', name: 'Mode Démo', uid: 'demo-' + Date.now().toString(36) });
+  } finally {
+    btn.disabled = false; btn.innerHTML = originalHTML;
+  }
+}
+
+/* ── Résultat de la connexion : trouver le commerce lié ou afficher le sélecteur ── */
+async function loginSuccess(user) {
+  state.user = user;
+  document.getElementById('header-shift-info').textContent =
+    new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  let restaurant = null;
+  try { restaurant = await findRestaurantForUser(user.uid, user.email); }
+  catch (err) { console.warn('[Store] findRestaurantForUser :', err.message); }
+
+  if (restaurant) {
+    applyRestaurant(restaurant);
+    showScreen('dashboard');
+    startActivityFeed();
+  } else {
+    /* Aucun commerce lié automatiquement → sélecteur */
+    await loadAndShowPicker(user);
+  }
+}
+
+/* Applique un restaurant comme commerce actif de la session */
+function applyRestaurant(r) {
+  state.currentRestaurant = {
+    id:         r.id,
+    name:       r.name        || 'Commerce',
+    maxStamps:  r.maxStamps   || 10,
+    reward:     r.reward      || 'Récompense',
+    multiStamp: r.multiStamp  ?? false,
+    dailyLimit: r.dailyLimit  || 3,
+    colorClass: r.colorClass  || 'card-noir',
+    logoText:   r.logoText    || (r.name || '').charAt(0) || '?',
+    logoColor:  r.logoColor   || 'rgba(201,168,76,0.15)',
+  };
+  document.getElementById('header-resto-name').textContent = r.name || 'Commerce';
+  initConsoleTab();
+}
+
+function logout() {
+  closeScannerModal();
+  closeValidation(true);
+  stopActivityFeed();
+  restoreNetworkIfSimulatedOffline();
+  state.user = null;
+  state.currentRestaurant = null;
+  state.consoleStampCount = 1;
+  state.validations = [];
+  _pickerRestos = [];
+  showScreen('auth');
+  showToast('Déconnexion effectuée');
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SÉLECTEUR DE COMMERCE
+══════════════════════════════════════════════════════════════════ */
+async function loadAndShowPicker(user) {
+  showScreen('picker');
+  const listEl = document.getElementById('picker-list');
+  listEl.innerHTML = '<div class="text-center text-sm text-slate-400 py-10">Chargement des commerces…</div>';
+
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    const snap = await fs.getDocs(fs.collection(db, 'commerces'));
+    _pickerRestos = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => r.active !== false);
+  } catch {
+    /* Firestore indisponible → localStorage */
+    const raw = localStorage.getItem('pb_admin_restaurants');
+    _pickerRestos = raw ? (() => { try { return JSON.parse(raw); } catch { return []; } })() : [];
+  }
+
+  if (!_pickerRestos.length) {
+    listEl.innerHTML = '<p class="text-center text-sm text-slate-400 py-10 leading-relaxed">Aucun commerce disponible.<br>Créez d\'abord un commerce via le panneau d\'administration (Maj+Alt+A depuis index.html).</p>';
+    return;
+  }
+
+  listEl.innerHTML = _pickerRestos.map((r, i) => `
+    <button onclick="selectRestaurant(${i})" class="flex items-center gap-3.5 p-4 bg-white border border-slate-200 rounded-2xl hover:border-amber-300 hover:shadow-card active:scale-[.98] transition text-left w-full">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm shrink-0" style="background:${r.logoColor || 'rgba(201,168,76,0.15)'};color:${r.logoTextColor || '#b45309'}">
+        ${escapeBrand((r.logoText || r.name || '?').substring(0, 2).toUpperCase())}
+      </div>
+      <div class="min-w-0 flex-1">
+        <div class="text-sm font-semibold truncate">${escapeBrand(r.name)}</div>
+        <div class="text-xs text-slate-400 truncate">${escapeBrand(r.category || '')} · ${escapeBrand(r.city || '')}</div>
+      </div>
+      <svg viewBox="0 0 24 24" class="w-4 h-4 text-slate-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  `).join('');
+}
+
+function selectRestaurant(i) {
+  const r = _pickerRestos[i];
+  if (!r) return;
+  applyRestaurant(r);
+  document.getElementById('header-shift-info').textContent =
+    new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  showScreen('dashboard');
+  startActivityFeed();
+  showToast(`${r.name} — session ouverte`, 'success');
+}
+
+function logoutFromPicker() {
+  state.user = null;
+  _pickerRestos = [];
+  showScreen('auth');
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════════════════ */
+function showScreen(id) {
+  ['auth', 'picker', 'dashboard'].forEach(s => {
+    const el = document.getElementById(`screen-${s}`);
+    if (!el) return;
+    if (s === id) { el.classList.remove('hidden'); el.classList.add('flex'); }
+    else          { el.classList.add('hidden');    el.classList.remove('flex'); }
+  });
+}
+
+function toggleConsolePanel() {
+  const panel   = document.getElementById('console-panel');
+  const chevron = document.getElementById('console-chevron');
+  const willOpen = panel.classList.contains('hidden');
+  panel.classList.toggle('hidden');
+  chevron.classList.toggle('rotate-180', willOpen);
+  if (willOpen) initConsoleTab();
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   STATUT RÉSEAU (badge d'en-tête)
+══════════════════════════════════════════════════════════════════ */
+function updateNetworkBadge() {
+  const offline = !navigator.onLine || _netSimOffline;
+  const dot   = document.getElementById('network-dot');
+  const label = document.getElementById('network-label');
+  const wrap  = document.getElementById('network-row-badge');
+  if (!dot || !label || !wrap) return;
+  if (offline) {
+    wrap.className = 'flex items-center gap-1.5 pl-2.5 pr-3 py-1.5 rounded-full bg-red-50 border border-red-100';
+    dot.className  = 'w-1.5 h-1.5 rounded-full bg-red-500';
+    label.className = 'text-[11px] font-semibold text-red-700';
+    label.textContent = 'Hors-ligne';
+  } else {
+    wrap.className = 'flex items-center gap-1.5 pl-2.5 pr-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100';
+    dot.className  = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
+    label.className = 'text-[11px] font-semibold text-emerald-700';
+    label.textContent = 'Connecté';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MODALE SCANNER — cycle de vie
+══════════════════════════════════════════════════════════════════ */
+function openScannerModal() {
+  document.getElementById('scanner-modal').classList.remove('hidden');
+  document.getElementById('scanner-modal').classList.add('flex');
+  document.body.style.overflow = 'hidden';
+  startScanner();
+}
+
+function closeScannerModal() {
+  stopScanner();
+  const modal = document.getElementById('scanner-modal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+  document.body.style.overflow = '';
+}
+
+function showScannerState(name) {
+  const states = { live: 'scanner-state-live', nocamera: 'scanner-state-nocamera', error: 'scanner-state-error' };
+  Object.values(states).forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById(states[name]).classList.remove('hidden');
+}
+
+function useManualEntryFromScanner() {
+  closeScannerModal();
+  const input = document.getElementById('console-email');
+  if (input) { input.scrollIntoView({ behavior: 'smooth', block: 'center' }); input.focus(); }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SCANNER QR
+   • Aucun lancement automatique : la caméra ne démarre que depuis
+     openScannerModal() (clic explicite sur "Ouvrir le Scanner").
+   • Dès qu'un QR code est détecté (valide ou non) OU si la modale
+     est fermée, le flux caméra est immédiatement coupé (track.stop())
+     — voir stopScanner() et onQRDetected().
+══════════════════════════════════════════════════════════════════ */
+async function startScanner() {
+  if (typeof jsQR === 'undefined') { showScannerState('nocamera'); return; }
+  stopScanner(); /* libère complètement le flux précédent */
+  showScannerState('live');
+
+  const video = document.getElementById('scanner-video');
+  const hint  = document.getElementById('scanner-hint');
+
+  try {
+    state.videoStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
+    });
+    video.srcObject = state.videoStream;
+    hint.textContent = 'Présentez le QR code du client face à la caméra';
+    state.scanPaused = false;
+    _scanFrameCount = 0;
+
+    try { await video.play(); } catch (_) { /* autoplay attribute gère le repli */ }
+    scheduleScan();
+
+  } catch (err) {
+    console.warn('[Scanner] Erreur caméra :', err.name, err.message);
+    showScannerState('nocamera');
+  }
+}
+
+/** Coupe immédiatement et proprement le flux caméra (économie batterie). */
+function stopScanner() {
+  cancelAnimationFrame(state.rafId);
+  state.rafId = null;
+  state.scanPaused = true;
+  if (state.videoStream) {
+    state.videoStream.getTracks().forEach(t => t.stop());
+    state.videoStream = null;
+  }
+  const video = document.getElementById('scanner-video');
+  if (video) { video.pause(); video.srcObject = null; }
+}
+
+function scheduleScan() {
+  if (state.scanPaused) return;
+  state.rafId = requestAnimationFrame(scanFrame);
+}
+
+function scanFrame() {
+  if (state.scanPaused) return;
+  const video  = document.getElementById('scanner-video');
+  const canvas = document.getElementById('scanner-canvas-hidden');
+  const ctx    = canvas.getContext('2d', { willReadFrequently: true });
+
+  if (video.readyState >= video.HAVE_ENOUGH_DATA) {
+    /* Résolution d'analyse réduite pour soulager le thread principal —
+       jsQR n'a pas besoin de la pleine résolution caméra. */
+    const vw = video.videoWidth, vh = video.videoHeight;
+    const scale = Math.min(1, SCAN_MAX_DIM / Math.max(vw, vh));
+    canvas.width  = Math.round(vw * scale);
+    canvas.height = Math.round(vh * scale);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+      inversionAttempts: 'attemptBoth'
+    });
+
+    _scanFrameCount++;
+    updateScanDebugUI();
+
+    if (code && code.data) {
+      onQRDetected(code.data);
+      return;
+    }
+  }
+  state.rafId = requestAnimationFrame(scanFrame);
+}
+
+function updateScanDebugUI() {
+  const now = performance.now();
+  if (now - _scanLastUiUpdate < 200) return; /* throttle pour ne pas ajouter de saccades */
+  _scanLastUiUpdate = now;
+  const frEl = document.getElementById('scan-debug-frames');
+  if (frEl) frEl.textContent = _scanFrameCount;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   CAPTURE MANUELLE — alternative au scan continu
+   Fige l'image en pleine résolution et l'analyse une seule fois.
+══════════════════════════════════════════════════════════════════ */
+async function captureAndAnalyze() {
+  const video = document.getElementById('scanner-video');
+  const btn   = document.getElementById('btn-manual-capture');
+  if (!video.videoWidth) { showToast('Caméra non prête — réessayez dans un instant', 'error'); return; }
+
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = spinnerHTML('text-white') + 'Analyse…';
+
+  const wasPaused = state.scanPaused;
+  state.scanPaused = true;
+  cancelAnimationFrame(state.rafId);
+
+  try {
+    const canvas = document.getElementById('scanner-canvas-hidden');
+    const ctx    = canvas.getContext('2d', { willReadFrequently: true });
+    canvas.width  = video.videoWidth;   /* pleine résolution pour cette capture unique */
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
+
+    if (code && code.data) {
+      onQRDetected(code.data);
+    } else {
+      showToast('Aucun QR trouvé sur cette photo — rapprochez-vous et évitez les reflets d\'écran', 'error');
+      state.scanPaused = wasPaused;
+      if (!wasPaused) scheduleScan();
+    }
+  } catch (err) {
+    console.error('[Scanner] Erreur capture manuelle :', err);
+    showToast('Erreur lors de l\'analyse de la photo', 'error');
+    state.scanPaused = wasPaused;
+    if (!wasPaused) scheduleScan();
+  } finally {
+    btn.disabled = false; btn.innerHTML = originalHTML;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TRAITEMENT DU QR DÉTECTÉ
+   Logique d'acceptation :
+     • card_id === null    → Carte Universelle    → ACCEPTÉ (inscription + tampon)
+     • card_id === myId    → Carte de ce commerce  → ACCEPTÉ (tampon)
+     • card_id === autreId → Carte d'un autre commerce → REFUSÉ
+   Dans tous les cas, la caméra est coupée immédiatement.
+══════════════════════════════════════════════════════════════════ */
+function onQRDetected(raw) {
+  stopScanner(); /* coupe le flux dès qu'un code est lu, succès ou échec */
+
+  const result = validateToken(raw);
+  if (!result.ok) {
+    document.getElementById('scan-error-message').textContent = result.msg;
+    showScannerState('error');
+    return;
+  }
+
+  const myCommerceId = state.currentRestaurant?.id;
+  if (!myCommerceId) {
+    document.getElementById('scan-error-message').textContent = 'Aucun commerce sélectionné — utilisez le sélecteur';
+    showScannerState('error');
+    return;
+  }
+
+  const scannedCardId = result.token.card_id;
+  /* card_id null = Carte Universelle (passe-partout) */
+  if (scannedCardId && scannedCardId !== myCommerceId) {
+    document.getElementById('scan-error-message').textContent = 'Carte d\'un autre commerce — demandez la Carte Universelle au client';
+    showScannerState('error');
+    return;
+  }
+
+  state.scannedToken = result.token;
+  state.stampCount   = 1;
+  closeScannerModal();
+  openValidationSheet(result.token);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   FEUILLE DE VALIDATION
+══════════════════════════════════════════════════════════════════ */
+async function openValidationSheet(token) {
+  const resto   = state.currentRestaurant;
+  const secLeft = Math.max(0, Math.round((token.exp - Date.now()) / 1000));
+
+  document.getElementById('preview-brand').textContent = resto.name;
+  document.getElementById('preview-uid').textContent   = `uid : ${token.uid.substring(0, 16)}…`;
+  document.getElementById('token-meta').innerHTML      = `Token valide · <span class="text-emerald-600">${secLeft}s</span> restantes`;
+
+  const db = await getStoreDb();
+  const fs = _fsModule;
+  const cardRef = fs.doc(db, 'users', token.uid, 'cards', resto.id);
+
+  let existing = null;
+  try {
+    const snap = await fs.getDoc(cardRef);
+    if (snap.exists()) existing = snap.data();
+  } catch (err) {
+    console.warn('[Store] Lecture carte impossible :', err.message);
+  }
+
+  state.cardRef    = cardRef;
+  state.cardExists = !!existing;
+  state.cardData   = {
+    brand:      resto.name,
+    stamps:     existing?.stamps    || 0,
+    maxStamps:  existing?.maxStamps || resto.maxStamps,
+    colorClass: resto.colorClass
+  };
+
+  /* Badge d'inscription si première visite */
+  const enrollWrap = document.getElementById('enroll-badge-wrap');
+  enrollWrap.innerHTML = !existing
+    ? `<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-100 text-amber-700 text-xs font-semibold">
+         <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7.1L12 17.8l-6.2 3.5L7 14.2 2 9.3l7.1-.7L12 2z"/></svg>
+         Première visite — inscription automatique
+       </div>`
+    : '';
+
+  if (!existing) {
+    document.getElementById('token-meta').innerHTML =
+      `<span class="text-amber-600 font-semibold">Nouvelle carte — ${escapeBrand(resto.name)}</span> · ${secLeft}s restantes`;
+  }
+
+  renderPreviewStamps(state.cardData, 1);
+  const maxSel = resto.multiStamp ? Math.min(3, resto.dailyLimit) : 1;
+  updateStampSelector(1, maxSel);
+  updateConfirmLabel();
+
+  document.getElementById('validation-overlay').classList.remove('hidden');
+  document.getElementById('validation-overlay').classList.add('flex');
+}
+
+function renderPreviewStamps(card, newCount) {
+  const container = document.getElementById('preview-stamps');
+  container.innerHTML = Array.from({ length: card.maxStamps }, (_, i) => {
+    const filled = i < card.stamps;
+    const isNew  = i >= card.stamps && i < card.stamps + newCount;
+    const cls = filled
+      ? 'bg-amber-400 border-amber-400 text-slate-900'
+      : isNew
+        ? 'bg-emerald-400/25 border-emerald-300 text-emerald-200'
+        : 'border-white/20 text-white/40';
+    return `<div class="w-6 h-6 rounded-full border-[1.5px] flex items-center justify-center text-[10px] ${cls}">${filled ? '✦' : isNew ? '+' : ''}</div>`;
+  }).join('');
+}
+
+function adjustStamps(delta) {
+  const resto = state.currentRestaurant;
+  const max = resto.multiStamp ? Math.min(3, resto.dailyLimit) : 1;
+  state.stampCount = Math.max(1, Math.min(max, state.stampCount + delta));
+  document.getElementById('stamp-count-display').textContent = state.stampCount;
+  document.getElementById('btn-minus').disabled = state.stampCount <= 1;
+  document.getElementById('btn-plus').disabled  = state.stampCount >= max;
+  updateConfirmLabel();
+  if (state.cardData) renderPreviewStamps(state.cardData, state.stampCount);
+}
+
+function updateStampSelector(count, max) {
+  state.stampCount = count;
+  document.getElementById('stamp-count-display').textContent = count;
+  document.getElementById('btn-minus').disabled = count <= 1;
+  document.getElementById('btn-plus').disabled  = count >= max;
+}
+
+function updateConfirmLabel() {
+  const n = state.stampCount;
+  document.getElementById('confirm-label').textContent = `${n} tampon${n > 1 ? 's' : ''}`;
+}
+
+async function confirmStamp() {
+  if (!state.scannedToken || !state.cardRef) return;
+
+  consumeNonce(state.scannedToken.nonce);
+
+  const resto = state.currentRestaurant;
+  const fs    = _fsModule;
+  const count = state.stampCount;
+
+  const historyEntry = {
+    date:    fs.Timestamp.now(),
+    action:  count === 1 ? 'Visite validée' : `${count} tampons validés`,
+    stamps:  count,
+    staffId: state.user?.uid || ''
+  };
+
+  const payload = {
+    commerceId: resto.id,
+    maxStamps:  resto.maxStamps,
+    reward:     resto.reward,
+    stamps:     fs.increment(count),
+    lastVisit:  fs.serverTimestamp(),
+    history:    fs.arrayUnion(historyEntry)
+  };
+  if (!state.cardExists) payload.createdAt = fs.serverTimestamp();
+
+  try {
+    await fs.setDoc(state.cardRef, payload, { merge: true });
+
+    /* Récupérer l'email du client pour le journal */
+    let clientEmail = '';
+    try {
+      const userSnap = await fs.getDoc(fs.doc(_storeDb, 'users', state.scannedToken.uid));
+      if (userSnap.exists()) clientEmail = userSnap.data().email || '';
+    } catch (_) {}
+    logActivity({
+      email: clientEmail || `uid:${state.scannedToken.uid.substring(0, 8)}…`,
+      uid:   state.scannedToken.uid,
+      label: state.cardExists
+        ? (count === 1 ? 'Point ajouté (+1) · QR' : `Points ajoutés (+${count}) · QR`)
+        : `Inscription + ${count} point${count > 1 ? 's' : ''} · QR`,
+      delta: count
+    });
+  } catch (err) {
+    console.error('[Store] Écriture Firestore échouée :', err);
+    showToast('Erreur lors de l\'enregistrement — réessayez', 'error');
+  }
+
+  state.validations.unshift({
+    time:   new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+    cardId: resto.id,
+    uid:    state.scannedToken.uid,
+    stamps: count,
+    brand:  resto.name,
+    isNew:  !state.cardExists,
+    via:    'QR'
+  });
+
+  updateTodayStats();
+  renderHistory();
+
+  const msg = state.cardExists
+    ? `✓ ${count} tampon${count > 1 ? 's' : ''} validé${count > 1 ? 's' : ''}`
+    : `⭐ Nouveau client inscrit + ${count} tampon${count > 1 ? 's' : ''}`;
+  closeValidation();
+  showToast(msg, 'success');
+}
+
+function cancelValidation() { closeValidation(); showToast('Validation annulée'); }
+
+function closeValidation(silent) {
+  document.getElementById('validation-overlay').classList.add('hidden');
+  document.getElementById('validation-overlay').classList.remove('flex');
+  state.scannedToken = null;
+  state.cardRef      = null;
+  state.cardExists   = false;
+  state.cardData     = null;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   STATISTIQUES & HISTORIQUE DE SESSION
+══════════════════════════════════════════════════════════════════ */
+function updateTodayStats() {
+  const total  = state.validations.reduce((s, v) => s + v.stamps, 0);
+  const visits = state.validations.length;
+  const elCount  = document.getElementById('stat-today-count');
+  const elVisits = document.getElementById('stat-today-visits');
+  if (elCount)  elCount.textContent  = total;
+  if (elVisits) elVisits.textContent = visits;
+}
+
+function renderHistory() {
+  const container = document.getElementById('history-list');
+  const total = state.validations.reduce((s, v) => s + v.stamps, 0);
+  const labelEl = document.getElementById('history-count-label');
+  if (labelEl) labelEl.textContent = `${total} tampon${total > 1 ? 's' : ''} validé${total > 1 ? 's' : ''}`;
+
+  if (!state.validations.length) {
+    container.innerHTML = `
+      <div class="flex flex-col items-center text-center gap-2 py-8">
+        <svg viewBox="0 0 24 24" class="w-7 h-7 text-slate-300" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <div class="text-xs text-slate-400">Aucune validation pour l'instant.</div>
+      </div>`;
+    return;
+  }
+  container.innerHTML = state.validations.map(v => `
+    <div class="flex items-center justify-between gap-3 py-3">
+      <div class="min-w-0">
+        <div class="text-[11px] font-mono text-slate-400">${v.time}${v.isNew ? ' · ⭐ inscription' : ''}</div>
+        <div class="text-sm truncate mt-0.5">${escapeBrand(v.brand)} · ${escapeBrand(v.uid.substring(0, 12))}…</div>
+      </div>
+      <div class="shrink-0 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-full whitespace-nowrap">+${v.stamps} tampon${v.stamps > 1 ? 's' : ''}</div>
+    </div>`).join('');
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   VISIBILITÉ PAGE — coupe la caméra si l'app passe en arrière-plan
+══════════════════════════════════════════════════════════════════ */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    if (state.videoStream) {
+      stopScanner();
+      const modal = document.getElementById('scanner-modal');
+      if (modal && !modal.classList.contains('hidden')) {
+        document.getElementById('scan-error-message').textContent = "Scan interrompu — l'application est passée en arrière-plan.";
+        showScannerState('error');
+      }
+    }
+  }
+});
+
+window.addEventListener('online',  updateNetworkBadge);
+window.addEventListener('offline', updateNetworkBadge);
+
+/* ══════════════════════════════════════════════════════════════════
+   CONSOLE / SAISIE MANUELLE
+══════════════════════════════════════════════════════════════════ */
+let _unsubscribeActivity = null;
+let _netSimOffline       = false;
+
+async function findUserByEmail(email) {
+  const db = await getStoreDb();
+  const fs = _fsModule;
+  const snap = await fs.getDocs(fs.query(
+    fs.collection(db, 'users'), fs.where('email', '==', email), fs.limit(1)
+  ));
+  return snap.empty ? null : { uid: snap.docs[0].id, ...snap.docs[0].data() };
+}
+
+async function logActivity({ email, uid, label, delta }) {
+  const resto = state.currentRestaurant;
+  if (!resto?.id) return;
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    await fs.addDoc(fs.collection(db, 'commerces', resto.id, 'activity'), {
+      email: email || '', uid: uid || null, label: label || '',
+      delta: delta ?? 0, date: fs.serverTimestamp(), staffId: state.user?.uid || ''
+    });
+  } catch (err) { console.warn('[Console] Journal impossible :', err.message); }
+}
+
+function consoleMaxStamps() {
+  const resto = state.currentRestaurant;
+  if (!resto) return 1;
+  return resto.multiStamp ? Math.min(3, resto.dailyLimit || 3) : 1;
+}
+
+function consoleSetStampCount(n) {
+  const max = consoleMaxStamps();
+  state.consoleStampCount = Math.max(1, Math.min(max, n));
+  const valueEl = document.getElementById('console-stamp-value');
+  const minusEl = document.getElementById('console-btn-minus');
+  const plusEl  = document.getElementById('console-btn-plus');
+  if (valueEl) valueEl.textContent = state.consoleStampCount;
+  if (minusEl) minusEl.disabled = state.consoleStampCount <= 1;
+  if (plusEl)  plusEl.disabled  = state.consoleStampCount >= max;
+}
+
+function consoleAdjustStamps(delta) { consoleSetStampCount(state.consoleStampCount + delta); }
+
+async function consoleAddStamps() {
+  const resto = state.currentRestaurant;
+  if (!resto?.id) { showToast('Aucun commerce sélectionné', 'error'); return; }
+
+  const emailInput = document.getElementById('console-email');
+  const email = (emailInput.value || '').trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Adresse email invalide', 'error'); emailInput.focus(); return;
+  }
+
+  const btn = document.getElementById('btn-console-add');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = spinnerHTML('text-white') + 'Ajout…';
+
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    const count = state.consoleStampCount;
+    const match = await findUserByEmail(email);
+    if (!match) {
+      showToast('Aucun compte client pour cet email — le client doit se connecter une fois dans l\'app', 'error');
+      return;
+    }
+
+    const cardRef = fs.doc(db, 'users', match.uid, 'cards', resto.id);
+    let existing = null;
+    try { const snap = await fs.getDoc(cardRef); if (snap.exists()) existing = snap.data(); } catch (_) {}
+
+    const historyEntry = {
+      date: fs.Timestamp.now(),
+      action: count === 1 ? 'Visite validée (email)' : `${count} tampons validés (email)`,
+      stamps: count, staffId: state.user?.uid || ''
+    };
+
+    const payload = {
+      commerceId: resto.id, maxStamps: resto.maxStamps, reward: resto.reward,
+      stamps: fs.increment(count), lastVisit: fs.serverTimestamp(), history: fs.arrayUnion(historyEntry)
+    };
+    if (!existing) payload.createdAt = fs.serverTimestamp();
+
+    await fs.setDoc(cardRef, payload, { merge: true });
+    logActivity({
+      email, uid: match.uid,
+      label: existing ? (count === 1 ? 'Point ajouté (+1)' : `Points ajoutés (+${count})`) : `Inscription + ${count} point${count > 1 ? 's' : ''}`,
+      delta: count
+    });
+
+    state.validations.unshift({
+      time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      cardId: resto.id, uid: match.uid, stamps: count, brand: resto.name,
+      isNew: !existing, via: 'Email'
+    });
+    updateTodayStats();
+    renderHistory();
+
+    showToast(`✓ ${count} tampon${count > 1 ? 's' : ''} pour ${email}`, 'success');
+    emailInput.value = '';
+    consoleSetStampCount(1);
+  } catch (err) {
+    console.error('[Console] Erreur ajout tampon :', err);
+    showToast('Erreur lors de l\'ajout — réessayez', 'error');
+  } finally {
+    btn.disabled = false; btn.innerHTML = originalHTML;
+  }
+}
+
+async function consoleRedeemReward() {
+  const resto = state.currentRestaurant;
+  if (!resto?.id) { showToast('Aucun commerce sélectionné', 'error'); return; }
+
+  const emailInput = document.getElementById('console-email');
+  const email = (emailInput.value || '').trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Adresse email invalide', 'error'); emailInput.focus(); return;
+  }
+
+  const btn = document.getElementById('btn-console-gift');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = spinnerHTML('text-white') + '…';
+
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    const match = await findUserByEmail(email);
+    if (!match) { showToast('Aucun compte client pour cet email', 'error'); return; }
+
+    const cardRef = fs.doc(db, 'users', match.uid, 'cards', resto.id);
+    const snap = await fs.getDoc(cardRef);
+    const data = snap.exists() ? snap.data() : null;
+    const stamps    = data?.stamps    || 0;
+    const maxStamps = data?.maxStamps || resto.maxStamps;
+    const reward    = data?.reward    || resto.reward;
+
+    if (!data || stamps < maxStamps) {
+      showToast(`Récompense indisponible (${stamps}/${maxStamps} tampons)`, 'error'); return;
+    }
+
+    const historyEntry = {
+      date: fs.Timestamp.now(), action: `Récompense utilisée : ${reward}`,
+      stamps: -maxStamps, staffId: state.user?.uid || ''
+    };
+    await fs.setDoc(cardRef, { stamps: 0, lastVisit: fs.serverTimestamp(), history: fs.arrayUnion(historyEntry) }, { merge: true });
+    logActivity({ email, uid: match.uid, label: `Récompense : ${reward}`, delta: -maxStamps });
+
+    showToast(`✓ Récompense validée pour ${email}`, 'success');
+    emailInput.value = ''; consoleSetStampCount(1);
+  } catch (err) {
+    console.error('[Console] Erreur récompense :', err);
+    showToast('Erreur — réessayez', 'error');
+  } finally {
+    btn.disabled = false; btn.innerHTML = originalHTML;
+  }
+}
+
+async function toggleMultiStamp(checked) {
+  const resto    = state.currentRestaurant;
+  const toggleEl = document.getElementById('console-multistamp');
+  if (!resto?.id) { showToast('Aucun commerce sélectionné', 'error'); if (toggleEl) toggleEl.checked = !checked; return; }
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    await fs.updateDoc(fs.doc(db, 'commerces', resto.id), { multiStamp: checked });
+    resto.multiStamp = checked;
+    updateMultiStampHint(); consoleSetStampCount(1);
+    showToast(checked ? 'Multi-tampon activé' : 'Multi-tampon désactivé', 'success');
+  } catch (err) {
+    if (toggleEl) toggleEl.checked = !checked;
+    showToast('Erreur de mise à jour', 'error');
+  }
+}
+
+function updateMultiStampHint() {
+  const resto  = state.currentRestaurant;
+  const hintEl = document.getElementById('console-multi-hint');
+  if (!hintEl) return;
+  hintEl.textContent = resto?.multiStamp
+    ? `Règle : multi-tampon autorisé (max ${consoleMaxStamps()}/encaissement)`
+    : 'Règle : multi-tampon désactivé';
+}
+
+function onDailyLimitInput(value) {
+  const label  = document.getElementById('console-daily-limit-value');
+  if (label) label.textContent = `${value} max`;
+}
+
+async function onDailyLimitChange(value) {
+  const resto = state.currentRestaurant;
+  const n = Math.max(1, Math.min(10, parseInt(value, 10) || 1));
+  if (!resto?.id) { showToast('Aucun commerce sélectionné', 'error'); return; }
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    await fs.updateDoc(fs.doc(db, 'commerces', resto.id), { dailyLimit: n });
+    resto.dailyLimit = n; updateMultiStampHint(); consoleSetStampCount(state.consoleStampCount);
+    showToast('Limite anti-fraude mise à jour', 'success');
+  } catch (err) { showToast('Erreur de mise à jour', 'error'); }
+}
+
+async function toggleNetworkSim() {
+  const db    = await getStoreDb();
+  const fs    = _fsModule;
+  const btn   = document.getElementById('btn-network-sim');
+  const iconWrap = document.getElementById('network-status-icon-wrap');
+  const icon  = document.getElementById('network-status-icon');
+  const label = document.getElementById('network-status-label');
+  try {
+    if (!_netSimOffline) {
+      await fs.disableNetwork(db);
+      _netSimOffline = true;
+      iconWrap.className = 'w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0';
+      icon.innerHTML = '<path d="m2 2 20 20"/><path d="M8.5 16.5a6 6 0 0 1 4.6-1.7"/><path d="M5 12.5a11 11 0 0 1 5.5-3"/><path d="M2 8.5a16 16 0 0 1 4.2-2.6"/><path d="M16.5 8a16 16 0 0 1 5.5 3.5"/><circle cx="12" cy="19.5" r="1"/>';
+      label.textContent = 'Hors-ligne — écritures en file locale';
+      btn.textContent = 'Rétablir la Connexion';
+      btn.className = 'px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition whitespace-nowrap';
+      showToast('Coupure réseau simulée', '');
+    } else {
+      await fs.enableNetwork(db);
+      _netSimOffline = false;
+      iconWrap.className = 'w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0';
+      icon.innerHTML = '<path d="M5 12.5a11 11 0 0 1 14 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/>';
+      label.textContent = 'Connecté en direct';
+      btn.textContent = 'Simuler Coupure';
+      btn.className = 'px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-xl transition whitespace-nowrap';
+      showToast('Connexion rétablie', 'success');
+    }
+    updateNetworkBadge();
+  } catch (err) { showToast('Erreur', 'error'); }
+}
+
+async function restoreNetworkIfSimulatedOffline() {
+  if (!_netSimOffline || !_storeDb || !_fsModule) return;
+  try { await _fsModule.enableNetwork(_storeDb); } catch (_) {}
+  _netSimOffline = false;
+  updateNetworkBadge();
+}
+
+function csvEscape(v) {
+  const s = String(v ?? '');
+  return /[",;\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+async function generateActivityExport() {
+  const resto = state.currentRestaurant;
+  if (!resto?.id) { showToast('Aucun commerce sélectionné', 'error'); return; }
+
+  const btn = document.getElementById('btn-export-csv');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = spinnerHTML('text-amber-700') + 'Génération…';
+
+  try {
+    const db = await getStoreDb();
+    const fs = _fsModule;
+    const snap = await fs.getDocs(fs.query(
+      fs.collection(db, 'commerces', resto.id, 'activity'),
+      fs.orderBy('date', 'desc'), fs.limit(1000)
+    ));
+
+    const rows = [['Date', 'Heure', 'Email', 'Action', 'Variation tampons']];
+    snap.forEach(d => {
+      const data = d.data();
+      const date = data.date?.toDate ? data.date.toDate() : new Date();
+      rows.push([
+        date.toLocaleDateString('fr-FR'),
+        date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        data.email || '', data.label || '',
+        data.delta != null ? String(data.delta) : ''
+      ]);
+    });
+
+    const csv  = rows.map(r => r.map(csvEscape).join(',')).join('\r\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `pb-cates-${resto.id}-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    showToast(`Export généré (${snap.size} entrée${snap.size > 1 ? 's' : ''})`, 'success');
+  } catch (err) {
+    console.error('[Console] Erreur export CSV :', err);
+    showToast('Erreur lors de la génération de l\'export', 'error');
+  } finally {
+    btn.disabled = false; btn.innerHTML = originalHTML;
+  }
+}
+
+function startActivityFeed() {
+  stopActivityFeed();
+  const resto = state.currentRestaurant;
+  if (!resto?.id) return;
+
+  getStoreDb().then(db => {
+    const fs = _fsModule;
+    const q = fs.query(
+      fs.collection(db, 'commerces', resto.id, 'activity'),
+      fs.orderBy('date', 'desc'), fs.limit(20)
+    );
+    _unsubscribeActivity = fs.onSnapshot(q,
+      snap => renderActivityFeed(snap.docs.map(d => d.data())),
+      err  => console.warn('[Console] Activité indisponible :', err.message)
+    );
+  });
+}
+
+function stopActivityFeed() {
+  if (_unsubscribeActivity) { _unsubscribeActivity(); _unsubscribeActivity = null; }
+}
+
+function renderActivityFeed(items) {
+  const container = document.getElementById('activity-list');
+  if (!container) return;
+  if (!items.length) {
+    container.innerHTML = `<div class="text-xs text-slate-400 text-center py-4">Aucune activité pour le moment.</div>`;
+    return;
+  }
+  container.innerHTML = items.map(it => {
+    const date     = it.date?.toDate ? it.date.toDate() : new Date();
+    const positive = (it.delta || 0) >= 0;
+    const badge    = positive ? `+${it.delta ?? 0}` : `${it.delta ?? ''}`;
+    return `
+      <div class="flex items-center gap-3 py-2.5">
+        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs shrink-0 ${positive ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}">${positive ? '✓' : '★'}</div>
+        <div class="min-w-0 flex-1">
+          <div class="text-[13px] truncate">${escapeBrand(it.email || '—')}</div>
+          <div class="text-[11px] text-slate-400 truncate">${escapeBrand(it.label || '')} · ${formatActivityDate(date)}</div>
+        </div>
+        <div class="text-xs font-semibold shrink-0 ${positive ? 'text-emerald-600' : 'text-amber-600'}">${badge}</div>
+      </div>`;
+  }).join('');
+}
+
+function formatActivityDate(d) {
+  return `${d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' })} ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+}
+
+function initConsoleTab() {
+  const resto  = state.currentRestaurant;
+  const linked = !!resto?.id;
+
+  consoleSetStampCount(1);
+  updateMultiStampHint();
+
+  const multiToggle = document.getElementById('console-multistamp');
+  const dailySlider  = document.getElementById('console-daily-limit');
+  if (multiToggle) multiToggle.checked = !!resto?.multiStamp;
+  if (dailySlider) { const dl = resto?.dailyLimit || 3; dailySlider.value = dl; onDailyLimitInput(dl); }
+
+  const row    = document.getElementById('network-row');
+  const iconWrap = document.getElementById('network-status-icon-wrap');
+  const icon   = document.getElementById('network-status-icon');
+  const label  = document.getElementById('network-status-label');
+  const netBtn = document.getElementById('btn-network-sim');
+  if (row && icon && label && netBtn) {
+    if (_netSimOffline) {
+      iconWrap.className = 'w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0';
+      label.textContent = 'Hors-ligne — écritures en file locale';
+      netBtn.textContent = 'Rétablir la Connexion';
+      netBtn.className = 'px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition whitespace-nowrap';
+    } else {
+      iconWrap.className = 'w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0';
+      label.textContent = 'Connecté en direct';
+      netBtn.textContent = 'Simuler Coupure';
+      netBtn.className = 'px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-xl transition whitespace-nowrap';
+    }
+  }
+
+  ['console-email', 'btn-console-add', 'btn-console-gift',
+   'console-multistamp', 'console-daily-limit', 'btn-export-csv'
+  ].forEach(id => { const el = document.getElementById(id); if (el) el.disabled = !linked; });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   UTILITAIRES
+══════════════════════════════════════════════════════════════════ */
+function escapeBrand(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function spinnerHTML(colorClass) {
+  return `<svg class="animate-spin w-4 h-4 mr-1.5 inline ${colorClass || ''}" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle><path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V1.5A10.5 10.5 0 0 0 1.5 12H4Z"></path></svg>`;
+}
+
+function showToast(msg, type = '') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  const styles = {
+    success: 'bg-white border border-emerald-200 text-emerald-700',
+    error:   'bg-white border border-red-200 text-red-700',
+    '':      'bg-white border border-slate-200 text-slate-700',
+  };
+  t.className = `px-4 py-2.5 rounded-full text-sm font-medium shadow-card whitespace-nowrap animate-rise-in ${styles[type] || styles['']}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => {
+    t.style.transition = 'opacity .3s, transform .3s';
+    t.style.opacity = '0'; t.style.transform = 'translateY(-6px)';
+    setTimeout(() => t.remove(), 300);
+  }, 3000);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   INITIALISATION
+══════════════════════════════════════════════════════════════════ */
+updateNetworkBadge();
+renderHistory();
+</script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f8fafc" />
+  <meta name="description" content="PB-Cates — Votre portefeuille de fidélité multi-commerce" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="indexcss/app.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>PB-Cates — Fidélité Sans Friction</title>
+
+  <!-- Tailwind config doit rester inline : le CDN le lit synchroniquement au boot -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['DM Sans', 'system-ui', 'sans-serif'] },
+          colors: {
+            gold: { DEFAULT: '#e2e8f0', light: '#e0c170', dark: '#a98a36' },
+          },
+          keyframes: {
+            fadeUp: { '0%': { opacity: 0, transform: 'translateY(18px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+          },
+          animation: { fadeUp: 'fadeUp 0.35s ease both' },
+        },
+      },
+    };
+  </script>
+
+  <!-- Firebase config doit rester inline : lue par firebase.js via window.FIREBASE_CONFIG -->
+  <script>
+    window.FIREBASE_CONFIG = {
+      apiKey:            "AIzaSyAY6M5puxY9bZITCDLw0fg__a3Fky3NJZ0",
+      authDomain:        "pb-cates-demo.firebaseapp.com",
+      projectId:         "pb-cates-demo",
+      storageBucket:     "pb-cates-demo.firebasestorage.app",
+      messagingSenderId: "786794482585",
+      appId:             "1:786794482585:web:21d3b2b210349b5a0a6108"
+    };
+  </script>
+</head>
+
+<body class="bg-slate-100 text-slate-900 antialiased">
+<div id="app" class="min-h-[100dvh] flex flex-col items-center bg-slate-100 min-[500px]:py-8 [padding-bottom:env(safe-area-inset-bottom)]">
+  <div class="shell w-full max-w-[440px] flex-1 flex flex-col relative bg-slate-50 min-[500px]:rounded-[28px] min-[500px]:border min-[500px]:border-slate-200 min-[500px]:shadow-2xl min-[500px]:shadow-slate-900/10 min-[500px]:overflow-hidden min-[500px]:max-h-[860px]">
+
+    <!-- ÉCRAN 1 : AUTHENTIFICATION -->
+    <section id="screen-auth" class="screen flex flex-col justify-center px-6 py-10 min-h-[100dvh] animate-fadeUp" role="main" aria-label="Connexion">
+      <div class="text-center mb-10">
+        <div class="w-[72px] h-[72px] rounded-2xl bg-amber-500 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-slate-900/15 font-extrabold text-xl text-white" aria-hidden="true">PB</div>
+        <div class="font-extrabold text-2xl text-slate-900 tracking-tight">PB-Cates</div>
+        <div class="text-xs text-slate-400 tracking-[3px] uppercase mt-1">Fidélité Sans Friction</div>
+      </div>
+
+      <div class="w-full">
+        <h2 class="text-xl font-bold text-slate-900 mb-1">Bienvenue</h2>
+        <p class="text-sm text-slate-500 mb-7 leading-relaxed">Connectez-vous pour accéder à votre portefeuille de fidélité.</p>
+
+        <div class="flex flex-col gap-2.5 mb-6">
+          <button class="w-full flex items-center justify-center gap-2.5 px-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed" id="btn-google" onclick="signInWithGoogle()">
+            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.14 0 5.95 1.08 8.17 2.85l6.09-6.09C34.46 3.18 29.5 1 24 1 14.82 1 7.07 6.48 3.73 14.16l7.09 5.51C12.43 13.62 17.73 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.57-.14-3.09-.4-4.55H24v8.6h12.65c-.55 2.9-2.2 5.36-4.67 7.02l7.18 5.58C43.43 37.3 46.5 31.35 46.5 24.5z"/><path fill="#FBBC05" d="M10.82 28.33A14.54 14.54 0 0 1 9.5 24c0-1.5.25-2.95.69-4.33l-7.09-5.51A23.94 23.94 0 0 0 0 24c0 3.87.93 7.53 2.57 10.76l8.25-6.43z"/><path fill="#34A853" d="M24 47c6.48 0 11.93-2.14 15.9-5.82l-7.18-5.58c-2.18 1.46-4.97 2.3-8.72 2.3-6.27 0-11.57-4.12-13.18-9.67l-8.25 6.43C7.07 41.52 14.82 47 24 47z"/></svg>
+            Continuer avec Google
+          </button>
+          <button class="w-full flex items-center justify-center gap-2.5 px-6 py-3.5 bg-slate-900 border border-slate-900 rounded-2xl text-sm font-medium text-white shadow-sm hover:bg-slate-800 active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed" id="btn-apple" onclick="signInWithApple()">
+            <svg width="18" height="18" viewBox="0 0 814 1000" fill="currentColor" aria-hidden="true"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.5-155.5-127.4C46.3 790.6.1 656.4.1 577.2c0-207.2 135.4-316.7 269.1-316.7 71 0 130.5 46.4 175 46.4 42.8 0 109.9-49.5 190.5-49.5zm-88-76.4c40.8-48.6 70-116.1 70-183.6 0-9.5-.6-19-2.5-26.9-66.4 2.5-145.4 44.1-193 98.5-37.5 42.8-72.5 110.3-72.5 178.8 0 10.8 1.9 21.7 2.5 25.2 3.8.6 10.1 1.3 16.4 1.3 59.6 0 133.2-40.1 179.1-93.3z"/></svg>
+            Continuer avec Apple
+          </button>
+        </div>
+
+        <div class="flex items-center gap-4 text-xs text-slate-400 tracking-wide my-6" aria-hidden="true">
+          <span class="flex-1 h-px bg-slate-200"></span> ou par email <span class="flex-1 h-px bg-slate-200"></span>
+        </div>
+
+        <div class="flex bg-slate-100 rounded-2xl p-1 mb-6" role="tablist">
+          <button class="flex-1 py-2 text-center text-sm rounded-xl font-medium transition bg-white shadow-sm text-slate-900" id="tab-login" role="tab" onclick="switchAuthTab('login')">Connexion</button>
+          <button class="flex-1 py-2 text-center text-sm rounded-xl font-medium transition text-slate-400" id="tab-register" role="tab" onclick="switchAuthTab('register')">Inscription</button>
+        </div>
+
+        <div id="auth-error" class="hidden text-sm text-red-600 text-center px-3 py-2.5 bg-red-50 border border-red-100 rounded-xl mb-4" role="alert"></div>
+
+        <div id="panel-login">
+          <div class="relative mb-4">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base" aria-hidden="true">✉</span>
+            <input type="email" id="login-email" placeholder="votre@email.com" autocomplete="email" inputmode="email" aria-label="Adresse email" class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-gold focus:ring-2 focus:ring-gold/15 transition" />
+          </div>
+          <div class="relative mb-5">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base" aria-hidden="true">🔒</span>
+            <input type="password" id="login-password" placeholder="Mot de passe" autocomplete="current-password" aria-label="Mot de passe" class="w-full pl-11 pr-11 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-gold focus:ring-2 focus:ring-gold/15 transition" />
+            <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-base" onclick="togglePwd('login-password', this)" aria-label="Afficher le mot de passe">👁</button>
+          </div>
+          <button class="w-full py-3.5 bg-gold hover:bg-gold-light rounded-2xl text-sm font-semibold text-slate-900 shadow-md shadow-gold/20 active:scale-[0.98] transition disabled:opacity-45 disabled:cursor-not-allowed" id="btn-login" onclick="handleEmailLogin()">Se connecter</button>
+          <button type="button" class="w-full text-center text-xs text-slate-500 hover:text-gold-dark transition pt-3" onclick="showForgotPanel()">Mot de passe oublié ?</button>
+        </div>
+
+        <div id="panel-forgot" style="display:none">
+          <div class="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-gold-dark transition cursor-pointer mb-4" onclick="hideForgotPanel()" role="button" tabindex="0">← Retour à la connexion</div>
+          <p class="text-sm text-slate-500 mb-5 leading-relaxed">Saisissez votre email. Vous recevrez un lien pour créer un nouveau mot de passe.</p>
+          <div id="forgot-success" class="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-2.5 mb-4" style="display:none" role="alert">✓ Email envoyé ! Vérifiez votre boîte de réception (et les spams).</div>
+          <div class="relative mb-5">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base" aria-hidden="true">✉</span>
+            <input type="email" id="forgot-email" placeholder="votre@email.com" autocomplete="email" inputmode="email" class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-gold focus:ring-2 focus:ring-gold/15 transition" />
+          </div>
+          <button class="w-full py-3.5 bg-gold hover:bg-gold-light rounded-2xl text-sm font-semibold text-slate-900 shadow-md shadow-gold/20 active:scale-[0.98] transition disabled:opacity-45 disabled:cursor-not-allowed" id="btn-forgot-send" onclick="handleForgotPassword()">Envoyer le lien de réinitialisation</button>
+        </div>
+
+        <div id="panel-register" style="display:none">
+          <div class="relative mb-4">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base" aria-hidden="true">✉</span>
+            <input type="email" id="reg-email" placeholder="votre@email.com" autocomplete="email" inputmode="email" class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-gold focus:ring-2 focus:ring-gold/15 transition" />
+          </div>
+          <div class="relative mb-5">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base" aria-hidden="true">🔒</span>
+            <input type="password" id="reg-password" placeholder="Choisir un mot de passe (6 car. min.)" autocomplete="new-password" class="w-full pl-11 pr-11 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-gold focus:ring-2 focus:ring-gold/15 transition" />
+            <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-base" onclick="togglePwd('reg-password', this)" aria-label="Afficher le mot de passe">👁</button>
+          </div>
+          <button class="w-full py-3.5 bg-gold hover:bg-gold-light rounded-2xl text-sm font-semibold text-slate-900 shadow-md shadow-gold/20 active:scale-[0.98] transition disabled:opacity-45 disabled:cursor-not-allowed" id="btn-register" onclick="handleEmailRegister()">Créer mon compte</button>
+        </div>
+
+        <a href="store.html" class="flex items-center justify-center gap-2 w-full mt-7 px-4 py-3 bg-transparent border border-dashed border-slate-300 rounded-2xl text-xs tracking-wide text-slate-400 hover:text-gold-dark hover:border-gold/40 hover:bg-gold/5 transition" aria-label="Accéder à l'espace caisse">
+          <span aria-hidden="true">🏪</span> Vous êtes un commerce ? Accéder à l'Espace Caisse
+        </a>
+      </div>
+    </section>
+
+    <!-- ÉCRAN 2 : WALLET -->
+    <section id="screen-wallet" class="screen hidden flex-col flex-1" role="main" aria-label="Portefeuille de fidélité">
+      <header class="flex items-center justify-between px-5 pt-5 pb-2 sticky top-0 bg-slate-50/90 backdrop-blur z-10">
+        <span class="font-extrabold text-lg text-slate-900 tracking-tight">PB-Cates</span>
+        <button class="w-[38px] h-[38px] rounded-full bg-white border border-slate-200 text-gold-dark text-xs font-semibold flex items-center justify-center shadow-sm" id="user-avatar" onclick="showScreen('profile')" aria-label="Mon profil">ME</button>
+      </header>
+
+      <div class="px-5 pt-3 pb-2">
+        <div class="text-xs text-slate-400 tracking-[2px] uppercase">Bonjour</div>
+        <div class="font-bold text-2xl text-slate-900 mt-1 mb-3" id="wallet-title">Mon Portefeuille</div>
+        <div class="flex gap-2.5">
+          <div class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs text-slate-500 shadow-sm"><span aria-hidden="true" class="text-gold-dark">♦</span><span><strong class="text-slate-900 font-semibold" id="stat-cards">0</strong> cartes</span></div>
+          <div class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs text-slate-500 shadow-sm"><span aria-hidden="true" class="text-gold-dark">★</span><span><strong class="text-slate-900 font-semibold" id="stat-rewards">0</strong> récompense</span></div>
+        </div>
+      </div>
+
+      <div id="wc-area" class="px-4 pt-4 flex-shrink-0 [touch-action:pan-y]">
+        <div id="wc-wrap" class="relative w-full" style="aspect-ratio:1.586;">
+          <div id="wc-shn" class="absolute inset-0 rounded-[20px] hidden [transform:rotate(2.5deg)_scale(0.965)] z-0 opacity-60"></div>
+          <div id="wc-shp" class="absolute inset-0 rounded-[20px] hidden [transform:rotate(-2.5deg)_scale(0.965)] z-0 opacity-40"></div>
+          <div id="wc-scene" class="absolute inset-0 z-[1] [perspective:1200px] [touch-action:none] cursor-pointer rounded-[20px] overflow-hidden outline-none focus-visible:[box-shadow:0_0_0_3px_rgba(169,138,54,0.55)]" aria-label="Carte de fidélité — touchez pour retourner, glissez ou utilisez les flèches pour changer">
+            <div id="wc-inner" class="w-full h-full relative [transform-style:preserve-3d] [transition:transform_0.65s_cubic-bezier(0.23,1,0.32,1)] rounded-[20px] shadow-[0_16px_40px_rgba(15,23,42,0.18),0_4px_10px_rgba(15,23,42,0.10)]">
+              <div id="wc-front" class="absolute inset-0 rounded-[20px] p-4 flex flex-col justify-between overflow-hidden [backface-visibility:hidden] [-webkit-backface-visibility:hidden]"></div>
+              <div id="wc-back" class="absolute inset-0 rounded-[20px] overflow-hidden flex flex-col [backface-visibility:hidden] [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)]"></div>
+            </div>
+          </div>
+        </div>
+        <div id="wc-dots" class="flex justify-center gap-1.5 mt-3.5 pb-0.5" role="tablist" aria-label="Navigation entre les cartes"></div>
+        <div id="wc-announce" class="sr-only" aria-live="polite"></div>
+      </div>
+
+      <div id="wc-list" class="mt-3 px-2 pt-3 pb-4 flex-1 overflow-y-auto border-t border-slate-200/70" role="list"></div>
+    </section>
+
+    <!-- ÉCRAN 3 : DÉTAIL -->
+    <section id="screen-detail" class="screen hidden flex-col flex-1 overflow-y-auto" role="main" aria-label="Détail de la carte">
+      <button class="flex items-center gap-2 px-5 pt-5 pb-3 text-sm text-slate-500 hover:text-gold-dark transition" onclick="showScreen('wallet')" aria-label="Retour au portefeuille">← Portefeuille</button>
+
+      <div class="px-4 mb-5">
+        <div class="rounded-[24px] p-7 min-h-[200px] flex flex-col justify-between relative overflow-hidden shadow-lg shadow-slate-900/15 bg-[linear-gradient(135deg,#475569,#0f172a)]" id="detail-card">
+          <div>
+            <div class="font-extrabold text-xl text-white mb-1" id="detail-brand">Le Bistro du Coin</div>
+            <div class="text-xs text-white/60 tracking-[2px] uppercase" id="detail-category">Restaurant · Paris 11e</div>
+          </div>
+          <div class="flex gap-2 flex-wrap mt-5" id="detail-stamps-grid"></div>
+          <div class="flex items-center justify-between mt-4">
+            <div id="detail-reward-badge"></div>
+            <div class="text-xs text-white/50" id="detail-member-since">Membre depuis jan. 2024</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-4">
+        <div class="text-xs text-slate-400 tracking-[2.5px] uppercase mb-3">Valider un tampon</div>
+        <div class="flex items-center gap-4 p-5 bg-white border border-slate-200 rounded-2xl shadow-sm cursor-pointer hover:border-gold/40 transition" onclick="openQROverlay()" role="button" tabindex="0" aria-label="Afficher mon QR Code">
+          <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-gold-dark text-2xl flex-shrink-0" aria-hidden="true">▣</div>
+          <div class="flex-1">
+            <strong class="block text-slate-900 font-semibold text-sm mb-0.5">Afficher mon QR Code</strong>
+            <p class="text-xs text-slate-400">Présentez-le en caisse pour valider votre visite</p>
+          </div>
+          <span class="text-slate-300 text-lg" aria-hidden="true">›</span>
+        </div>
+      </div>
+
+      <div class="px-4 mt-6 pb-8">
+        <div class="text-xs text-slate-400 tracking-[2.5px] uppercase mb-3">Historique</div>
+        <div id="detail-history"></div>
+      </div>
+    </section>
+
+    <!-- ÉCRAN 4 : PROFIL -->
+    <section id="screen-profile" class="screen hidden flex-col flex-1" role="main" aria-label="Mon profil">
+      <header class="flex items-center justify-between px-5 pt-5 pb-2">
+        <span class="font-extrabold text-lg text-slate-900 tracking-tight">PB-Cates</span>
+      </header>
+      <div class="px-5 pt-3 pb-2">
+        <div class="text-xs text-slate-400 tracking-[2px] uppercase">Mon Compte</div>
+        <div class="font-bold text-2xl text-slate-900 mt-1">Profil</div>
+      </div>
+      <div class="px-5 py-6 flex flex-col gap-6">
+        <div class="bg-white border border-slate-200 rounded-3xl p-7 flex flex-col items-center gap-2 text-center shadow-sm">
+          <div class="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 text-gold-dark font-extrabold text-xl flex items-center justify-center" id="profile-avatar" aria-hidden="true">ME</div>
+          <div class="text-sm font-semibold text-slate-900 break-all mt-1" id="profile-email">—</div>
+          <div class="text-[11px] text-slate-400 break-all" id="profile-uid"></div>
+        </div>
+        <button class="w-full py-3.5 bg-white border border-red-200 rounded-2xl text-sm font-semibold text-red-600 hover:bg-red-50 active:scale-[0.98] transition" onclick="logout()">Se déconnecter</button>
+      </div>
+    </section>
+
+    <nav class="bottom-nav flex bg-white border-t border-slate-200 py-2.5 [padding-bottom:calc(0.6rem+env(safe-area-inset-bottom))]" id="bottom-nav" style="display:none" role="navigation" aria-label="Navigation principale">
+      <button class="flex-1 flex flex-col items-center gap-0.5 py-1.5 text-[10px] tracking-wide uppercase text-gold-dark transition" id="nav-wallet" onclick="showScreen('wallet')" aria-label="Portefeuille"><span class="text-xl">◈</span>Wallet</button>
+      <button class="flex-1 flex flex-col items-center gap-0.5 py-1.5 text-[10px] tracking-wide uppercase text-slate-400 transition" onclick="showToast('Offres — bientôt disponible')" aria-label="Offres"><span class="text-xl">◇</span>Offres</button>
+      <button class="flex-1 flex flex-col items-center gap-0.5 py-1.5 text-[10px] tracking-wide uppercase text-slate-400 transition" id="nav-profile" onclick="showScreen('profile')" aria-label="Profil"><span class="text-xl">○</span>Profil</button>
+    </nav>
+  </div>
+</div>
+
+<!-- QR OVERLAY -->
+<div class="qr-overlay hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] items-center justify-center p-8" id="qr-overlay" role="dialog" aria-modal="true" aria-label="QR Code dynamique" onclick="closeQROverlay(event)">
+  <div class="bg-white border border-slate-200 rounded-[28px] p-8 w-full max-w-[320px] text-center shadow-2xl animate-fadeUp" onclick="event.stopPropagation()">
+    <div class="font-bold text-lg text-slate-900 mb-1" id="qr-modal-brand">PB-Cates</div>
+    <div class="text-xs text-slate-400 mb-7">Code dynamique — valable 2 minutes</div>
+    <div class="relative w-[164px] h-[164px] mx-auto mb-6" aria-label="QR Code de validation">
+      <svg class="absolute -top-[13px] -left-[13px] w-[calc(100%+26px)] h-[calc(100%+26px)] [transform:rotate(-90deg)] pointer-events-none" viewBox="0 0 190 190" aria-hidden="true">
+        <circle fill="none" stroke="#e2e8f0" stroke-width="5" cx="95" cy="95" r="88"/>
+        <circle fill="none" stroke="#c9a84c" stroke-width="5" stroke-linecap="round" stroke-dasharray="553" stroke-dashoffset="0" style="transition:stroke-dashoffset 1s linear, stroke 0.5s ease;" cx="95" cy="95" r="88" id="qr-ring-progress"/>
+      </svg>
+      <div class="absolute inset-0 flex items-center justify-center bg-white rounded-2xl overflow-hidden border border-slate-100">
+        <div id="qr-canvas-container"></div>
+      </div>
+    </div>
+    <div class="text-xs text-slate-400 tracking-wide">Expire dans <strong class="text-gold-dark" id="qr-timer">120</strong>s</div>
+    <button class="mt-5 px-8 py-2.5 border border-slate-200 rounded-full text-xs text-slate-500 hover:border-gold/40 hover:text-gold-dark transition" onclick="closeQROverlay()">Fermer</button>
+  </div>
+</div>
+
+<div class="fixed top-5 left-1/2 -translate-x-1/2 z-[200] flex flex-col gap-2 pointer-events-none" id="toast-container" aria-live="assertive"></div>
+
+<!-- Point d'entrée ES Module — charge tous les modules en cascade -->
+<script type="module" src="indexjs/main.js"></script>
+</body>
+</html>

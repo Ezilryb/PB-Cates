@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Deliberately no manifest — admin panel is NOT a PWA -->
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <title>PB-Cates — Administration</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          keyframes: {
+            fadeIn:  { '0%': { opacity: 0, transform: 'translateY(6px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+            modalIn: { '0%': { opacity: 0, transform: 'scale(.96) translateY(10px)' }, '100%': { opacity: 1, transform: 'scale(1) translateY(0)' } },
+            toastIn: { '0%': { opacity: 0, transform: 'translateX(12px)' }, '100%': { opacity: 1, transform: 'translateX(0)' } },
+            shake:   { '0%,100%': { transform: 'translateX(0)' }, '20%,60%': { transform: 'translateX(-6px)' }, '40%,80%': { transform: 'translateX(6px)' } },
+          },
+          animation: {
+            fadeIn:  'fadeIn .25s ease',
+            modalIn: 'modalIn .25s cubic-bezier(.25,.46,.45,.94)',
+            toastIn: 'toastIn .3s ease',
+            shake:   'shake .4s ease',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
+
+<!-- ══════════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════════ -->
+<div id="login-screen" class="flex min-h-screen items-center justify-center px-4 py-12" style="background-image:radial-gradient(circle at 50% 0%, rgba(245,158,11,0.07), transparent 55%)">
+  <div class="w-full max-w-[400px]">
+
+    <div class="mb-7 flex flex-col items-center text-center">
+      <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-[13px] font-bold text-white shadow-lg shadow-amber-500/25">PB</div>
+      <span class="mb-3 inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-amber-700">
+        <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4.5v9L12 20l-8-4.5v-9L12 2z"/></svg>
+        Administration
+      </span>
+      <h1 class="text-xl font-bold tracking-tight text-slate-900">PB-Cates</h1>
+      <p class="mt-0.5 text-[13px] text-slate-500">Panneau de gestion</p>
+    </div>
+
+    <div class="rounded-2xl border border-slate-200 bg-white p-7 shadow-xl shadow-slate-900/[0.04]">
+      <div class="flex flex-col gap-4">
+        <div>
+          <label class="mb-1.5 block text-[12.5px] font-medium text-slate-600">Adresse email</label>
+          <input type="email" id="admin-email" placeholder="admin@betacapital.fr" autocomplete="username"
+            class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-[14px] text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10" />
+        </div>
+        <div>
+          <label class="mb-1.5 block text-[12.5px] font-medium text-slate-600">Mot de passe</label>
+          <input type="password" id="admin-pwd" placeholder="••••••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') attemptLogin()"
+            class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-[14px] text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10" />
+        </div>
+
+        <div id="login-error" class="hidden items-center justify-center rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-center text-[13px] font-medium text-rose-700 [&.visible]:flex [&.visible]:animate-shake">
+          Identifiants incorrects. Vérifiez vos accès.
+        </div>
+
+        <button onclick="attemptLogin()" class="btn-login mt-1 w-full rounded-lg bg-gradient-to-b from-amber-500 to-amber-600 px-4 py-2.5 text-[14px] font-semibold text-white shadow-sm shadow-amber-500/30 transition-all hover:from-amber-400 hover:to-amber-500 active:scale-[0.99]">
+          Accéder au panneau
+        </button>
+
+        <p class="mt-1 text-center text-[12px] leading-relaxed text-slate-400">
+          Accès réservé aux administrateurs.<br>
+          Raccourci depuis la page client : <span class="font-mono text-slate-500">Maj+Alt+A</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     APP SHELL
+══════════════════════════════════════════ -->
+<div id="app-shell" class="hidden min-h-screen [&.visible]:flex [&.visible]:flex-col">
+
+  <!-- Top bar -->
+  <header class="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-slate-200 bg-white/85 px-4 backdrop-blur sm:px-6">
+    <div class="flex items-center gap-3">
+      <button class="-ml-1 rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 lg:hidden" onclick="toggleSidebar()" aria-label="Ouvrir le menu">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="flex items-center gap-2.5">
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 text-[12px] font-bold text-white shadow-sm">PB</div>
+        <div class="flex items-center gap-2">
+          <span class="text-[15px] font-semibold tracking-tight text-slate-900">PB-Cates</span>
+          <span class="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Admin</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="hidden text-right sm:block">
+        <p class="text-[13px] font-medium leading-tight text-slate-700" id="topbar-user-name">—</p>
+        <p class="text-[11px] leading-tight text-slate-400">Administrateur</p>
+      </div>
+      <div class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-[12px] font-bold text-white shadow-sm" id="topbar-avatar">A</div>
+      <button class="rounded-lg border border-slate-200 px-3 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600" onclick="logout()">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="flex flex-1">
+
+    <!-- Mobile overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 z-40 hidden bg-slate-900/40 backdrop-blur-sm lg:hidden" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <nav id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full border-r border-slate-200 bg-white transition-transform duration-200 ease-out lg:static lg:z-0 lg:h-[calc(100vh-4rem)] lg:w-64 lg:translate-x-0" style="top:4rem">
+      <div class="flex h-full flex-col overflow-y-auto px-3 py-5">
+
+        <div class="mb-6">
+          <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">Gestion</p>
+          <div class="mt-1.5 space-y-0.5">
+            <button id="nav-restaurants" class="sidebar-item active group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 [&.active]:bg-amber-50 [&.active]:text-amber-700" onclick="showPage('restaurants')">
+              <svg class="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+              <span class="flex-1 text-left">Restaurants</span>
+              <span id="resto-count-badge" class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500 [.active_&]:bg-amber-100 [.active_&]:text-amber-700">0</span>
+            </button>
+            <button id="nav-stats" class="sidebar-item group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 [&.active]:bg-amber-50 [&.active]:text-amber-700" onclick="showPage('stats')">
+              <svg class="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="4" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="20" y1="20" x2="20" y2="14"/></svg>
+              <span class="flex-1 text-left">Statistiques</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">Système</p>
+          <div class="mt-1.5 space-y-0.5">
+            <button class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600" onclick="showToast('Documentation — bientôt disponible')">
+              <svg class="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h8l5 5v13a1 1 0 01-1 1H6a1 1 0 01-1-1V3.5a1 1 0 011-1z"/><path d="M14 2.5v5h5"/></svg>
+              <span class="flex-1 text-left">Documentation</span>
+            </button>
+            <button class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600" onclick="showToast('Déployez le projet Firebase pour activer cette section')">
+              <svg class="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="18" r="2"/></svg>
+              <span class="flex-1 text-left">Configuration Firebase</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-5 text-[11px] text-slate-300">pb-cates-demo · v3</div>
+      </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+
+      <!-- ── PAGE: RESTAURANTS ── -->
+      <div id="page-restaurants" class="page active hidden [&.active]:block [&.active]:animate-fadeIn">
+        <div class="mb-7 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 class="text-[22px] font-bold tracking-tight text-slate-900">Restaurants</h1>
+            <p class="mt-0.5 text-[13px] text-slate-500">Gérez les établissements partenaires et leurs configurations</p>
+          </div>
+          <button class="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-b from-amber-500 to-amber-600 px-4 py-2.5 text-[13.5px] font-semibold text-white shadow-sm shadow-amber-500/25 transition-all hover:from-amber-400 hover:to-amber-500" onclick="openCreateModal()">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Nouveau restaurant
+          </button>
+        </div>
+
+        <div class="mb-7 grid grid-cols-2 gap-3.5 sm:grid-cols-4">
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Total</p>
+            <p class="mt-1.5 text-[28px] font-bold leading-none text-slate-900" id="s-total">0</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Actifs</p>
+            <p class="mt-1.5 text-[28px] font-bold leading-none text-emerald-600" id="s-active">0</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Multi-tampon</p>
+            <p class="mt-1.5 text-[28px] font-bold leading-none text-amber-600" id="s-multi">0</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Moy. tampons</p>
+            <p class="mt-1.5 text-[28px] font-bold leading-none text-slate-900" id="s-stamps">10</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3" id="resto-grid">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- ── PAGE: STATS ── -->
+      <div id="page-stats" class="page hidden [&.active]:block [&.active]:animate-fadeIn">
+        <div class="mb-7">
+          <h1 class="text-[22px] font-bold tracking-tight text-slate-900">Statistiques &amp; Système</h1>
+          <p class="mt-0.5 text-[13px] text-slate-500">Informations sur le déploiement Firebase</p>
+        </div>
+
+        <div class="flex flex-col gap-5">
+
+          <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="flex items-center gap-2.5 border-b border-slate-100 px-6 py-4">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg>
+              </div>
+              <h3 class="text-[14px] font-semibold text-slate-900">Architecture Firebase</h3>
+            </div>
+            <div class="divide-y divide-slate-100 px-6">
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Hébergement</span><span class="font-mono text-[12.5px] font-medium text-amber-700">Firebase Hosting (Free)</span></div>
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Base de données</span><span class="font-mono text-[12.5px] font-medium text-slate-700">Firestore (Free Tier)</span></div>
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Authentification</span><span class="font-mono text-[12.5px] font-medium text-slate-700">Firebase Auth — Email Link</span></div>
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Capacité (Spark)</span><span class="font-mono text-[12.5px] font-medium text-slate-700">~500 clients actifs</span></div>
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Coût mensuel estimé</span><span class="font-mono text-[12.5px] font-medium text-amber-700">0 € / mois</span></div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="flex items-center gap-2.5 border-b border-slate-100 px-6 py-4">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><circle cx="12" cy="11" r="2"/><path d="M12 13v3"/></svg>
+              </div>
+              <h3 class="text-[14px] font-semibold text-slate-900">Sécurité QR</h3>
+            </div>
+            <div class="divide-y divide-slate-100 px-6">
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Validité d'un QR</span><span class="font-mono text-[12.5px] font-medium text-slate-700">30 secondes</span></div>
+              <div class="flex items-center justify-between gap-3 py-3 text-[13px]"><span class="shrink-0 text-slate-500">Structure du token</span><span class="truncate font-mono text-[12px] font-medium text-slate-700">{ v, card_id, uid, ts, exp, nonce }</span></div>
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Anti-rejeu</span><span class="font-mono text-[12.5px] font-medium text-amber-700">Nonce Redis / Supabase (prod)</span></div>
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Expiration</span><span class="font-mono text-[12.5px] font-medium text-slate-700">Vérifiée côté serveur (Cloud Function)</span></div>
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Liaison utilisateur</span><span class="font-mono text-[12.5px] font-medium text-slate-700">uid Firebase vérifié vs JWT</span></div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="flex items-center gap-2.5 border-b border-slate-100 px-6 py-4">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.5 2.5-6 5.5-6s5.5 2.5 5.5 6"/><circle cx="17.5" cy="9.5" r="2.4"/><path d="M15.7 14.2c2.4.3 4.3 2.5 4.3 5.8"/></svg>
+              </div>
+              <h3 class="text-[14px] font-semibold text-slate-900">Comptes administrateurs</h3>
+            </div>
+            <div class="divide-y divide-slate-100 px-6">
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Compte 1</span><span class="font-mono text-[12.5px] font-medium text-amber-700">admin@betacapital.fr</span></div>
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Compte 2</span><span class="font-mono text-[12.5px] font-medium text-amber-700">support@betacapital.fr</span></div>
+              <div class="flex items-center justify-between gap-3 py-3 text-[13px]">
+                <span class="text-slate-500">Stockage credentials</span>
+                <span class="inline-flex items-center gap-1.5 rounded-md bg-rose-50 px-2 py-1 text-[12px] font-medium text-rose-600">
+                  <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L2.6 17.5a1.6 1.6 0 001.4 2.5h16a1.6 1.6 0 001.4-2.5L13.7 3.9a1.6 1.6 0 00-2.8 0z"/><line x1="12" y1="9" x2="12" y2="13.5"/><circle cx="12" cy="16.5" r="0.4" fill="currentColor" stroke="none"/></svg>
+                  Hardcodé — migrer vers Custom Claims
+                </span>
+              </div>
+              <div class="flex items-center justify-between py-3 text-[13px]"><span class="text-slate-500">Accès</span><span class="font-mono text-[12.5px] font-medium text-slate-700">Login client → Maj + Alt + A</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══ MODAL: CREATE / EDIT ══ -->
+<div class="modal-backdrop hidden fixed inset-0 z-[200] items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm [&.open]:flex sm:p-8" id="modal-edit">
+  <div onclick="event.stopPropagation()" class="flex max-h-[90vh] w-full max-w-2xl animate-modalIn flex-col rounded-2xl border border-slate-200 bg-white shadow-2xl">
+
+    <div class="flex items-center justify-between border-b border-slate-100 px-6 py-5 sm:px-8">
+      <div>
+        <h2 class="text-[17px] font-bold tracking-tight text-slate-900" id="modal-edit-title">Nouveau restaurant</h2>
+        <p class="mt-0.5 text-[12.5px] text-slate-400">Configurez les informations de l'établissement partenaire</p>
+      </div>
+      <button class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600" onclick="closeModal('modal-edit')">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="flex flex-col gap-5 overflow-y-auto px-6 py-6 sm:px-8">
+      <input type="hidden" id="edit-id" value="" />
+
+      <!-- Identité -->
+      <div class="flex items-center gap-3">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-600">Identité</span>
+        <span class="h-px flex-1 bg-slate-100"></span>
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_120px]">
+        <div>
+          <label class="mb-1.5 block text-[12.5px] font-medium text-slate-600">Nom de l'établissement *</label>
+          <input id="edit-name" placeholder="Le Bistro du Coin" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-[14px] text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10" />
+        </div>
+        <div>
+          <label class="mb-1.5 block text-[12.5px] font-medium text-slate-600">Logo (2 lettres)</label>
+          <input id="edit-logo" placeholder="BC" maxlength="3" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-[14px] uppercase text-slate-900 placeholder:text-slate-400 placeholder:normal-case outline-none transition-colors focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label class="mb-1.5 block text-[12.5px] font-medium text-slate-600">Catégorie</label>
+          <div class="relative">
+            <select id="edit-category" class="w-full appearance-none rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 pr-9 text-[14px] text-slate-900 outline-none transition-colors focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10">
+              <option value="Restaurant">Restaurant</option>
+              <option value="Boulangerie">Boulangerie</option>
+              <option value="Café">Café</option>
+              <option value="Bar">Bar</option>
+              <option value="Commerce">Commerce</option>
+              <option value="Autre">Autre</option>
+            </select>
+            <svg class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div>
+          <label class="mb-1.5 block text-[12.5px] font-medium text-slate-600">Ville</label>
+          <input id="edit-city" placeholder="Paris 11e" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-[14px] text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10" />
+        </div>
+      </div>
+
+      <!-- Accès caisse -->
+      <div class="flex items-center gap-3 pt-1">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-600">Accès caisse</span>
+        <span class="h-px flex-1 bg-slate-100"></span>
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2" id="account-row">
+        <div>
+          <label class="mb-1.5 block text-[12.5px] font-medium text-slate-600">Email du compte caisse *</label>
+          <input id="edit-email" type="email" placeholder="caisse@monresto.fr" autocomplete="off" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-[14px] text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10" />
+          <p class="mt-1.5 text-[11.5px] text-slate-400">Identifiant de connexion pour le staff</p>
+        </div>
+        <div id="field-password">
+          <label class="mb-1.5 block text-[12.5px] font-medium text-slate-600" id="pwd-field-label">Mot de passe *</label>
+          <div class="relative">
+            <input id="edit-password" type="password" placeholder="Min. 6 caractères" autocomplete="new-password" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 pr-10 text-[14px] text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10" />
+            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600" onclick="toggleModalPwd()" aria-label="Afficher le mot de passe">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7.5 10-7.5S22 12 22 12s-3.5 7.5-10 7.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <p class="mt-1.5 text-[11.5px] text-slate-400" id="pwd-field-hint">Pour accéder à l'espace caisse</p>
+        </div>
+      </div>
+      <div id="reset-pwd-row" style="display:none">
+        <button type="button" id="btn-send-reset" class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-[13px] font-medium text-amber-700 transition-colors hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-40" onclick="sendStorePasswordReset()">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 6.5l10 6.5 10-6.5"/></svg>
+          Envoyer un email de réinitialisation au compte caisse
+        </button>
+      </div>
+
+      <!-- Programme de fidélité -->
+      <div class="flex items-center gap-3 pt-1">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-600">Programme de fidélité</span>
+        <span class="h-px flex-1 bg-slate-100"></span>
+      </div>
+      <div>
+        <label class="mb-1.5 block text-[12.5px] font-medium text-slate-600">Récompense au <span id="label-max-stamps">10</span>ème tampon</label>
+        <input id="edit-reward" placeholder="Café offert, Croissant offert…" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-[14px] text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10" />
+      </div>
+
+      <div>
+        <label class="mb-2 block text-[12.5px] font-medium text-slate-600">Nombre de tampons pour récompense</label>
+        <div class="flex items-center gap-4 rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3.5">
+          <input type="range" id="edit-max-stamps" min="5" max="20" value="10" oninput="updateStampSlider(this.value)" class="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-slate-200 accent-amber-500" />
+          <div class="flex h-10 w-12 shrink-0 items-center justify-center rounded-lg bg-amber-500 text-[16px] font-bold text-white shadow-sm" id="slider-display">10</div>
+        </div>
+        <p class="mt-1.5 text-[11.5px] text-slate-400">Nombre de visites nécessaires avant d'obtenir la récompense</p>
+      </div>
+
+      <!-- Apparence -->
+      <div class="flex items-center gap-3 pt-1">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-600">Apparence</span>
+        <span class="h-px flex-1 bg-slate-100"></span>
+      </div>
+      <div>
+        <label class="mb-2.5 block text-[12.5px] font-medium text-slate-600">Thème visuel de la carte</label>
+        <div class="flex flex-wrap gap-4" id="color-picker">
+          <div class="flex flex-col items-center gap-1.5">
+            <button type="button" data-class="card-noir" onclick="selectColor(this)" title="Noir"
+              class="color-swatch selected relative h-12 w-12 rounded-xl bg-gradient-to-br from-[#1f1f24] to-[#0c0c0e] shadow-sm ring-2 ring-offset-2 ring-transparent transition-transform hover:scale-105 [&.selected]:ring-amber-500 after:absolute after:inset-0 after:flex after:items-center after:justify-center after:text-[15px] after:font-bold after:text-white after:opacity-0 after:transition-opacity after:content-[''] [&.selected]:after:opacity-100 [&.selected]:after:content-['✓']"></button>
+            <span class="text-[10.5px] font-medium text-slate-400">Noir</span>
+          </div>
+          <div class="flex flex-col items-center gap-1.5">
+            <button type="button" data-class="card-navy" onclick="selectColor(this)" title="Marine"
+              class="color-swatch relative h-12 w-12 rounded-xl bg-gradient-to-br from-[#15263d] to-[#060d18] shadow-sm ring-2 ring-offset-2 ring-transparent transition-transform hover:scale-105 [&.selected]:ring-amber-500 after:absolute after:inset-0 after:flex after:items-center after:justify-center after:text-[15px] after:font-bold after:text-white after:opacity-0 after:transition-opacity after:content-[''] [&.selected]:after:opacity-100 [&.selected]:after:content-['✓']"></button>
+            <span class="text-[10.5px] font-medium text-slate-400">Marine</span>
+          </div>
+          <div class="flex flex-col items-center gap-1.5">
+            <button type="button" data-class="card-forest" onclick="selectColor(this)" title="Forêt"
+              class="color-swatch relative h-12 w-12 rounded-xl bg-gradient-to-br from-[#163923] to-[#060e07] shadow-sm ring-2 ring-offset-2 ring-transparent transition-transform hover:scale-105 [&.selected]:ring-amber-500 after:absolute after:inset-0 after:flex after:items-center after:justify-center after:text-[15px] after:font-bold after:text-white after:opacity-0 after:transition-opacity after:content-[''] [&.selected]:after:opacity-100 [&.selected]:after:content-['✓']"></button>
+            <span class="text-[10.5px] font-medium text-slate-400">Forêt</span>
+          </div>
+          <div class="flex flex-col items-center gap-1.5">
+            <button type="button" data-class="card-plum" onclick="selectColor(this)" title="Prune"
+              class="color-swatch relative h-12 w-12 rounded-xl bg-gradient-to-br from-[#2c1a38] to-[#0d090f] shadow-sm ring-2 ring-offset-2 ring-transparent transition-transform hover:scale-105 [&.selected]:ring-amber-500 after:absolute after:inset-0 after:flex after:items-center after:justify-center after:text-[15px] after:font-bold after:text-white after:opacity-0 after:transition-opacity after:content-[''] [&.selected]:after:opacity-100 [&.selected]:after:content-['✓']"></button>
+            <span class="text-[10.5px] font-medium text-slate-400">Prune</span>
+          </div>
+          <div class="flex flex-col items-center gap-1.5">
+            <button type="button" data-class="card-amber" onclick="selectColor(this)" title="Ambre"
+              class="color-swatch relative h-12 w-12 rounded-xl bg-gradient-to-br from-[#3a2710] to-[#100a04] shadow-sm ring-2 ring-offset-2 ring-transparent transition-transform hover:scale-105 [&.selected]:ring-amber-500 after:absolute after:inset-0 after:flex after:items-center after:justify-center after:text-[15px] after:font-bold after:text-white after:opacity-0 after:transition-opacity after:content-[''] [&.selected]:after:opacity-100 [&.selected]:after:content-['✓']"></button>
+            <span class="text-[10.5px] font-medium text-slate-400">Ambre</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paramètres -->
+      <div class="flex items-center gap-3 pt-1">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-600">Paramètres</span>
+        <span class="h-px flex-1 bg-slate-100"></span>
+      </div>
+
+      <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3.5">
+        <div class="pr-4">
+          <p class="text-[13.5px] font-medium text-slate-700">Autoriser les multi-tampons</p>
+          <p class="text-[12px] text-slate-400">2–3 tampons d'un coup, utile pour les grandes tables</p>
+        </div>
+        <label class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center">
+          <input type="checkbox" id="edit-multi" class="peer sr-only" />
+          <span class="absolute inset-0 rounded-full bg-slate-300 transition-colors peer-checked:bg-amber-500"></span>
+          <span class="absolute left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"></span>
+        </label>
+      </div>
+
+      <div id="daily-limit-field">
+        <label class="mb-1.5 block text-[12.5px] font-medium text-slate-600">Limite quotidienne de tampons</label>
+        <input id="edit-daily-limit" type="number" min="1" max="10" value="3" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-[14px] text-slate-900 outline-none transition-colors focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10" />
+        <p class="mt-1.5 text-[11.5px] text-slate-400">Anti-fraude : nombre maximum de tampons par client par jour</p>
+      </div>
+
+      <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3.5">
+        <p class="text-[13.5px] font-medium text-slate-700">Restaurant actif</p>
+        <label class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center">
+          <input type="checkbox" id="edit-active" checked class="peer sr-only" />
+          <span class="absolute inset-0 rounded-full bg-slate-300 transition-colors peer-checked:bg-emerald-500"></span>
+          <span class="absolute left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-2.5 border-t border-slate-100 px-6 py-4 sm:px-8">
+      <button class="rounded-lg border border-slate-200 px-4 py-2.5 text-[13.5px] font-medium text-slate-600 transition-colors hover:bg-slate-50" onclick="closeModal('modal-edit')">Annuler</button>
+      <button class="btn-save inline-flex items-center justify-center rounded-lg bg-gradient-to-b from-amber-500 to-amber-600 px-5 py-2.5 text-[13.5px] font-semibold text-white shadow-sm shadow-amber-500/25 transition-all hover:from-amber-400 hover:to-amber-500" onclick="saveRestaurant()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: DELETE CONFIRM ══ -->
+<div class="modal-backdrop hidden fixed inset-0 z-[200] items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm [&.open]:flex" id="modal-delete" onclick="closeModal('modal-delete')">
+  <div onclick="event.stopPropagation()" class="w-full max-w-[420px] animate-modalIn rounded-2xl border border-slate-200 bg-white shadow-2xl">
+    <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+      <h3 class="text-[15px] font-semibold text-slate-900">Supprimer le restaurant</h3>
+      <button class="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600" onclick="closeModal('modal-delete')">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="flex flex-col items-center px-6 py-7 text-center">
+      <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-rose-500">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"/><path d="M19 6l-1 14a1 1 0 01-1 1H7a1 1 0 01-1-1L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+      </div>
+      <p class="text-[15px] font-semibold text-slate-900">Confirmer la suppression</p>
+      <p class="mt-1.5 text-[13.5px] leading-relaxed text-slate-500">
+        Vous êtes sur le point de supprimer <span class="font-semibold text-rose-600" id="delete-name">—</span>.<br>
+        Cette action est irréversible. Toutes les cartes de fidélité associées seront désactivées.
+      </p>
+    </div>
+    <div class="flex justify-end gap-2.5 border-t border-slate-100 px-6 py-4">
+      <button class="rounded-lg border border-slate-200 px-4 py-2.5 text-[13.5px] font-medium text-slate-600 transition-colors hover:bg-slate-50" onclick="closeModal('modal-delete')">Annuler</button>
+      <button class="btn-danger rounded-lg bg-rose-600 px-4 py-2.5 text-[13.5px] font-semibold text-white shadow-sm shadow-rose-600/25 transition-colors hover:bg-rose-700" onclick="confirmDelete()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-wrap" class="pointer-events-none fixed right-4 top-4 z-[500] flex flex-col gap-2 sm:right-6 sm:top-5"></div>
+
+<!-- ⚠ Remplacer par les vraies valeurs Firebase avant déploiement -->
+<script>
+  window.FIREBASE_CONFIG = {
+    apiKey:            "AIzaSyAY6M5puxY9bZITCDLw0fg__a3Fky3NJZ0",
+    authDomain:        "pb-cates-demo.firebaseapp.com",
+    projectId:         "pb-cates-demo",
+    storageBucket:     "pb-cates-demo.firebasestorage.app",
+    messagingSenderId: "786794482585",
+    appId:             "1:786794482585:web:21d3b2b210349b5a0a6108"
+  };
+</script>
+
+<script>
+'use strict';
+
+/* ── Default restaurant seed ── */
+const DEFAULT_RESTOS = [
+  {
+    id: 'bistro-coin', name: 'Le Bistro du Coin', category: 'Restaurant', city: 'Paris 11e',
+    colorClass: 'card-noir', logoText: 'BC', logoColor: 'rgba(201,168,76,0.2)', logoTextColor: '#c9a84c',
+    maxStamps: 10, reward: 'Café offert', multiStamp: true, dailyLimit: 3, active: true, createdAt: '2024-01-15'
+  },
+  {
+    id: 'boulangerie-martin', name: 'Boulangerie Martin', category: 'Boulangerie', city: 'Lyon 6e',
+    colorClass: 'card-amber', logoText: 'BM', logoColor: 'rgba(232,160,32,0.2)', logoTextColor: '#e8a020',
+    maxStamps: 10, reward: 'Croissant offert', multiStamp: false, dailyLimit: 1, active: true, createdAt: '2024-03-10'
+  },
+  {
+    id: 'sushi-kado', name: 'Sushi Kado', category: 'Restaurant', city: 'Bordeaux',
+    colorClass: 'card-navy', logoText: 'SK', logoColor: 'rgba(74,140,212,0.2)', logoTextColor: '#4a8cd4',
+    maxStamps: 10, reward: 'Entrée offerte', multiStamp: true, dailyLimit: 2, active: true, createdAt: '2024-04-22'
+  }
+];
+
+/* ── State ── */
+let currentAdmin = null;
+let restaurants = [];
+let editingId = null;
+let deletingId = null;
+let selectedColorClass = 'card-noir';
+
+/* ══════════════════════════════════════════════════════════════════
+   FIRESTORE HELPERS
+══════════════════════════════════════════════════════════════════ */
+let _adminDb = null;
+async function getAdminDb() {
+  if (_adminDb) return _adminDb;
+  const [{ getApps, getApp, initializeApp }, { getFirestore }] = await Promise.all([
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'),
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+  ]);
+  const app = getApps().length ? getApp() : initializeApp(window.FIREBASE_CONFIG);
+  _adminDb = getFirestore(app);
+  return _adminDb;
+}
+
+async function firestoreLoadAll() {
+  const db = await getAdminDb();
+  const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+  const snap = await getDocs(collection(db, 'commerces'));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+async function firestoreSave(restaurant) {
+  const db = await getAdminDb();
+  const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+  await setDoc(doc(db, 'commerces', restaurant.id), restaurant);
+}
+
+async function firestoreDelete(id) {
+  const db = await getAdminDb();
+  const { doc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+  await deleteDoc(doc(db, 'commerces', id));
+}
+
+/* ── Color → logo color map ── */
+const COLOR_LOGO = {
+  'card-noir':   { bg: 'rgba(201,168,76,0.2)',   text: '#c9a84c' },
+  'card-navy':   { bg: 'rgba(74,140,212,0.2)',   text: '#4a8cd4' },
+  'card-forest': { bg: 'rgba(78,203,113,0.2)',   text: '#4ecb71' },
+  'card-plum':   { bg: 'rgba(155,89,182,0.2)',   text: '#9b59b6' },
+  'card-amber':  { bg: 'rgba(232,160,32,0.2)',   text: '#e8a020' }
+};
+
+/* ── Load restaurants — Firestore en priorité, localStorage en fallback ── */
+async function loadRestaurants() {
+  try {
+    const fromFs = await firestoreLoadAll();
+    if (fromFs.length > 0) {
+      restaurants = fromFs;
+      saveLocal();
+      return;
+    }
+    /* Firestore vide : migrer le localStorage vers Firestore */
+    const raw = localStorage.getItem('pb_admin_restaurants');
+    if (raw) {
+      try { restaurants = JSON.parse(raw); } catch { restaurants = [...DEFAULT_RESTOS]; }
+    } else {
+      restaurants = [...DEFAULT_RESTOS];
+    }
+    /* Pousser les données locales vers Firestore */
+    await Promise.all(restaurants.map(r => firestoreSave(r)));
+    showToast('Données migrées vers Firestore ✓', 'success');
+  } catch (err) {
+    console.warn('[Admin] Firestore indisponible, chargement local :', err.message);
+    const raw = localStorage.getItem('pb_admin_restaurants');
+    if (raw) { try { restaurants = JSON.parse(raw); } catch { restaurants = [...DEFAULT_RESTOS]; } }
+    else { restaurants = [...DEFAULT_RESTOS]; saveLocal(); }
+  }
+}
+
+function saveLocal() {
+  localStorage.setItem('pb_admin_restaurants', JSON.stringify(restaurants));
+}
+
+/* Conservé pour compatibilité avec les anciens appels */
+function saveRestaurants() { saveLocal(); }
+
+/* ── Admin Auth via Firebase ── */
+/* ⚠ En production : restreindre l'accès via Firebase Custom Claims (role: admin)
+   Les emails autorisés ne doivent plus jamais être hardcodés côté client. */
+const ADMIN_DISPLAY = {
+  'admin@betacapital.fr':   { name: 'Admin Principal',   initials: 'AP' },
+  'support@betacapital.fr': { name: 'Support Technique', initials: 'ST' }
+};
+
+let _adminFbAuth = null;
+async function getAdminAuth() {
+  if (_adminFbAuth) return _adminFbAuth;
+  const [{ getApps, getApp, initializeApp }, { getAuth }] = await Promise.all([
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'),
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js')
+  ]);
+  const app = getApps().length ? getApp() : initializeApp(window.FIREBASE_CONFIG);
+  _adminFbAuth = getAuth(app);
+  return _adminFbAuth;
+}
+
+async function attemptLogin() {
+  const email  = (document.getElementById('admin-email').value || '').trim().toLowerCase();
+  const pwd    = (document.getElementById('admin-pwd').value   || '');
+  const errEl  = document.getElementById('login-error');
+  errEl.classList.remove('visible');
+
+  if (!email || !pwd) {
+    errEl.textContent = 'Veuillez remplir tous les champs.';
+    errEl.classList.add('visible');
+    return;
+  }
+
+  /* Vérification côté client : seuls les emails admin connus sont acceptés.
+     En production, remplacer par une vérification Firebase Custom Claims. */
+  if (!ADMIN_DISPLAY[email]) {
+    errEl.textContent = 'Accès refusé — compte non autorisé.';
+    void errEl.offsetWidth; errEl.classList.add('visible');
+    document.getElementById('admin-pwd').value = '';
+    document.getElementById('admin-pwd').focus();
+    return;
+  }
+
+  const btn = document.querySelector('.btn-login');
+  btn.disabled = true; btn.textContent = 'Connexion…';
+
+  try {
+    const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    const auth = await getAdminAuth();
+    const cred = await signInWithEmailAndPassword(auth, email, pwd);
+
+    const adminInfo = ADMIN_DISPLAY[email];
+    currentAdmin = { email, ...adminInfo, uid: cred.user.uid };
+    errEl.classList.remove('visible');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-shell').classList.add('visible');
+    document.getElementById('topbar-user-name').textContent = adminInfo.name;
+    document.getElementById('topbar-avatar').textContent    = adminInfo.initials;
+    await loadRestaurants();
+    renderRestaurants();
+    showPage('restaurants');
+    showToast(`Bienvenue, ${adminInfo.name}`, 'success');
+
+  } catch (err) {
+    const map = {
+      'auth/invalid-credential': 'Mot de passe incorrect.',
+      'auth/wrong-password':     'Mot de passe incorrect.',
+      'auth/user-not-found':     'Aucun compte pour cet email.',
+      'auth/too-many-requests':  'Trop de tentatives. Réessayez dans quelques minutes.',
+      'auth/network-request-failed': 'Erreur réseau — vérifiez votre connexion.',
+    };
+    errEl.textContent = map[err.code] || 'Identifiants incorrects.';
+    void errEl.offsetWidth; errEl.classList.add('visible');
+    document.getElementById('admin-pwd').value = '';
+    document.getElementById('admin-pwd').focus();
+  } finally {
+    btn.disabled = false; btn.textContent = 'Accéder au panneau';
+  }
+}
+
+async function logout() {
+  try {
+    const { signOut } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    const auth = await getAdminAuth();
+    await signOut(auth);
+  } catch { /* silently ignore */ }
+  currentAdmin = null;
+  document.getElementById('app-shell').classList.remove('visible');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-email').value = '';
+  document.getElementById('admin-pwd').value = '';
+}
+
+/* ── Sidebar mobile (nouveau — navigation responsive) ── */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('-translate-x-full');
+  document.getElementById('sidebar-overlay').classList.toggle('hidden');
+}
+
+/* ── Page navigation ── */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${id}`).classList.add('active');
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  const navBtn = document.getElementById(`nav-${id}`);
+  if (navBtn) navBtn.classList.add('active');
+
+  /* Fermer le menu mobile après navigation (si ouvert) */
+  const overlay = document.getElementById('sidebar-overlay');
+  if (overlay && !overlay.classList.contains('hidden')) toggleSidebar();
+}
+
+/* ── Render restaurants ── */
+function renderRestaurants() {
+  const grid = document.getElementById('resto-grid');
+  const total   = restaurants.length;
+  const active  = restaurants.filter(r => r.active).length;
+  const multi   = restaurants.filter(r => r.multiStamp).length;
+  const avgSt   = total ? Math.round(restaurants.reduce((s, r) => s + r.maxStamps, 0) / total) : 0;
+
+  document.getElementById('s-total').textContent  = total;
+  document.getElementById('s-active').textContent = active;
+  document.getElementById('s-multi').textContent  = multi;
+  document.getElementById('s-stamps').textContent = avgSt || '—';
+  document.getElementById('resto-count-badge').textContent = total;
+
+  if (!restaurants.length) {
+    grid.innerHTML = `
+      <div class="col-span-full flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white/60 py-16 text-center">
+        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </div>
+        <h3 class="text-[14px] font-semibold text-slate-900">Aucun restaurant</h3>
+        <p class="mt-1 text-[13px] text-slate-500">Créez votre premier établissement partenaire.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = restaurants.map(r => `
+    <div class="group flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md" id="rcard-${r.id}">
+      <div class="flex items-start gap-3 p-5">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-[14px] font-bold" style="background:${r.logoColor};color:${r.logoTextColor}">${escH(r.logoText)}</div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-start justify-between gap-2">
+            <h3 class="truncate text-[15px] font-semibold leading-tight text-slate-900">${escH(r.name)}</h3>
+            <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${r.active ? 'bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20' : 'bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-600/20'}">
+              <span class="h-1.5 w-1.5 rounded-full ${r.active ? 'bg-emerald-500' : 'bg-rose-500'}"></span>${r.active ? 'Actif' : 'Inactif'}
+            </span>
+          </div>
+          <p class="mt-0.5 truncate text-[12.5px] text-slate-500">${escH(r.category)} · ${escH(r.city)}</p>
+        </div>
+      </div>
+
+      <div class="flex-1 border-t border-slate-100 px-5 py-4">
+        <div class="flex items-center gap-6">
+          <div>
+            <p class="text-[10.5px] font-semibold uppercase tracking-wide text-slate-400">Tampons</p>
+            <p class="mt-0.5 text-[14px] font-bold text-amber-700">${r.maxStamps}</p>
+          </div>
+          <div class="min-w-0">
+            <p class="text-[10.5px] font-semibold uppercase tracking-wide text-slate-400">Récompense</p>
+            <p class="mt-0.5 truncate text-[13.5px] font-medium text-slate-700">${escH(r.reward)}</p>
+          </div>
+        </div>
+
+        <div class="mt-3.5 flex flex-wrap gap-1.5">
+          <span class="rounded-full border px-2.5 py-1 text-[11px] font-medium ${r.multiStamp ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-slate-200 bg-slate-50 text-slate-500'}">Multi-tampon ${r.multiStamp ? '✓' : '✗'}</span>
+          <span class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-500">Limite ${r.dailyLimit}/jour</span>
+          <span class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-500">Depuis ${formatDate(r.createdAt)}</span>
+        </div>
+
+        <div class="mt-3.5 flex items-center gap-2 border-t border-slate-100 pt-3">
+          <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 6.5l10 6.5 10-6.5"/></svg>
+          ${r.storeEmail
+            ? `<span class="truncate font-mono text-[12px] text-slate-600">${escH(r.storeEmail)}</span>`
+            : `<span class="truncate text-[12px] text-rose-600">Aucun compte caisse configuré</span>`
+          }
+        </div>
+      </div>
+
+      <div class="flex gap-2 border-t border-slate-100 px-5 py-3">
+        <button class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-[13px] font-medium text-slate-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700" onclick="openEditModal('${r.id}')">Modifier</button>
+        <button class="rounded-lg border border-slate-200 px-3 py-2 text-slate-400 transition-colors hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600" onclick="openDeleteModal('${r.id}')" aria-label="Supprimer ${escH(r.name)}">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"/><path d="M19 6l-1 14a1 1 0 01-1 1H7a1 1 0 01-1-1L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+/* ── Create modal ── */
+function openCreateModal() {
+  editingId = null;
+  document.getElementById('modal-edit-title').textContent = 'Nouveau restaurant';
+  document.getElementById('edit-id').value    = '';
+  document.getElementById('edit-name').value  = '';
+  document.getElementById('edit-logo').value  = '';
+  document.getElementById('edit-city').value  = '';
+  document.getElementById('edit-reward').value = '';
+  document.getElementById('edit-email').value  = '';
+  document.getElementById('edit-password').value = '';
+  document.getElementById('edit-password').type  = 'password';
+  document.getElementById('edit-category').value = 'Restaurant';
+  document.getElementById('edit-max-stamps').value = 10;
+  document.getElementById('slider-display').textContent = 10;
+  document.getElementById('label-max-stamps').textContent = 10;
+  document.getElementById('edit-multi').checked = false;
+  document.getElementById('edit-active').checked = true;
+  document.getElementById('edit-daily-limit').value = 3;
+  selectedColorClass = 'card-noir';
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.toggle('selected', s.dataset.class === 'card-noir'));
+  /* Show password field as required, hide reset button */
+  document.getElementById('edit-email').readOnly = false;
+  document.getElementById('field-password').style.display = '';
+  document.getElementById('pwd-field-label').textContent = 'Mot de passe *';
+  document.getElementById('pwd-field-hint').textContent = 'Pour accéder à l\'espace caisse';
+  document.getElementById('reset-pwd-row').style.display = 'none';
+  openModal('modal-edit');
+  document.getElementById('edit-name').focus();
+}
+
+/* ── Edit modal ── */
+function openEditModal(id) {
+  const r = restaurants.find(x => x.id === id);
+  if (!r) return;
+  editingId = id;
+  document.getElementById('modal-edit-title').textContent = 'Modifier le restaurant';
+  document.getElementById('edit-id').value    = r.id;
+  document.getElementById('edit-name').value  = r.name;
+  document.getElementById('edit-logo').value  = r.logoText;
+  document.getElementById('edit-city').value  = r.city;
+  document.getElementById('edit-reward').value = r.reward;
+  document.getElementById('edit-email').value  = r.storeEmail || '';
+  document.getElementById('edit-password').value = '';
+  document.getElementById('edit-password').type  = 'password';
+  document.getElementById('edit-category').value = r.category;
+  document.getElementById('edit-max-stamps').value = r.maxStamps;
+  document.getElementById('slider-display').textContent = r.maxStamps;
+  document.getElementById('label-max-stamps').textContent = r.maxStamps;
+  document.getElementById('edit-multi').checked = r.multiStamp;
+  document.getElementById('edit-active').checked = r.active;
+  document.getElementById('edit-daily-limit').value = r.dailyLimit;
+  selectedColorClass = r.colorClass;
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.toggle('selected', s.dataset.class === r.colorClass));
+  /* On edit: email is readonly, hide password field, show reset button */
+  document.getElementById('edit-email').readOnly = true;
+  document.getElementById('edit-email').style.opacity = '0.6';
+  document.getElementById('field-password').style.display = 'none';
+  document.getElementById('reset-pwd-row').style.display = r.storeEmail ? '' : 'none';
+  openModal('modal-edit');
+}
+
+/* ── Save (create or update) ── */
+async function saveRestaurant() {
+  const name       = document.getElementById('edit-name').value.trim();
+  const logoRaw    = document.getElementById('edit-logo').value.trim().toUpperCase();
+  const city       = document.getElementById('edit-city').value.trim();
+  const reward     = document.getElementById('edit-reward').value.trim();
+  const category   = document.getElementById('edit-category').value;
+  const storeEmail = document.getElementById('edit-email').value.trim().toLowerCase();
+  const storePwd   = document.getElementById('edit-password').value;
+  const maxStamps  = parseInt(document.getElementById('edit-max-stamps').value) || 10;
+  const multiStamp = document.getElementById('edit-multi').checked;
+  const active     = document.getElementById('edit-active').checked;
+  const dailyLimit = parseInt(document.getElementById('edit-daily-limit').value) || 3;
+
+  if (!name)   { showToast('Le nom est obligatoire', 'error'); document.getElementById('edit-name').focus(); return; }
+  if (!reward) { showToast('La récompense est obligatoire', 'error'); document.getElementById('edit-reward').focus(); return; }
+
+  if (!editingId) {
+    /* ── Création : email + mdp obligatoires ── */
+    if (!storeEmail) { showToast('L\'email du compte caisse est obligatoire', 'error'); document.getElementById('edit-email').focus(); return; }
+    if (!storePwd || storePwd.length < 6) { showToast('Le mot de passe doit contenir au moins 6 caractères', 'error'); document.getElementById('edit-password').focus(); return; }
+  }
+
+  const logoText = logoRaw || name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  const colors   = COLOR_LOGO[selectedColorClass] || COLOR_LOGO['card-noir'];
+
+  /* Disable save button during async work */
+  const saveBtn = document.querySelector('.btn-save');
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '<svg class="mr-1.5 h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>Enregistrement…';
+
+  try {
+    if (!editingId) {
+      /* ── CRÉATION : créer le compte Firebase Auth via REST API ────────
+         On utilise le REST endpoint directement pour ne pas déconnecter
+         l'admin (le SDK Firebase ne peut pas créer un user sans le logger)
+      ──────────────────────────────────────────────────────────────────── */
+      let storeUid = null;
+      try {
+        const resp = await fetch(
+          `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${window.FIREBASE_CONFIG.apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: storeEmail, password: storePwd, returnSecureToken: false })
+          }
+        );
+        const data = await resp.json();
+        if (data.error) {
+          const errMap = {
+            'EMAIL_EXISTS':   'Cet email est déjà utilisé par un autre compte Firebase.',
+            'WEAK_PASSWORD : Password should be at least 6 characters': 'Mot de passe trop faible (6 caractères min.).',
+            'INVALID_EMAIL':  'Format d\'email invalide.',
+          };
+          const msg = errMap[data.error.message] || `Erreur Firebase : ${data.error.message}`;
+          showToast(msg, 'error');
+          return;
+        }
+        storeUid = data.localId;
+        showToast(`Compte Firebase créé : ${storeEmail}`, 'success');
+      } catch (netErr) {
+        /* Réseau indisponible — on crée quand même localement */
+        showToast('Réseau indisponible — compte sauvegardé localement uniquement', '');
+      }
+
+      const id = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      const uniqueId = id + '-' + Date.now().toString(36);
+      const newResto = {
+        id: uniqueId, name, category, city, reward, maxStamps, multiStamp, active, dailyLimit,
+        logoText, logoColor: colors.bg, logoTextColor: colors.text, colorClass: selectedColorClass,
+        storeEmail, storeUid,
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+      restaurants.push(newResto);
+      saveLocal();
+      try {
+        await firestoreSave(newResto);
+      } catch (fsErr) {
+        console.error('[Admin] Firestore save failed:', fsErr);
+        showToast('Sauvegardé localement uniquement (Firestore hors-ligne)', '');
+      }
+      showToast(`${name} créé avec succès`, 'success');
+
+    } else {
+      /* ── MISE À JOUR ── */
+      const idx = restaurants.findIndex(r => r.id === editingId);
+      if (idx >= 0) {
+        restaurants[idx] = {
+          ...restaurants[idx],
+          name, category, city, reward, maxStamps, multiStamp, active, dailyLimit,
+          logoText, logoColor: colors.bg, logoTextColor: colors.text, colorClass: selectedColorClass
+        };
+        saveLocal();
+        try {
+          await firestoreSave(restaurants[idx]);
+        } catch (fsErr) {
+          console.error('[Admin] Firestore update failed:', fsErr);
+          showToast('Mis à jour localement uniquement (Firestore hors-ligne)', '');
+        }
+      }
+      showToast(`${name} mis à jour`, 'success');
+    }
+
+    renderRestaurants();
+    closeModal('modal-edit');
+
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = 'Enregistrer';
+  }
+}
+
+/* ── Delete ── */
+function openDeleteModal(id) {
+  const r = restaurants.find(x => x.id === id);
+  if (!r) return;
+  deletingId = id;
+  document.getElementById('delete-name').textContent = r.name;
+  openModal('modal-delete');
+}
+
+function confirmDelete() {
+  if (!deletingId) return;
+  const r = restaurants.find(x => x.id === deletingId);
+  restaurants = restaurants.filter(x => x.id !== deletingId);
+  saveLocal();
+  firestoreDelete(deletingId).catch(e => console.error('[Admin] Firestore delete failed:', e));
+  renderRestaurants();
+  closeModal('modal-delete');
+  deletingId = null;
+  showToast(`${r?.name || 'Restaurant'} supprimé`, 'success');
+}
+
+/* ── Password toggle in modal ── */
+function toggleModalPwd() {
+  const inp = document.getElementById('edit-password');
+  inp.type = (inp.type === 'password') ? 'text' : 'password';
+}
+
+/* ── Send password reset email to the store account ── */
+async function sendStorePasswordReset() {
+  const r = restaurants.find(x => x.id === editingId);
+  const email = r?.storeEmail || document.getElementById('edit-email').value.trim();
+  if (!email) { showToast('Aucun email de compte caisse trouvé', 'error'); return; }
+
+  const btn = document.getElementById('btn-send-reset');
+  btn.disabled = true;
+  btn.innerHTML = '<svg class="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg> Envoi en cours…';
+
+  try {
+    const { sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    const auth = await getAdminAuth();
+    await sendPasswordResetEmail(auth, email);
+    showToast(`Email de réinitialisation envoyé à ${email}`, 'success');
+  } catch (err) {
+    const map = {
+      'auth/user-not-found': 'Aucun compte Firebase pour cet email.',
+      'auth/invalid-email':  'Email invalide.',
+      'auth/network-request-failed': 'Erreur réseau.',
+    };
+    showToast(map[err.code] || `Erreur : ${err.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 6.5l10 6.5 10-6.5"/></svg> Envoyer un email de réinitialisation au compte caisse';
+  }
+}
+
+/* ── Form helpers ── */
+function updateStampSlider(val) {
+  document.getElementById('slider-display').textContent = val;
+  document.getElementById('label-max-stamps').textContent = val;
+}
+
+function selectColor(el) {
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedColorClass = el.dataset.class;
+}
+
+/* ── Modal helpers ── */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+/* ── Utilities ── */
+function escH(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function formatDate(d) { return new Date(d).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' }); }
+
+/* ── Toasts ── */
+function showToast(msg, type = '') {
+  const c = document.getElementById('toast-wrap');
+  const t = document.createElement('div');
+  const styles = {
+    '':        'border-slate-200 text-slate-700',
+    success:   'border-emerald-200 text-emerald-700',
+    error:     'border-rose-200 text-rose-700'
+  };
+  t.className = `pointer-events-auto flex items-center gap-2 whitespace-nowrap rounded-full border bg-white px-4 py-2.5 text-[13px] font-medium shadow-lg shadow-slate-900/[0.06] animate-toastIn ${styles[type] || styles['']}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+/* ── Keyboard shortcuts ── */
+document.addEventListener('keydown', e => {
+  // Close modals on Escape
+  if (e.key === 'Escape') {
+    ['modal-edit', 'modal-delete'].forEach(id => closeModal(id));
+  }
+  // Login on Enter when password focused
+  if (e.key === 'Enter' && document.activeElement?.id === 'admin-pwd') {
+    attemptLogin();
+  }
+});
+
+// Allow clicking backdrop to close modals
+document.getElementById('modal-edit').addEventListener('click', function(e) { if (e.target === this) closeModal('modal-edit'); });
+</script>
+</body>
+</html>
